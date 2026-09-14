@@ -1,0 +1,187 @@
+id: ipv4-subnetting
+slug: ipv4-subnetting
+title: Masque, CIDR et classes IPv4
+description: Comprendre les masques IPv4, la notation CIDR, les classes historiques et calculer réseau, broadcast et nombre d'hôtes.
+level: Débutant
+duration: 15 min
+themeId: IPv4
+color: teal
+
+objectives:
+  - Comprendre le rôle d'un masque
+  - Lire une notation CIDR
+  - Connaître les classes historiques IPv4
+  - Calculer l'adresse réseau
+  - Calculer l'adresse de broadcast
+  - Calculer le nombre d'adresses hôtes
+  - Identifier les plages d'adresses utilisables
+
+sections:
+
+  - id: mask
+    title: Le masque de sous-réseau
+    kicker: "01 / Masque"
+    blocks:
+
+      - type: text
+        title: À quoi sert le masque ?
+        content: |
+          Le masque permet de déterminer quelle partie d'une adresse IPv4 correspond au **réseau** et quelle partie correspond à **l'hôte**.
+
+          Exemple : **192.168.1.25**
+
+          avec : **255.255.255.0**
+
+          Les 24 premiers bits correspondent au réseau.
+
+          Les 8 derniers bits correspondent à l'hôte.
+
+      - type: text
+        title: Notation CIDR
+        content: |
+          Le masque peut être écrit avec la notation **CIDR** :
+
+          **192.168.1.25/24**
+
+          Le `/24` signifie que les **24 premiers bits** sont utilisés pour identifier le réseau.
+
+          Il reste :
+
+          **32 - 24 = 8 bits**
+
+          pour les hôtes.
+
+      - type: text
+        title: Nombre d'hôtes
+        content: |
+          Avec **n bits d'hôte**, on dispose de :
+
+          **2ⁿ adresses**
+
+          Dans un sous-réseau IPv4 classique, deux adresses sont réservées :
+
+          → adresse réseau
+
+          → adresse broadcast
+
+          Nombre d'hôtes utilisables :
+
+          **2ⁿ - 2**
+
+          Exemple avec `/24` :
+
+          **2⁸ - 2 = 254 hôtes**
+
+  - id: calculation
+    title: Calcul d'un sous-réseau
+    kicker: "02 / Calcul"
+    blocks:
+
+      - type: text
+        title: Exemple
+        content: |
+          Prenons **192.168.10.37/24**
+          Le réseau est **192.168.10.0**
+          Le broadcast est **192.168.10.255**
+          Les hôtes utilisables sont **192.168.10.1 → 192.168.10.254**
+          Il y a donc **254 adresses hôtes utilisables.**
+
+      - type: text
+        title: Méthode
+        content: |
+          Pour résoudre un exercice :
+          1. **Lire le préfixe CIDR**
+          2. **Déterminer le nombre de bits réseau**
+          3. **Déterminer le nombre de bits hôte**
+          4. **Calculer l'adresse réseau**
+          5. **Calculer l'adresse broadcast**
+          6. **Déterminer la plage d'hôtes**
+          7. **Calculer le nombre d'hôtes disponibles**
+
+  - id: classes
+    title: Les classes historiques
+    kicker: "03 / Historique"
+    blocks:
+
+      - type: text
+        title: Classes A, B et C
+        content: |
+          Avant CIDR, IPv4 utilisait principalement des classes.
+
+          **Classe A**
+          - premier octet : 1 à 126
+          - masque historique : /8
+
+          **Classe B**
+          - premier octet : 128 à 191
+          - masque historique : /16
+
+          **Classe C**
+          - premier octet : 192 à 223
+          - masque historique : /24
+
+      - type: text
+        title: Pourquoi les classes ont disparu ?
+        content: |
+          Le système par classes était peu flexible.
+
+          Un réseau avait une taille imposée par sa classe.
+
+          CIDR permet au contraire de choisir précisément la longueur du préfixe :
+
+          **/20**
+
+          **/23**
+
+          **/27**
+
+          etc.
+
+          Aujourd'hui, les classes sont principalement utiles pour comprendre l'histoire d'IPv4.
+
+  - id: exercises
+    title: Série d'exercices
+    kicker: "04 / Entraînement"
+    blocks:
+
+      - type: text
+        title: Exercice 1
+        content: |
+          Pour **192.168.1.37/24** :
+
+          → Adresse réseau ?
+
+          → Broadcast ?
+
+          → Première adresse utilisable ?
+
+          → Dernière adresse utilisable ?
+
+          → Nombre d'hôtes ?
+
+      - type: text
+        title: Exercice 2
+        content: |
+          Pour **172.16.35.100/20** :
+
+          → Adresse réseau ?
+
+          → Broadcast ?
+
+          → Plage d'hôtes ?
+
+          → Nombre d'hôtes utilisables ?
+
+      - type: text
+        title: Exercice 3
+        content: |
+          Pour **10.20.14.200/26** :
+
+          → Adresse réseau ?
+
+          → Broadcast ?
+
+          → Plage d'hôtes ?
+
+          → Nombre d'hôtes utilisables ?
+

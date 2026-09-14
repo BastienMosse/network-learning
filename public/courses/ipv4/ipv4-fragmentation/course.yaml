@@ -1,0 +1,148 @@
+# ============================================================
+# IP — 04 / FRAGMENTATION
+# ============================================================
+
+id: ipv4-fragmentation
+slug: ipv4-fragmentation
+title: Fragmentation IPv4
+description: Comprendre la MTU et le mécanisme de fragmentation IPv4 avec les flags et le fragment offset.
+level: Débutant
+duration: 10 min
+themeId: IPv4
+color: coral
+
+objectives:
+  - Comprendre ce qu'est une MTU
+  - Comprendre pourquoi un paquet peut être fragmenté
+  - Comprendre les flags DF et MF
+  - Comprendre le fragment offset
+  - Savoir reconstituer la position des fragments
+
+sections:
+
+  - id: mtu
+    title: La MTU
+    kicker: "01 / Fondations"
+    blocks:
+
+      - type: text
+        title: Maximum Transmission Unit
+        content: |
+          La **MTU** (*Maximum Transmission Unit*) représente la taille maximale d'un paquet IP pouvant être transporté sur une liaison sans fragmentation.
+
+          Une liaison Ethernet classique possède généralement une MTU de :
+
+          **1500 octets**
+
+      - type: text
+        title: Le problème
+        content: |
+          Imaginons qu'un paquet IPv4 fasse **4000 octets**
+          et qu'il doive traverser une liaison dont la MTU est
+          **1500 octets**.
+
+          Le paquet est trop grand pour cette liaison.
+          IPv4 peut alors le fragmenter.
+
+  - id: fragmentation
+    title: Comment fonctionne la fragmentation ?
+    kicker: "02 / Mécanisme"
+    blocks:
+
+      - type: text
+        title: Les fragments
+        content: |
+          Le paquet original est découpé en plusieurs fragments.
+
+          Chaque fragment possède son propre en-tête IPv4.
+
+          Les fragments contiennent notamment :
+
+          - **Identification** → permet de savoir quels fragments appartiennent au même paquet.
+          - **Fragment Offset** → indique la position du fragment dans le paquet original.
+          - **MF (More Fragments)** → indique qu'il existe encore des fragments après celui-ci.
+
+      - type: text
+        title: Les Flags
+        content: |
+          Un paquet IP contient 3 bits de flag.
+
+          - Bit 0 : reservé
+          - Bit 1 : DF
+          - Bit 2 : MF
+
+          Exemple :
+
+      - type: code
+        code: |
+          010
+          │││
+          ││└── MF = 0 → dernier fragment
+          │└─── DF = 1 → ne peut pas être fragmenté
+          └──── Réservé = 0
+
+      - type: text
+        title: DF et MF
+        content: |
+          Les deux flags importants sont :
+          - **DF — Don't Fragment** → indique que le paquet ne doit pas être fragmenté.
+          - **MF — More Fragments** → indique que d'autres fragments suivent.
+
+      - type: text
+        title: Reconstitution
+        content: |
+          Le destinataire utilise :
+
+          **Identification + Fragment Offset + MF**
+
+          pour remettre les fragments dans leur ordre et reconstruire le paquet original.
+
+  - id: demo
+    title: Démo — Fragmentation
+    kicker: "03 / Animation"
+    blocks:
+
+      - type: demo
+        title: "Un paquet traverse une liaison à MTU réduite"
+        intro: "Observez comment un paquet trop volumineux est découpé en fragments."
+
+        nodes:
+          - id: r1
+            label: Routeur 1
+            kind: device
+            position: { x: 20, y: 50 }
+
+          - id: r2
+            label: Routeur 2
+            kind: device
+            position: { x: 80, y: 50 }
+
+        connections:
+          - from: r1
+            to: r2
+
+        steps:
+
+          - title: "1. Paquet de 4000 octets"
+            description: "Le paquet doit traverser une liaison dont la MTU est de 1500 octets."
+            active: [r1]
+            panel: "Paquet = 4000 octets | MTU = 1500"
+
+          - title: "2. Le paquet est fragmenté"
+            description: "Le paquet est découpé afin que chaque fragment puisse respecter la MTU."
+            active: [r1]
+            panel: "Fragmentation"
+
+          - title: "3. Les fragments traversent la liaison"
+            description: "Chaque fragment possède son propre en-tête IPv4."
+            active: [r1, r2]
+            panel: "Identification + Offset + MF"
+            packets:
+              - from: r1
+                to: r2
+
+          - title: "4. Le destinataire reconstitue le paquet"
+            description: "Les fragments sont réassemblés par le destinataire."
+            active: [r2]
+            panel: "Réassemblage"
+

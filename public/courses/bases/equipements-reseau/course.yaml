@@ -1,0 +1,1009 @@
+id: equipements-reseau
+slug: equipements-reseau
+title: Équipements réseau — Hub, Bridge, Switch et Routeur
+description: Comprendre le rôle et les différences entre un hub, un bridge, un switch et un routeur, ainsi que les couches OSI et les adresses utilisées.
+level: Débutant
+duration: 40 min
+themeId: bases
+color: blue
+objectives:
+  - Comprendre le rôle d'un hub, d'un bridge, d'un switch et d'un routeur
+  - Savoir différencier les couches OSI 1, 2 et 3
+  - Comprendre la différence entre adresse MAC et adresse IP
+  - Savoir ce qu'est une table MAC et une table de routage
+  - Savoir quel équipement utiliser pour connecter des appareils ou des réseaux différents
+
+sections:
+
+  # ============================================================
+  # 01 - LES BASES
+  # ============================================================
+
+  - id: bases
+    title: Les équipements réseau
+    kicker: 01 / Fondations
+    blocks:
+
+      - type: text
+        title: À quoi servent-ils ?
+        content: |
+          Les équipements réseau permettent de faire circuler des données entre différents appareils.
+          Ils n'ont cependant pas tous le même rôle : certains transmettent simplement les signaux, d'autres choisissent à quel appareil envoyer les données, et d'autres encore permettent de communiquer entre plusieurs réseaux.
+
+          Les quatre équipements à connaître sont :
+
+          - **Hub** : répète les données vers tous les ports
+          - **Bridge** : relie et filtre deux segments d'un réseau
+          - **Switch** : connecte plusieurs appareils et transmet les données vers le bon port
+          - **Routeur** : relie plusieurs réseaux différents
+
+      - type: text
+        title: Le repère avec le modèle OSI
+        content: |
+          Ces équipements se situent principalement dans les trois premières couches du modèle OSI :
+
+          - **Couche 1 — Physique** → Hub
+          - **Couche 2 — Liaison de données** → Bridge et Switch
+          - **Couche 3 — Réseau** → Routeur
+
+          Plus on monte dans les couches, plus l'équipement prend en compte des informations permettant de prendre des décisions sur la destination des données.
+
+  # ============================================================
+  # 02 - LE HUB
+  # ============================================================
+
+  - id: hub
+    title: Le Hub
+    kicker: 02 / Couche 1
+    blocks:
+
+      - type: text
+        title: Définition
+        content: |
+          Un **hub** est un équipement réseau très simple permettant de connecter plusieurs appareils.
+
+          Lorsqu'il reçoit un signal sur un port, il le **répète sur tous les autres ports**.
+          Il ne cherche pas à déterminer quel appareil est réellement le destinataire.
+
+          Le hub est équivalent à un simple bus : il ne fait que répéter les signaux électriques sur tous les appareils connectés.
+          Il sature le réseau et provoque des collisions lorsque plusieurs appareils tentent de transmettre en même temps.
+
+      - type: text
+        title: Exemple
+        content: |
+          Si le PC A envoie des données au PC C, le hub reçoit le signal sur son port et le répète vers tous les autres ports.
+          Le hub transmet donc les données à tout le monde, même si un seul appareil est réellement concerné.
+
+      - type: text
+        title: Caractéristiques
+        content: |
+          - Fonctionne en **couche 1 — Physique**
+          - Travaille avec les **signaux et les bits**
+          - Ne connaît pas les adresses MAC
+          - Répète les données sur tous les ports
+          - La bande passante est partagée
+          - Peut provoquer des collisions
+          - Est aujourd'hui largement **obsolète**
+
+          À retenir : **HUB = répète partout**
+      
+
+      - type: demo
+        title: Le hub répète partout
+        intro: PC A envoie une trame destinée uniquement à PC C.
+        nodes:
+          - id: hub
+            label: Hub
+            kind: device
+            position: { x: 50, y: 20 }
+          - id: pc-a
+            label: PC A
+            kind: device
+            position: { x: 14, y: 80 }
+          - id: pc-b
+            label: PC B
+            kind: device
+            position: { x: 38, y: 80 }
+          - id: pc-c
+            label: PC C
+            kind: device
+            position: { x: 62, y: 80 }
+          - id: pc-d
+            label: PC D
+            kind: device
+            position: { x: 86, y: 80 }
+        connections:
+          - from: pc-a
+            to: hub
+          - from: pc-b
+            to: hub
+          - from: pc-c
+            to: hub
+          - from: pc-d
+            to: hub
+        steps:
+          - title: Demo Hub
+            description: Demo Hub.
+            active: []
+            panel: Demo Hub
+
+          - title: PC A envoie une trame pour PC C
+            description: PC A veut communiquer uniquement avec PC C. Il envoie sa trame sur le câble qui le relie au hub.
+            active: [pc-a]
+            panel: Trame destinée à PC C uniquement
+
+          - title: Le hub reçoit le signal
+            description: Le hub reçoit le signal électrique sur son port. Il ne lit aucune adresse et ne sait pas qui est réellement concerné.
+            active: [pc-a, hub]
+            packets:
+              - from: pc-a
+                to: hub
+            panel: Aucune analyse, aucune table
+
+          - title: Le hub répète vers tous les ports
+            description: Le hub répète purement et simplement le signal sur tous les autres ports, y compris ceux de PC B et PC D, qui ne sont pourtant pas concernés.
+            active: [hub, pc-b, pc-c, pc-d]
+            packets:
+              - from: hub
+                to: pc-b
+              - from: hub
+                to: pc-c
+              - from: hub
+                to: pc-d
+            panel: Diffusion vers tous les ports
+
+          - title: PC B et PC D reçoivent aussi la trame
+            description: PC B et PC D reçoivent la trame, l'examinent, constatent qu'elle ne leur est pas destinée et l'ignorent. La bande passante a été utilisée inutilement pour eux.
+            active: [pc-b, pc-d]
+            panel: Trame reçue puis ignorée
+
+          - title: Seul PC C traite réellement la trame
+            description: Seul PC C, le destinataire réel, traite la trame. Le hub n'a fait aucune différence entre les appareils.
+            active: [pc-c]
+            panel: Trame traitée par le destinataire
+
+  # ============================================================
+  # 03 - LE BRIDGE
+  # ============================================================
+
+  - id: bridge
+    title: Le Bridge
+    kicker: 03 / Couche 2
+    blocks:
+
+      - type: text
+        title: Définition
+        content: |
+          Un **bridge**, ou pont réseau, permet de **relier deux segments d'un même réseau**.
+
+          Contrairement au hub, il peut analyser les trames et décider si elles doivent être transmises d'un segment à l'autre.
+          Il laissera passer toutes les trames dont la destination est inconnue.
+
+      - type: text
+        title: Le rôle des adresses MAC
+        content: |
+          Le bridge fonctionne avec les **adresses MAC**.
+
+          Il apprend quelles adresses MAC se trouvent de chaque côté du pont.
+          Il peut alors filtrer certaines trames et éviter de transmettre inutilement des données.
+
+          Si PC A communique avec PC B et que le bridge sait que PC B se trouve sur le même segment, il peut empêcher la trame de traverser vers le deuxième segment.
+
+          Il apprends les adresses MAC en observant le trafic qui traverse ses ports.
+          Il regarde l'émetteur de chaque trame et note de quel segment provient le paquet.
+          Il construit ainsi une **table d'apprentissage** qui lui permet de savoir sur quel segment se trouve chaque appareil.
+
+      - type: text
+        title: Caractéristiques
+        content: |
+          - Fonctionne en **couche 2 — Liaison de données**
+          - Utilise les **adresses MAC**
+          - Relie principalement deux segments
+          - Peut filtrer les **trames**
+          - Réduit le trafic inutile
+          - Constitue le principe de base du switch
+
+          À retenir : **BRIDGE = filtre les trames**
+      
+# ---------- Démo 1 : remplissage de la table d'apprentissage MAC ----------
+
+      - type: demo
+        title: Le bridge apprend les deux segments
+        intro: Le bridge observe le trafic et construit sa table au fur et à mesure.
+        nodes:
+          - id: bridge
+            label: Bridge
+            kind: device
+            position: { x: 50, y: 50 }
+          - id: hub-1
+            label: Hub
+            kind: device
+            position: { x: 32, y: 50 }
+          - id: pc-a
+            label: PC A
+            kind: device
+            position: { x: 15, y: 70 }
+          - id: pc-b
+            label: PC B
+            kind: device
+            position: { x: 15, y: 30 }
+          - id: hub-2
+            label: Hub
+            kind: device
+            position: { x: 68, y: 50 }
+          - id: pc-c
+            label: PC C
+            kind: device
+            position: { x: 85, y: 70 }
+          - id: pc-d
+            label: PC D
+            kind: device
+            position: { x: 85, y: 30 }
+        segments:
+          - id: segment-1
+            label: Segment 1
+            x: 3
+            y: 10
+            width: 44
+            height: 80
+            color: teal
+          - id: segment-2
+            label: Segment 2
+            x: 53
+            y: 10
+            width: 44
+            height: 80
+            color: coral
+        connections:
+          - from: pc-a
+            to: hub-1
+          - from: pc-b
+            to: hub-1
+          - from: hub-1
+            to: bridge
+          - from: pc-c
+            to: hub-2
+          - from: pc-d
+            to: hub-2
+          - from: hub-2
+            to: bridge
+        steps:
+          - title: La table du bridge est vide
+            description: Au démarrage, le bridge ne sait sur quel segment se trouve chaque appareil. Il va l'apprendre en observant le trafic qui traverse chaque port.
+            active: [bridge]
+            panel: Table du bridge
+            table:
+              headers: [Adresse MAC, Segment]
+              rows: 
+                - ["-", "-"]
+                - ["-", "-"]
+                - ["-", "-"]
+                - ["-", "-"]
+
+          - title: PC A émet une trame vers PC B
+            description: PC A émet une trame. Elle traverse le hub 1, qui la diffuse vers PC B et vers le bridge. Le bridge note que PC A se trouve sur le segment 1.
+            active: [pc-a, hub-1, bridge]
+            packetGroups:
+              -
+                - from: pc-a
+                  to: hub-1
+              -
+                - from: hub-1
+                  to: bridge
+                - from: hub-1
+                  to: pc-b
+              -
+                - from: bridge
+                  to: hub-2
+              -
+                - from: hub-2
+                  to: pc-c
+                - from: hub-2
+                  to: pc-d
+            panel: Apprentissage — PC A sur le segment 1
+            table:
+              headers: [Adresse MAC, Segment]
+              rows:
+                - ["PC A", "Segment 1"]
+                - ["-", "-"]
+                - ["-", "-"]
+                - ["-", "-"]
+
+          - title: PC B émet à son tour vers PC A
+            description: PC B émet une trame, relayée par le hub 1 jusqu'au bridge. Le bridge ajoute PC B à sa table, toujours sur le segment 1.
+            active: [pc-b, hub-1, bridge]
+            packetGroups:
+              -
+                - from: pc-b
+                  to: hub-1
+              -
+                - from: hub-1
+                  to: bridge
+                - from: hub-1
+                  to: pc-a
+            panel: Apprentissage — PC B sur le segment 1
+            table:
+              headers: [Adresse MAC, Segment]
+              rows:
+                - ["PC A", "Segment 1"]
+                - ["PC B", "Segment 1"]
+                - ["-", "-"]
+                - ["-", "-"]
+
+          - title: PC C émet depuis l'autre segment vers PC A
+            description: PC C émet une trame. Elle traverse le hub 2 puis atteint le bridge par l'autre port. Le bridge apprend que PC C se trouve sur le segment 2.
+            active: [pc-c, hub-2, bridge]
+            packetGroups:
+              -
+                - from: pc-c
+                  to: hub-2
+              -
+                - from: hub-2
+                  to: bridge
+                - from: hub-2
+                  to: pc-d
+              -
+                - from: bridge
+                  to: hub-1
+              -
+                - from: hub-1
+                  to: pc-a
+                - from: hub-1
+                  to: pc-b
+            panel: Apprentissage — PC C sur le segment 2
+            table:
+              headers: [Adresse MAC, Segment]
+              rows:
+                - ["PC A", "Segment 1"]
+                - ["PC B", "Segment 1"]
+                - ["PC C", "Segment 2"]
+                - ["-", "-"]
+
+          - title: PC D complète la table vers PC C
+            description: PC D émet une trame relayée par le hub 2. Le bridge connaît désormais la position de chaque appareil sur les deux segments.
+            active: [pc-d, hub-2, bridge]
+            packetGroups:
+              -
+                - from: pc-d
+                  to: hub-2
+              -
+                - from: hub-2
+                  to: bridge
+                - from: hub-2
+                  to: pc-c
+            panel: Table complète
+            table:
+              headers: [Adresse MAC, Segment]
+              rows:
+                - ["PC A", "Segment 1"]
+                - ["PC B", "Segment 1"]
+                - ["PC C", "Segment 2"]
+                - ["PC D", "Segment 2"]
+
+
+# ---------- Démo 2 : PC A → PC B (même segment) ----------
+
+      - type: demo
+        title: PC A vers PC B — même segment
+        intro: Le bridge connaît déjà les deux segments. Que se passe-t-il pour un trafic local ?
+        nodes:
+          - id: bridge
+            label: Bridge
+            kind: device
+            position: { x: 50, y: 50 }
+          - id: hub-1
+            label: Hub
+            kind: device
+            position: { x: 32, y: 50 }
+          - id: pc-a
+            label: PC A
+            kind: device
+            position: { x: 15, y: 70 }
+          - id: pc-b
+            label: PC B
+            kind: device
+            position: { x: 15, y: 30 }
+          - id: hub-2
+            label: Hub
+            kind: device
+            position: { x: 68, y: 50 }
+          - id: pc-c
+            label: PC C
+            kind: device
+            position: { x: 85, y: 70 }
+          - id: pc-d
+            label: PC D
+            kind: device
+            position: { x: 85, y: 30 }
+        segments:
+          - id: segment-1
+            label: Segment 1
+            x: 3
+            y: 10
+            width: 44
+            height: 80
+            color: teal
+          - id: segment-2
+            label: Segment 2
+            x: 53
+            y: 10
+            width: 44
+            height: 80
+            color: coral
+        connections:
+          - from: pc-a
+            to: hub-1
+          - from: pc-b
+            to: hub-1
+          - from: hub-1
+            to: bridge
+          - from: pc-c
+            to: hub-2
+          - from: pc-d
+            to: hub-2
+          - from: hub-2
+            to: bridge
+        steps:
+          - title: Le bridge a deja sa table complete.
+            description: La table du bridge est complète. Il sait sur quel segment se trouve chaque appareil.
+            active: [bridge]
+            panel: Table du bridge
+            table:
+              headers: [Adresse MAC, Segment]
+              rows:
+                - ["PC A", "Segment 1"]
+                - ["PC B", "Segment 1"]
+                - ["PC C", "Segment 2"]
+                - ["PC D", "Segment 2"]
+
+
+          - title: PC A envoie une trame à PC B
+            description: |
+              PC A veut joindre PC B, qui se trouve sur le même segment. La trame part vers le hub 1.
+              Le hub 1 ne filtre rien : il répète la trame vers PC B et vers le bridge, sans distinction.
+            active: [pc-a, hub-1, bridge]
+            packetGroups:
+              -
+                - from: pc-a
+                  to: hub-1
+              -
+                - from: hub-1
+                  to: pc-b
+                - from: hub-1
+                  to: bridge
+            panel: Trame destinée à PC B (segment 1) puis diffusion locale par le hub 1
+
+          - title: Le bridge consulte sa table
+            description: Le bridge regarde sa table et constate que PC A et PC B sont tous les deux sur le segment 1.
+            active: [bridge]
+            panel: Table du bridge
+
+          - title: Le bridge filtre la trame
+            description: Comme le destinataire est sur le même segment que l'émetteur, le bridge bloque la trame. Elle ne traverse pas vers le segment 2.
+            active: [bridge]
+            panel: Trame filtrée, non transmise au segment 2
+
+          - title: PC B reçoit la trame
+            description: PC B a déjà reçu la trame directement via le hub 1, sans que le bridge n'ait eu besoin de la transmettre. Le trafic est resté local au segment 1.
+            active: [pc-b]
+            panel: Trame reçue localement
+
+
+# ---------- Démo 3 : PC A → PC C (segment différent) ----------
+
+      - type: demo
+        title: PC A vers PC C — segments différents
+        intro: Cette fois, le destinataire se trouve de l'autre côté du bridge.
+        nodes:
+          - id: bridge
+            label: Bridge
+            kind: device
+            position: { x: 50, y: 50 }
+          - id: hub-1
+            label: Hub
+            kind: device
+            position: { x: 32, y: 50 }
+          - id: pc-a
+            label: PC A
+            kind: device
+            position: { x: 15, y: 70 }
+          - id: pc-b
+            label: PC B
+            kind: device
+            position: { x: 15, y: 30 }
+          - id: hub-2
+            label: Hub
+            kind: device
+            position: { x: 68, y: 50 }
+          - id: pc-c
+            label: PC C
+            kind: device
+            position: { x: 85, y: 70 }
+          - id: pc-d
+            label: PC D
+            kind: device
+            position: { x: 85, y: 30 }
+        segments:
+          - id: segment-1
+            label: Segment 1
+            x: 3
+            y: 10
+            width: 44
+            height: 80
+            color: teal
+          - id: segment-2
+            label: Segment 2
+            x: 53
+            y: 10
+            width: 44
+            height: 80
+            color: coral
+        connections:
+          - from: pc-a
+            to: hub-1
+          - from: pc-b
+            to: hub-1
+          - from: hub-1
+            to: bridge
+          - from: pc-c
+            to: hub-2
+          - from: pc-d
+            to: hub-2
+          - from: hub-2
+            to: bridge
+        steps:
+          - title: Le bridge a deja sa table complete.
+            description: La table du bridge est complète. Il sait sur quel segment se trouve chaque appareil.
+            active: [bridge]
+            panel: Table du bridge
+            table:
+              headers: [Adresse MAC, Segment]
+              rows:
+                - ["PC A", "Segment 1"]
+                - ["PC B", "Segment 1"]
+                - ["PC C", "Segment 2"]
+                - ["PC D", "Segment 2"]
+
+          - title: PC A envoie une trame à PC C
+            description: |
+              PC A veut cette fois joindre PC C, situé sur le segment 2. La trame part d'abord vers le hub 1.
+              Le hub 1 répète la trame vers PC B (qui l'ignore, non concerné) et vers le bridge.
+            active: [pc-a, hub-1, bridge]
+            packetGroups:
+              -
+                - from: pc-a
+                  to: hub-1
+              -
+                - from: hub-1
+                  to: pc-b
+                - from: hub-1
+                  to: bridge
+            panel: Trame destinée à PC C (segment 2)
+
+          - title: Le bridge consulte sa table
+            description: Le bridge regarde sa table et constate que PC C se trouve sur le segment 2, différent de celui de PC A.
+            active: [bridge]
+
+          - title: Le bridge transmet vers le segment 2
+            description: |
+              Le destinataire étant sur l'autre segment, le bridge transmet la trame de l'autre côté du pont, vers le hub 2.
+              Le hub 2 répète la trame vers PC C et PC D. Seul PC C, le destinataire réel, la traite.
+            active: [bridge, hub-2, pc-c]
+            packetGroups:
+              - 
+                - from: bridge
+                  to: hub-2
+              -
+                - from: hub-2
+                  to: pc-c
+                - from: hub-2
+                  to: pc-d
+            panel: Trame transmise vers le segment 2
+
+          - title: PC C reçoit la trame
+            description: PC C reçoit et traite la trame. PC D l'a reçue aussi mais l'ignore, n'étant pas le destinataire.
+            active: [pc-c]
+            panel: Trame livrée à PC C
+
+  # ============================================================
+  # 04 - LE SWITCH
+  # ============================================================
+
+  - id: switch
+    title: Le Switch
+    kicker: 04 / Couche 2
+    blocks:
+
+      - type: text
+        title: Définition
+        content: |
+          Un **switch**, ou commutateur, permet de connecter plusieurs appareils au sein d'un même réseau local (**LAN**).
+
+          Il peut être considéré comme un **bridge avec de nombreux ports**, conçu pour être beaucoup plus performant et évolutif.
+
+      - type: text
+        title: La table MAC
+        content: |
+          Le switch apprend les adresses MAC des appareils connectés à ses ports.
+
+          Il construit une **table MAC**, par exemple :
+
+          - AA:AA:AA → Port 1
+          - BB:BB:BB → Port 2
+          - CC:CC:CC → Port 3
+          - DD:DD:DD → Port 4
+
+          Lorsqu'une trame arrive, le switch regarde l'adresse MAC de destination et consulte sa table pour savoir sur quel port l'envoyer.
+          Puis il redirige la trame uniquement vers le port correspondant, sans la diffuser vers tous les autres ports.
+
+      - type: text
+        title: Caractéristiques
+        content: |
+          - Fonctionne principalement en **couche 2 — Liaison de données**
+          - Utilise les **adresses MAC**
+          - Connecte plusieurs appareils dans un **LAN**
+          - Utilise une **table MAC**
+          - Transmet les trames vers le port approprié
+          - Remplace aujourd'hui les hubs dans la grande majorité des réseaux Ethernet
+
+          À retenir : **SWITCH = choisit le bon port grâce à la MAC**
+
+
+      - type: demo
+        title: Le switch apprend les adresses MAC
+        intro: Trois PC envoient des trames l'un après l'autre.
+        nodes:
+          - id: pc-a
+            label: PC A
+            kind: device
+            position: { x: 25, y: 70 }
+          - id: pc-b
+            label: PC B
+            kind: device
+            position: { x: 50, y: 70 }
+          - id: pc-c
+            label: PC C
+            kind: device
+            position: { x: 75, y: 70 }
+          - id: switch
+            label: Switch
+            kind: device
+            position: { x: 50, y: 20 }
+        connections:
+          - from: pc-a
+            to: switch
+          - from: pc-b
+            to: switch
+          - from: pc-c
+            to: switch
+        segments:
+          - id: segment-1
+            label: Segment 1
+            x: 10.5
+            y: 45
+            width: 25
+            height: 45
+            color: teal
+          - id: segment-2
+            label: Segment 2
+            x: 38
+            y: 45
+            width: 25
+            height: 45
+            color: coral
+          - id: segment-3
+            label: Segment 3
+            x: 65.5
+            y: 45
+            width: 25
+            height: 45
+            color: green
+        steps:
+          - title: La table MAC est vide
+            description: Au démarrage, le switch ne connaît aucune correspondance entre adresses MAC et ports.
+            active: [switch]
+            panel: Table MAC
+            table:
+              headers: [Adresse MAC, Port]
+              rows: 
+                - ["-", "-"]
+                - ["-", "-"]
+                - ["-", "-"]
+
+          - title: PC A envoie une trame
+            description: PC A envoie une trame sur le port 1. Le switch note que l'adresse MAC de PC A se trouve sur le port 1, puis diffuse la trame car il ne connaît pas encore le destinataire.
+            active: [pc-a, switch]
+            packetGroups:
+              - 
+                - from: pc-a
+                  to: switch
+              -
+                - from: switch
+                  to: pc-b
+                - from: switch
+                  to: pc-c
+            panel: Apprentissage du port 1
+            table:
+              headers: [Adresse MAC, Port]
+              rows:
+                - ["AA:AA:AA:AA:AA:01", 1]
+                - ["-", "-"]
+                - ["-", "-"]
+
+          - title: PC B répond
+            description: PC B répond depuis le port 2. Le switch apprend aussi cette adresse. Comme il connaît déjà le port de PC A, il transmet la trame directement, sans la diffuser.
+            active: [pc-b, switch, pc-a]
+            packetGroups:
+              -
+                - from: pc-b
+                  to: switch
+              -
+                - from: switch
+                  to: pc-a
+            panel: Apprentissage du port 2
+            table:
+              headers: [Adresse MAC, Port]
+              rows:
+                - ["AA:AA:AA:AA:AA:01", 1]
+                - ["BB:BB:BB:BB:BB:02", 2]
+                - ["-", "-"]
+
+          - title: PC C envoie une trame à son tour
+            description: PC C, sur le port 3, envoie une trame. Le switch complète sa table avec cette troisième correspondance.
+            active: [pc-c, switch]
+            packets:
+              - from: pc-c
+                to: switch
+            panel: Apprentissage du port 3
+            table:
+              headers: [Adresse MAC, Port]
+              rows:
+                - ["AA:AA:AA:AA:AA:01", 1]
+                - ["BB:BB:BB:BB:BB:02", 2]
+                - ["CC:CC:CC:CC:CC:03", 3]
+
+          - title: La table MAC est maintenant complète
+            description: Le switch connaît la position de chaque appareil et peut transmettre toutes les trames directement au bon port, sans diffusion inutile.
+            active: [switch]
+            panel: Table MAC finale
+            table:
+              headers: [Adresse MAC, Port]
+              rows:
+                - ["AA:AA:AA:AA:AA:01", 1]
+                - ["BB:BB:BB:BB:BB:02", 2]
+                - ["CC:CC:CC:CC:CC:03", 3]
+
+  # ============================================================
+  # 05 - LE ROUTEUR
+  # ============================================================
+
+  - id: routeur
+    title: Le Routeur
+    kicker: 05 / Couche 3
+    blocks:
+
+      - type: text
+        title: Définition
+        content: |
+          Un **routeur** permet de **relier plusieurs réseaux différents**.
+
+          Contrairement au switch, qui connecte principalement des appareils au sein d'un même réseau local, le routeur permet de faire communiquer des réseaux IP différents.
+
+          Exemple :
+
+          Réseau A : 192.168.1.0/24
+                    │
+                 ROUTEUR
+                    │
+          Réseau B : 192.168.2.0/24
+
+      - type: text
+        title: Le rôle des adresses IP
+        content: |
+          Le routeur utilise principalement les **adresses IP** pour déterminer où envoyer les paquets.
+
+          Si un ordinateur possède l'adresse :
+
+          192.168.1.10
+
+          et souhaite communiquer avec :
+
+          192.168.2.20
+
+          le routeur constate que la destination appartient à un autre réseau.
+          Il transmet alors le paquet vers l'interface permettant d'atteindre le réseau 192.168.2.0/24.
+
+      - type: text
+        title: La table de routage
+        content: |
+          Le routeur possède une **table de routage**.
+
+          Cette table contient des informations permettant de déterminer par quelle interface ou quelle passerelle un paquet doit être envoyé pour atteindre un réseau donné.
+
+          Le routeur cherche donc essentiellement :
+
+          **« Quel chemin dois-je utiliser pour atteindre ce réseau ? »**
+
+      - type: text
+        title: Caractéristiques
+        content: |
+          - Fonctionne principalement en **couche 3 — Réseau**
+          - Utilise les **adresses IP**
+          - Relie différents réseaux
+          - Utilise une **table de routage**
+          - Transmet des **paquets IP**
+          - Permet notamment de relier un réseau local à Internet
+
+          À retenir : **ROUTEUR = choisit le chemin entre les réseaux**
+
+
+      - type: demo
+        title: Le routeur choisit le chemin
+        intro: PC A (réseau 192.168.1.0/24) veut joindre PC B (réseau 192.168.2.0/24).
+        nodes:
+          - id: pc-a
+            label: PC A
+            kind: device
+          - id: routeur
+            label: Routeur
+            kind: device
+          - id: pc-b
+            label: PC B
+            kind: service
+        steps:
+          - title: PC A prépare le paquet
+            description: PC A, à l'adresse 192.168.1.10, veut envoyer un paquet à 192.168.2.20. Il constate que cette adresse n'appartient pas à son propre réseau et envoie le paquet à sa passerelle, le routeur.
+            active: [pc-a]
+            panel: Destination hors du réseau local
+
+          - title: Le routeur reçoit le paquet
+            description: Le routeur reçoit le paquet sur son interface eth0, reliée au réseau de PC A.
+            active: [pc-a, routeur]
+            packet:
+              from: pc-a
+              to: routeur
+            panel: Paquet reçu sur eth0
+
+          - title: Le routeur consulte sa table de routage
+            description: "Le routeur regarde l'adresse IP de destination, 192.168.2.20, et cherche par quelle interface ce réseau est accessible."
+            active: [routeur]
+            panel: Table de routage
+            table:
+              headers: [Réseau destination, Interface]
+              rows:
+                - ["192.168.1.0/24", "eth0"]
+                - ["192.168.2.0/24", "eth1"]
+
+          - title: Le routeur transmet vers eth1
+            description: Le réseau 192.168.2.0/24 est accessible par l'interface eth1. Le routeur y transmet le paquet.
+            active: [routeur, pc-b]
+            packet:
+              from: routeur
+              to: pc-b
+            panel: Paquet transmis via eth1
+
+          - title: PC B reçoit le paquet
+            description: PC B reçoit le paquet. Sans le routeur, PC A n'aurait eu aucun moyen d'atteindre un appareil situé sur un autre réseau.
+            active: [pc-b]
+            panel: Paquet livré
+
+  # ============================================================
+  # 06 - MAC VS IP
+  # ============================================================
+
+  - id: mac-ip
+    title: Adresse MAC et adresse IP
+    kicker: 06 / Notion essentielle
+    blocks:
+
+      - type: text
+        title: L'adresse MAC
+        content: |
+          Une **adresse MAC** identifie une interface réseau au niveau de la couche Liaison de données.
+
+          Exemple :
+
+          AA:BB:CC:DD:EE:FF
+
+          Elle est principalement utilisée par les **switches et les bridges** pour déterminer vers quelle interface transmettre une trame.
+
+          Une adresse MAC est essentiellement un identifiant d'interface : elle ne contient pas d'information hiérarchique permettant de déterminer à quel réseau appartient la machine.
+
+          **MAC → couche 2 → trame → switch / bridge**
+
+      - type: text
+        title: L'adresse IP
+        content: |
+          Une **adresse IP** identifie une interface dans un réseau IP.
+
+          Contrairement à une adresse MAC, une adresse IP est **hiérarchique** : elle permet, avec son masque ou son préfixe, de déterminer à quel **réseau ou sous-réseau** appartient l'interface.
+
+          Exemple :
+
+          192.168.1.25/24
+
+          Ici :
+
+          - **192.168.1.0/24** → réseau
+          - **192.168.1.25** → adresse de l'interface dans ce réseau
+
+          Cette organisation hiérarchique permet aux routeurs de regrouper plusieurs adresses et réseaux dans des **préfixes**, ce qui rend possible l'agrégation des routes et permet de faire fonctionner Internet à grande échelle.
+
+          Les adresses IP sont principalement utilisées par les **routeurs** pour déterminer vers quel réseau transmettre un paquet.
+
+          **IP → couche 3 → paquet → routeur**
+
+      - type: text
+        title: La différence fondamentale
+        content: |
+          Un switch se demande principalement :
+
+          **« Sur quel port se trouve cette adresse MAC ? »**
+
+          Un routeur se demande principalement :
+
+          **« Vers quel réseau dois-je envoyer ce paquet IP ? »**
+
+          En résumé :
+
+          - **MAC → identifie une interface sur le réseau local**
+          - **IP → permet de situer une interface dans une hiérarchie de réseaux**
+
+  # ============================================================
+  # 07 - COMPARAISON
+  # ============================================================
+
+  - id: comparaison
+    title: Comparer les quatre équipements
+    kicker: 07 / Synthèse technique
+    blocks:
+      - type: text
+        title: Tableau de comparaison
+        content: |
+          Le **hub** fonctionne en **couche 1** du modèle OSI. Il ne travaille pas avec des adresses réseau et se contente de répéter les signaux reçus vers les autres ports.
+          
+          Le **bridge** fonctionne en **couche 2**. Il utilise les **adresses MAC** pour relier et filtrer les trames entre différents segments du réseau.
+          
+          Le **switch** fonctionne également en **couche 2** et utilise les **adresses MAC**. Il permet de connecter plusieurs appareils au sein d'un même **LAN** et transmet les trames vers le port approprié.
+          
+          Le **routeur** fonctionne en **couche 3** et utilise les **adresses IP**. Il permet de relier différents réseaux et détermine vers quel réseau transmettre les paquets.
+
+      - type: text
+        title: Le chemin typique
+        content: |
+          Dans un réseau domestique ou d'entreprise, on peut retrouver plusieurs équipements :
+
+          PC → SWITCH → ROUTEUR → INTERNET
+
+          Le **switch** permet aux appareils du réseau local de communiquer.
+          Le **routeur** permet au réseau local de communiquer avec d'autres réseaux.
+
+  # ============================================================
+  # 08 - SYNTHÈSE
+  # ============================================================
+
+  - id: conclusion
+    title: À retenir
+    kicker: 08 / Synthèse
+    blocks:
+
+      - type: text
+        title: Le repère simple
+        content: |
+          - **Hub** → couche 1 → répète les signaux partout
+          - **Bridge** → couche 2 → filtre les trames grâce aux MAC
+          - **Switch** → couche 2 → utilise les MAC pour choisir le bon port
+          - **Routeur** → couche 3 → utilise les IP pour choisir le bon chemin
+
+          Le repère essentiel :
+
+          **Hub → 1**
+          **Bridge / Switch → 2**
+          **Routeur → 3**
+
+      - type: text
+        title: La phrase à retenir
+        content: |
+          Un **switch** permet principalement de connecter des appareils dans un même réseau grâce aux **adresses MAC**, tandis qu'un **routeur** permet de relier des réseaux différents grâce aux **adresses IP**.
+
+          Le **hub** est un équipement simple qui répète les signaux partout, tandis que le **bridge** filtre les trames entre différents segments d'un réseau.

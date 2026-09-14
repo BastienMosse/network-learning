@@ -1,0 +1,237 @@
+id: arp-table
+slug: arp-table
+title: Tables ARP
+description: Comprendre comment une table ARP se construit progressivement à partir des échanges ARP.
+level: Débutant
+duration: 8 min
+themeId: ARP
+color: teal
+
+objectives:
+  - Comprendre le rôle d'une table ARP
+  - Comprendre comment une entrée ARP est apprise
+  - Lire une table ARP
+  - Suivre la construction d'une table ARP après plusieurs échanges
+  - Distinguer une table ARP d'une table MAC
+
+sections:
+
+  # ============================================================
+  # 01 - LA TABLE ARP
+  # ============================================================
+
+  - id: principe
+    title: Qu'est-ce qu'une table ARP ?
+    kicker: "01 / Découverte"
+    blocks:
+
+      - type: text
+        title: Une association IP ↔ MAC
+        content: |
+          Une machine conserve généralement les associations qu'elle a apprises grâce à ARP.
+
+          Cette mémoire constitue sa **table ARP**.
+
+          Elle permet de retenir : **Adresse IP → Adresse MAC**
+
+      - type: text
+        title: Pourquoi la conserver ?
+        content: |
+          Sans cette table, la machine devrait effectuer une nouvelle résolution ARP chaque fois qu'elle veut communiquer avec une machine dont elle ne connaît pas la MAC.
+
+          La table ARP permet donc d'éviter des requêtes ARP inutiles tant que l'association est disponible.
+
+      - type: text
+        title: Ne pas confondre avec la table MAC
+        content: |
+          **Table ARP**
+
+          → présente sur les machines IP
+
+          → associe **IP → MAC**
+
+          **Table MAC**
+
+          → présente sur les switches / bridges
+          
+          → associe **MAC → port**
+
+          Ce sont deux tables différentes qui répondent à deux questions différentes.
+
+  # ============================================================
+  # 02 - DÉMO
+  # ============================================================
+
+  - id: demo
+    title: Démo — Construction d'une table ARP
+    kicker: "02 / Animation"
+    blocks:
+
+      - type: demo
+        title: "La table ARP de PC A se construit"
+        intro: "Observez comment PC A apprend progressivement les correspondances IP → MAC."
+
+        nodes:
+          - id: pc-a
+            label: PC A
+            kind: device
+            position: { x: 15, y: 50 }
+
+          - id: switch
+            label: Switch
+            kind: device
+            position: { x: 50, y: 50 }
+
+          - id: pc-b
+            label: PC B
+            kind: device
+            position: { x: 85, y: 25 }
+
+          - id: pc-c
+            label: PC C
+            kind: device
+            position: { x: 85, y: 75 }
+
+        connections:
+          - from: pc-a
+            to: switch
+
+          - from: switch
+            to: pc-b
+
+          - from: switch
+            to: pc-c
+
+        steps:
+
+          - title: "1. Table ARP vide"
+            description: "PC A démarre avec une table ARP ne contenant aucune association pour PC B ou PC C."
+            active: [pc-a]
+            panel: "Table ARP de PC A : vide"
+            table:
+              headers: [IP, MAC]
+              rows: []
+
+          - title: "2. PC A cherche PC B"
+            description: "PC A veut communiquer avec 192.168.1.20. Il ne connaît pas encore la MAC correspondante."
+            active: [pc-a]
+            panel: "Recherche : 192.168.1.20"
+
+          - title: "3. PC B répond"
+            description: "PC A envoie une requete ARP a PC B qui répond à sa requête en indiquant sa MAC, puis envoi son paquet."
+            active: [pc-a, pc-b]
+            panel: "192.168.1.20 → AA:BB:BB:BB:BB:BB"
+            packetGroups:
+              -
+                - from: pc-a
+                  to: switch
+              -
+                - from: switch
+                  to: pc-b
+              -
+                - from: pc-b
+                  to: switch
+              -
+                - from: switch
+                  to: pc-a
+              -
+                - from: pc-a
+                  to: switch
+              -
+                - from: switch
+                  to: pc-b
+
+          - title: "4. PC A ajoute l'entrée"
+            description: "PC A mémorise l'association IP → MAC obtenue grâce à la réponse ARP."
+            active: [pc-a]
+            panel: "Nouvelle entrée ARP"
+            table:
+              headers: [IP, MAC]
+              rows:
+                - ["192.168.1.20", "AA:BB:BB:BB:BB:BB"]
+
+          - title: "5. PC A cherche PC C"
+            description: "PC A veut maintenant communiquer avec 192.168.1.30. Cette adresse n'est pas encore présente dans sa table ARP."
+            active: [pc-a, pc-c]
+            panel: "Recherche : 192.168.1.30"
+
+          - title: "6. PC C répond"
+            description: "PC A envoie une requete ARP a PC C qui répond à sa requête en indiquant sa MAC, puis envoi son paquet."
+            active: [pc-a, pc-c]
+            panel: "192.168.1.30 → AA:CC:CC:CC:CC:CC"
+            packetGroups:
+              -
+                - from: pc-a
+                  to: switch
+              -
+                - from: switch
+                  to: pc-c
+              -
+                - from: pc-c
+                  to: switch
+              -
+                - from: switch
+                  to: pc-a
+              -
+                - from: pc-a
+                  to: switch
+              -
+                - from: switch
+                  to: pc-c
+
+          - title: "7. La table contient deux associations"
+            description: "PC A a maintenant appris les deux correspondances."
+            active: [pc-a]
+            panel: "Table ARP mise à jour"
+            table:
+              headers: [IP, MAC]
+              rows:
+                - ["192.168.1.20", "AA:BB:BB:BB:BB:BB"]
+                - ["192.168.1.30", "AA:CC:CC:CC:CC:CC"]
+
+          - title: "8. PC A communique avec PC B"
+            description: "La MAC de PC B est déjà connue. PC A n'a donc pas besoin d'effectuer immédiatement une nouvelle requête ARP."
+            active: [pc-a, pc-b]
+            panel: "192.168.1.20 → AA:BB:BB:BB:BB:BB"
+            packetGroups:
+              -
+                - from: pc-a
+                  to: switch
+              -
+                - from: switch
+                  to: pc-b
+
+  # ============================================================
+  # 03 - SYNTHÈSE
+  # ============================================================
+
+  - id: conclusion
+    title: À retenir
+    kicker: "03 / Synthèse"
+    blocks:
+
+      - type: text
+        title: Le fonctionnement
+        content: |
+          Une machine :
+
+          1. **Vérifie sa table ARP**
+          2. **Si l'IP est connue → utilise la MAC associée**
+          3. **Si l'IP n'est pas connue → requête ARP**
+          4. **Réponse ARP**
+          5. **Ajout de l'association IP → MAC**
+
+      - type: text
+        title: Le piège classique
+        content: |
+          Ne pas confondre :
+
+          **Table ARP** : `IP → MAC`
+
+          avec :
+
+          **Table MAC du switch** : `MAC → Port`
+
+          La machine utilise ARP pour savoir **quelle MAC utiliser**.
+
+          Le switch utilise sa table MAC pour savoir **sur quel port envoyer la trame**.

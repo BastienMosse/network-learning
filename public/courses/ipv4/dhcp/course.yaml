@@ -1,0 +1,153 @@
+# ============================================================
+# IP — 08 / DHCP
+# ============================================================
+
+id: dhcp
+slug: dhcp
+title: DHCP
+description: Comprendre comment DHCP attribue automatiquement une configuration réseau à une machine.
+level: Débutant
+duration: 10 min
+themeId: IPv4
+color: green
+
+objectives:
+  - Comprendre le rôle de DHCP
+  - Connaître les quatre étapes DORA
+  - Comprendre la notion de bail
+  - Identifier les principales options DHCP
+
+sections:
+
+  - id: principle
+    title: Pourquoi DHCP ?
+    kicker: "01 / Principe"
+    blocks:
+
+      - type: text
+        title: Configuration automatique
+        content: |
+          DHCP permet à une machine d'obtenir automatiquement sa configuration réseau.
+
+          Le serveur peut notamment fournir :
+          - une adresse IP
+          - un masque
+          - une passerelle par défaut
+          - des serveurs DNS
+          - une durée de bail
+
+      - type: text
+        title: Le bail
+        content: |
+          L'adresse attribuée par DHCP est généralement accordée pour une durée déterminée.
+
+          Cette durée constitue le **bail DHCP**.
+
+          Le client doit renouveler son bail avant son expiration s'il souhaite continuer à utiliser l'adresse.
+
+  - id: dora
+    title: DORA
+    kicker: "02 / Attribution"
+    blocks:
+
+      - type: text
+        title: Les quatre étapes
+        content: |
+          **D — Discover**
+
+          Le client cherche un serveur DHCP.
+
+          **O — Offer**
+
+          Un serveur propose une configuration.
+
+          **R — Request**
+
+          Le client demande officiellement la configuration proposée.
+
+          **A — Acknowledgment**
+
+          Le serveur confirme l'attribution.
+
+  - id: demo
+    title: Démo — DORA
+    kicker: "03 / Animation"
+    blocks:
+
+      - type: demo
+        title: "Attribution d'une adresse IP avec DHCP"
+        intro: "Suivez les quatre messages du processus DORA."
+
+        nodes:
+          - id: client
+            label: Client
+            kind: device
+            position: { x: 20, y: 50 }
+
+          - id: switch
+            label: Switch
+            kind: device
+            position: { x: 50, y: 50 }
+
+          - id: server
+            label: DHCP Server
+            kind: device
+            position: { x: 80, y: 50 }
+
+        connections:
+          - from: client
+            to: switch
+
+          - from: switch
+            to: server
+
+        steps:
+
+          - title: "1. DHCP Discover"
+            description: "Le client ne possède pas encore d'adresse IP utilisable et cherche un serveur DHCP."
+            active: [client, switch, server]
+            panel: "DHCP Discover"
+            packetGroups:
+              -
+                - from: client
+                  to: switch
+              -
+                - from: switch
+                  to: server
+
+          - title: "2. DHCP Offer"
+            description: "Le serveur propose une adresse IP et des paramètres réseau."
+            active: [server, client]
+            panel: "Offer : 192.168.1.50"
+            packetGroups:
+              -
+                - from: server
+                  to: switch
+              -
+                - from: switch
+                  to: client
+
+          - title: "3. DHCP Request"
+            description: "Le client indique qu'il souhaite utiliser l'offre proposée."
+            active: [client, server]
+            panel: "Request : 192.168.1.50"
+            packetGroups:
+              -
+                - from: client
+                  to: switch
+              -
+                - from: switch
+                  to: server
+
+          - title: "4. DHCP ACK"
+            description: "Le serveur confirme l'attribution et fournit la configuration."
+            active: [server, client]
+            panel: "ACK : IP + masque + passerelle + DNS"
+            packetGroups:
+              -
+                - from: server
+                  to: switch
+              -
+                - from: switch
+                  to: client
+

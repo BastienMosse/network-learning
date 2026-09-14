@@ -1,0 +1,417 @@
+id: trame-mac
+slug: trame-mac
+title: Trame Ethernet et adresses MAC
+description: Comprendre ce qu'est une trame Ethernet, son rôle dans la communication locale et le fonctionnement des adresses MAC.
+level: Débutant
+duration: 10 min
+themeId: ethernet
+color: blue
+objectives:
+  - Comprendre ce qu'est une trame Ethernet
+  - Connaître les principaux champs d'une trame Ethernet
+  - Comprendre le rôle des adresses MAC source et destination
+  - Savoir distinguer une adresse MAC d'une adresse IP
+  - Comprendre comment un switch utilise les adresses MAC
+  - Comprendre les notions de broadcast, unicast et multicast
+
+sections:
+
+  # ============================================================
+  # 01 - LES BASES
+  # ============================================================
+
+  - id: bases
+    title: Qu'est-ce qu'une trame ?
+    kicker: 01 / Fondations
+    blocks:
+
+      - type: text
+        title: Définition
+        content: |
+          Une **trame Ethernet** est l'unité de données utilisée au niveau de la **couche Liaison de données** pour transporter des informations sur un réseau Ethernet.
+
+          Lorsqu'une machine veut envoyer des données sur le réseau local, elle encapsule notamment les informations de couche supérieure dans une trame Ethernet.
+
+          On peut simplifier la communication ainsi :
+
+          **Données → paquet IP → trame Ethernet → bits sur le support**
+
+          Une **trame Ethernet** a une taille minimale de 64 octets et une taille maximale de 1518 octets.
+          Elle peut donc transporter une quantité de données comprises entre 48 et 1500 octets.
+
+
+      - type: text
+        title: Trame, paquet et bits
+        content: |
+          Il est important de ne pas confondre les différentes unités de données.
+
+          - **Bits** → signaux transmis sur le support physique
+          - **Trame** → unité de données de la couche 2
+          - **Paquet** → unité de données de la couche 3, notamment avec IP
+
+          Exemple :
+
+          PC A souhaite communiquer avec PC B.
+
+          **Paquet IP :**
+          IP source → IP destination
+
+          **Trame Ethernet :**
+          MAC source → MAC destination + paquet IP
+
+          La trame permet donc de transporter le paquet IP sur une liaison Ethernet.
+
+      - type: text
+        title: Le rôle de la trame
+        content: |
+          Une trame Ethernet permet notamment d'indiquer :
+
+          - qui envoie la trame grâce à la **MAC source**
+          - à qui elle est destinée grâce à la **MAC destination**
+          - quel protocole est transporté
+          - les données à transmettre
+          - si la trame a été altérée pendant son transport
+
+          Le switch utilise principalement les informations MAC de la trame pour déterminer où la transmettre.
+
+  # ============================================================
+  # 02 - LES ADRESSES MAC
+  # ============================================================
+
+  - id: mac
+    title: Les adresses MAC
+    kicker: 02 / Identification
+    blocks:
+
+      - type: text
+        title: Définition
+        content: |
+          Une **adresse MAC** (*Media Access Control*) est une adresse utilisée au niveau de la couche Liaison de données pour identifier une interface réseau.
+
+          Exemple :
+
+          AA:BB:CC:DD:EE:FF
+
+          Une interface Ethernet ou Wi-Fi possède généralement une adresse MAC utilisée pour les communications de couche 2.
+
+      - type: text
+        title: Une adresse MAC identifie une interface
+        content: |
+          Une adresse MAC permet d'identifier une interface réseau au niveau de la couche 2.
+
+          Par exemple :
+
+          PC A
+          MAC : AA:AA:AA:AA:AA:AA
+
+          PC B
+          MAC : BB:BB:BB:BB:BB:BB
+
+          Le switch peut utiliser ces adresses pour déterminer sur quel port se trouve chaque interface.
+
+          Il faut cependant distinguer **identification** et **localisation** : une adresse MAC ne fournit pas une information hiérarchique permettant de déterminer à quel réseau appartient la machine.
+
+      - type: text
+        title: Format d'une adresse MAC
+        content: |
+          Une adresse MAC Ethernet classique est représentée sur **48 bits**, soit **6 octets**.
+
+          Elle est généralement écrite sous forme hexadécimale :
+
+          AA:BB:CC:DD:EE:FF
+
+          Chaque groupe représente un octet.
+
+          Une adresse MAC contient donc :
+
+          **6 octets × 8 bits = 48 bits**
+
+      - type: text
+        title: MAC et couche OSI
+        content: |
+          Les adresses MAC appartiennent à la **couche 2 — Liaison de données** du modèle OSI.
+
+          Elles sont utilisées notamment par :
+
+          - les **switches**
+          - les **bridges**
+          - les protocoles de liaison comme Ethernet et Wi-Fi
+
+          **MAC → couche 2 → trame**
+
+  # ============================================================
+  # 03 - STRUCTURE D'UNE TRAME
+  # ============================================================
+
+  - id: structure-trame
+    title: Structure d'une trame Ethernet
+    kicker: 03 / Encapsulation
+    blocks:
+
+      - type: frame
+        title: "Trame Ethernet II"
+        bitsPerRow: 64
+        fields:
+          - { id: dst-mac, label: "MAC destination", bits: 6, color: coral, description: "MAC destination" }
+          - { id: src-mac, label: "MAC source", bits: 6, color: blue, description: "MAC source" }
+          - { id: ether-type, label: EtherType, bits: 2, color: green, description: "EtherType" }
+          - { id: payload, label: Données, bits: 0, variable: true, color: teal, description: "Données" }
+          - { id: fcs, label: FCS, bits: 4, color: yellow, description: "FCS" }
+
+      - type: text
+        title: MAC destination
+        content: |
+          La **MAC destination** indique l'interface réseau à laquelle la trame est destinée.
+          Le switch utilise cette adresse pour déterminer vers quel port transmettre la trame lorsqu'il connaît sa destination.
+
+      - type: text
+        title: MAC source
+        content: |
+          La **MAC source** indique l'interface réseau qui a envoyé la trame sur la liaison.
+          Le switch peut utiliser cette adresse pour apprendre où se trouve l'appareil source.
+          C'est grâce à cette information qu'il construit progressivement sa **table MAC**.
+
+      - type: text
+        title: Type / EtherType
+        content: |
+          Le champ **Type**, aussi appelé **EtherType**, indique quel protocole est transporté dans la partie données de la trame.
+          Par exemple, une trame Ethernet peut transporter un paquet **IPv4** ou **IPv6**.
+          Le récepteur sait ainsi comment interpréter les données contenues dans la trame.
+
+          - Ipv4: 0x0800
+          - Arp: 0x0806
+          - Ipv6: 0x86DD
+          - Vlan: 0x8100
+
+      - type: text
+        title: Données
+        content: |
+          La partie **Données** contient les informations transportées par la trame.
+          Dans une communication IP classique, elle contient notamment un **paquet IP**.
+          Cette organisation est appelée **encapsulation**.
+
+          On peut donc avoir :
+
+      - type: code
+        langauage:
+        code: |
+          Trame Ethernet
+          └── Paquet IP
+              └── Segment TCP ou datagramme UDP
+                  └── Données applicatives
+
+
+      - type: text
+        title: FCS
+        content: |
+          Le **FCS** (*Frame Check Sequence*) permet de détecter certaines erreurs survenues pendant la transmission de la trame.
+
+          Le récepteur recalcule une valeur à partir des données reçues et la compare au FCS présent dans la trame.
+
+          Si les valeurs ne correspondent pas, la trame est considérée comme corrompue.
+
+          Le FCS utilise un mécanisme basé sur un **CRC** (*Cyclic Redundancy Check*).
+
+  # ============================================================
+  # 04 - MAC SOURCE ET MAC DESTINATION
+  # ============================================================
+
+  - id: mac-source-destination
+    title: MAC source et MAC destination
+    kicker: 04 / Communication
+    blocks:
+
+      - type: text
+        title: Exemple simple
+        content: |
+          PC A veut envoyer une trame à PC B.
+
+          PC A :
+
+          MAC = AA:AA:AA:AA:AA:AA
+
+          PC B :
+
+          MAC = BB:BB:BB:BB:BB:BB
+
+          La trame contient alors :
+
+          MAC source      = AA:AA:AA:AA:AA:AA
+          MAC destination = BB:BB:BB:BB:BB:BB
+
+      - type: text
+        title: Le switch intervient
+        content: |
+          Le switch reçoit la trame et lit notamment la **MAC destination**.
+
+          S'il connaît cette adresse dans sa table MAC :
+
+          BB:BB:BB:BB:BB:BB → Port 4
+
+          il transmet la trame uniquement vers le port 4.
+
+          **PC A → SWITCH → PC B**
+
+          Le switch n'a donc pas besoin d'envoyer la trame à tous les appareils.
+
+      - type: text
+        title: Le switch apprend grâce à la MAC source
+        content: |
+          Lorsqu'une trame arrive sur un port, le switch regarde sa **MAC source**.
+
+          Exemple :
+
+          Une trame provenant de PC A arrive sur le port 2.
+
+          Le switch apprend :
+
+          AA:AA:AA:AA:AA:AA → Port 2
+
+          Il associe donc une adresse MAC au port sur lequel il l'a observée.
+
+          Cette méthode est appelée **MAC learning** ou **apprentissage MAC**.
+
+  # ============================================================
+  # 05 - TYPES DE DESTINATION
+  # ============================================================
+
+  - id: types-destination
+    title: Unicast, Broadcast et Multicast
+    kicker: 05 / Transmission
+    blocks:
+
+      - type: text
+        title: Unicast
+        content: |
+          Une transmission **unicast** est destinée à une seule interface.
+
+          Exemple :
+
+          PC A → PC B
+
+          La trame possède une MAC destination correspondant à PC B.
+
+          Le switch peut généralement transmettre la trame uniquement vers le port où se trouve PC B.
+
+          **Unicast = un émetteur → un destinataire**
+
+      - type: text
+        title: Broadcast
+        content: |
+          Une transmission **broadcast** est destinée à toutes les machines du domaine de broadcast local.
+
+          En Ethernet, l'adresse MAC de broadcast est :
+
+          FF:FF:FF:FF:FF:FF
+
+          Une trame envoyée à cette adresse est diffusée sur le réseau local.
+
+          Le protocole **ARP** utilise notamment le broadcast pour envoyer une requête du type :
+
+          « Qui possède cette adresse IP ? »
+
+          **Broadcast = un émetteur → tous les destinataires du domaine de broadcast**
+
+      - type: text
+        title: Multicast
+        content: |
+          Une transmission **multicast** est destinée à un groupe spécifique de machines ayant rejoint un groupe multicast.
+
+          Contrairement au broadcast, toutes les machines du réseau ne sont pas nécessairement concernées.
+
+          **Multicast = un émetteur → un groupe de destinataires**
+
+  # ============================================================
+  # 06 - TRAME ET ROUTEUR
+  # ============================================================
+
+  - id: trame-routeur
+    title: Que devient la trame avec un routeur ?
+    kicker: 06 / Couche 2 et couche 3
+    blocks:
+
+      - type: text
+        title: La trame ne traverse pas les routeurs
+        content: |
+          Lorsqu'un paquet IP traverse plusieurs réseaux, il est transporté dans une **nouvelle trame à chaque liaison**.
+
+          Exemple :
+
+          PC A → Routeur 1 → Routeur 2 → PC B
+
+          On peut avoir :
+
+          **Trame 1**
+          MAC A → MAC R1
+
+          **Trame 2**
+          MAC R1 → MAC R2
+
+          **Trame 3**
+          MAC R2 → MAC B
+
+          Les adresses MAC changent donc à chaque saut.
+
+      - type: text
+        title: Le paquet IP continue son chemin
+        content: |
+          Même si les trames changent, le paquet IP peut continuer vers sa destination.
+
+          Exemple :
+
+          IP source      = 192.168.1.10
+          IP destination = 192.168.3.10
+
+          Ces adresses restent associées au paquet pendant son routage, tandis que les adresses MAC sont adaptées à chaque liaison.
+
+          Cela illustre la différence entre :
+
+          **Couche 2 → communication sur la liaison actuelle**
+          **Couche 3 → acheminement entre les réseaux**
+
+      - type: text
+        title: Le rôle d'ARP
+        content: |
+          Lorsqu'un appareil connaît l'adresse IP du prochain destinataire mais ne connaît pas sa MAC, **ARP** permet de résoudre cette adresse IP en adresse MAC sur le réseau local.
+
+          Exemple :
+
+          PC A veut envoyer un paquet à un autre réseau.
+
+          Il ne cherche pas directement la MAC de la machine distante.
+          Il cherche la MAC de sa **passerelle par défaut**, c'est-à-dire généralement son routeur.
+
+          **IP du prochain saut → ARP → MAC du prochain saut → trame Ethernet**
+
+  # ============================================================
+  # 07 - SYNTHÈSE
+  # ============================================================
+
+  - id: conclusion
+    title: À retenir
+    kicker: 07 / Synthèse
+    blocks:
+
+      - type: text
+        title: Les notions essentielles
+        content: |
+          - Une **trame** est l'unité de données de la couche 2.
+          - Une trame Ethernet contient notamment une **MAC destination** et une **MAC source**.
+          - Une **adresse MAC** identifie une interface réseau au niveau de la couche 2.
+          - Un **switch** utilise les adresses MAC pour transmettre les trames vers les bons ports.
+          - Le switch apprend les MAC grâce à la **MAC source** des trames reçues.
+          - Une destination inconnue peut provoquer un **flooding**.
+          - Une adresse MAC de broadcast est **FF:FF:FF:FF:FF:FF**.
+          - **ARP** permet notamment de trouver une MAC à partir d'une adresse IPv4 sur le réseau local.
+          - Lorsqu'un paquet traverse un routeur, les **adresses MAC changent à chaque saut**, tandis que les adresses IP identifient la communication au niveau réseau.
+
+      - type: text
+        title: Le repère simple
+        content: |
+          **MAC → couche 2 → trame → Switch**
+
+          **IP → couche 3 → paquet → Routeur**
+
+          Une trame permet donc de transporter un paquet sur une liaison locale, tandis que le paquet IP permet de transporter les données entre différents réseaux.
+
+          La trame est adaptée à chaque liaison, alors que le routage permet au paquet de progresser de réseau en réseau.

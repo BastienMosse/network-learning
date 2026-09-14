@@ -1,0 +1,74 @@
+id: standards-iso-ieee
+slug: standards-iso-ieee
+title: Standards ISO et IEEE
+description: Comprendre à quoi servent les organismes de normalisation ISO et IEEE dans les réseaux, et le rôle des standards IEEE 802.x.
+level: Débutant
+duration: 5 min
+themeId: bases
+color: blue
+objectives:
+  - Comprendre à quoi servent les normes dans les réseaux
+  - Savoir que l'ISO a défini le modèle OSI
+  - Savoir que l'IEEE définit les standards 802.x pour Ethernet et Wi-Fi
+  - Savoir que les RFC définissent les protocoles utilisés sur Internet
+
+sections:
+
+  # ============================================================
+  # 01 - LES BASES
+  # ============================================================
+
+  - id: bases
+    title: À quoi servent ces normes ?
+    kicker: 01 / Fondations
+    blocks:
+      - type: text
+        title: Le rôle d'une norme
+        content: |
+          Une norme réseau définit des règles communes pour que des équipements et logiciels de fabricants différents puissent fonctionner ensemble.
+          Sans normalisation, chaque fabricant ferait à sa manière, et rien ne serait compatible entre marques.
+          Deux organismes reviennent constamment quand on parle de réseaux : l'**ISO** et l'**IEEE**.
+
+      - type: text
+        title: ISO — le modèle théorique
+        content: |
+          L'**ISO** (International Organization for Standardization) est un organisme international de normalisation, tous secteurs confondus (pas seulement l'informatique).
+          C'est l'ISO qui a défini le **modèle OSI**, le découpage théorique des réseaux en 7 couches utilisé pour raisonner et enseigner le fonctionnement des réseaux.
+
+      - type: text
+        title: IEEE — les standards concrets
+        content: |
+          L'**IEEE** (Institute of Electrical and Electronics Engineers) est une organisation d'ingénieurs qui rédige des standards techniques concrets, notamment pour les réseaux.
+          La famille **IEEE 802.x** couvre les couches basses (Physique et Liaison de données) :
+
+          - **802.3** : Ethernet (réseaux filaires)
+          - **802.11** : Wi-Fi (réseaux sans fil)
+
+          Ces standards définissent précisément comment les trames sont formées, comment le support est partagé, et comment les équipements dialoguent au niveau matériel.
+
+      - type: text
+        title: RFC — les protocoles d'Internet
+        content: |
+          Les **RFC** (Request For Comments) sont des documents publiés par l'**IETF** (Internet Engineering Task Force) qui décrivent les protocoles utilisés sur Internet.
+          Malgré leur nom qui suggère un simple "appel à commentaires", une fois adoptées, les RFC deviennent la référence technique officielle du protocole qu'elles décrivent.
+
+          - Couvrent les couches hautes du réseau : **IP**, **TCP**, **UDP**, **HTTP**, **DNS**...
+          - Chaque RFC est numérotée et reste publiée indéfiniment (même remplacée, elle n'est jamais supprimée)
+          - N'importe qui peut proposer une RFC ; elle est ensuite discutée et validée par la communauté avant adoption
+
+  # ============================================================
+  # 02 - SYNTHÈSE
+  # ============================================================
+
+  - id: conclusion
+    title: À retenir
+    kicker: 02 / Synthèse
+    blocks:
+      - type: text
+        title: Le repère simple
+        content: |
+          - **ISO** → le modèle théorique (OSI, 7 couches)
+          - **IEEE** → les standards concrets des couches basses (802.3 Ethernet, 802.11 Wi-Fi)
+          - **RFC** (IETF) → les protocoles concrets des couches hautes utilisés sur Internet (IP, TCP, HTTP, DNS...)
+
+          L'ISO pose le cadre conceptuel, l'IEEE et l'IETF fournissent les spécifications techniques réellement utilisées, chacun sur des couches différentes.

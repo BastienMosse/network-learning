@@ -1,0 +1,303 @@
+id: icmp
+slug: icmp
+title: ICMP
+description: Comprendre le protocole ICMP, la structure de ses messages, son rôle dans le diagnostic réseau et le fonctionnement de ping.
+level: Débutant
+duration: 10 min
+themeId: IPv4
+color: yellow
+
+objectives:
+  - Comprendre le rôle d'ICMP
+  - Comprendre la structure d'un message ICMP
+  - Comprendre le fonctionnement de ping
+  - Identifier les types ICMP courants
+  - Comprendre la notion de type et code
+
+sections:
+
+  # ============================================================
+  # 01 - PRINCIPE
+  # ============================================================
+
+  - id: principle
+    title: À quoi sert ICMP ?
+    kicker: "01 / Principe"
+    blocks:
+
+      - type: text
+        title: Internet Control Message Protocol
+        content: |
+          **ICMP** est un protocole utilisé avec IP pour transporter des messages de contrôle, de diagnostic et d'erreur.
+
+          Il permet notamment aux équipements réseau d'indiquer :
+
+          → qu'une destination est inaccessible
+
+          → qu'un paquet a dépassé son TTL
+
+          → qu'une requête de diagnostic a reçu une réponse
+
+          ICMP ne sert donc pas à transporter directement les données d'une application comme TCP ou UDP.
+          Il accompagne IP pour signaler l'état ou le résultat d'un traitement réseau.
+
+      - type: text
+        title: Ping
+        content: |
+          La commande **ping** utilise ICMP pour vérifier qu'une machine est joignable.
+
+          Elle envoie généralement un :
+
+          **ICMP Echo Request**
+
+          Le destinataire répond avec :
+
+          **ICMP Echo Reply**
+
+          Le résultat permet notamment de vérifier la connectivité et de mesurer le temps aller-retour (RTT).
+
+      - type: text
+        title: Type et Code
+        content: |
+          Un message ICMP est identifié principalement par deux champs :
+
+          **Type**
+
+          → indique la catégorie du message ICMP.
+
+          **Code**
+
+          → apporte une précision supplémentaire sur le type de message.
+
+          Par exemple :
+
+          **Type 8 + Code 0**
+          → Echo Request
+
+          **Type 0 + Code 0**
+          → Echo Reply
+
+          Pour certains messages, le type et le code permettent donc de connaître précisément la raison du message.
+
+  # ============================================================
+  # 02 - TRAME ICMP
+  # ============================================================
+
+  - id: frame
+    title: Structure d'un message ICMP
+    kicker: "02 / Trame"
+    blocks:
+
+      - type: text
+        title: ICMP est transporté dans IP
+        content: |
+          ICMP n'est pas directement transporté dans une trame Ethernet.
+
+          L'encapsulation est :
+
+          **Trame Ethernet → Paquet IPv4 → Message ICMP**
+
+          Dans l'en-tête IPv4, le champ **Protocol** indique quel protocole est transporté.
+
+          Pour ICMP :
+
+          **Protocol = 1**
+
+          Le paquet IPv4 contient ensuite le message ICMP.
+
+      - type: frame
+        title: "Message ICMP"
+        bitsPerRow: 32
+        fields:
+          - { id: type, label: Type, bits: 8, color: coral, description: "Identifie la catégorie du message ICMP" }
+          - { id: code, label: Code, bits: 8, color: blue, description: "Précise le type de message ICMP" }
+          - { id: checksum, label: Checksum, bits: 16, color: yellow, description: "Somme de contrôle du message ICMP" }
+          - { id: identifier, label: Identifier, bits: 16, color: yellow, description: "Somme de contrôle du message ICMP" }
+          - { id: sequence-number, label: Sequence Number, bits: 16, color: yellow, description: "Somme de contrôle du message ICMP" }
+          - { id: data, label: Données, bits: 0, variable: true, color: green, description: "Données éventuellement transportées par le message ICMP" }
+
+      - type: text
+        title: |
+          Exemple : Echo Request
+        content: |
+          Pour un ping IPv4 classique :
+
+          **Type = 8**
+          **Code = 0**
+
+          Le message contient également des champs permettant notamment d'identifier la requête et de suivre sa séquence.
+
+          La réponse utilise :
+
+          **Type = 0**
+          **Code = 0**
+
+          → Echo Reply
+
+  # ============================================================
+  # 03 - TYPES ET CODES
+  # ============================================================
+
+  - id: types
+    title: Types et codes les plus connus
+    kicker: "03 / Référence"
+    blocks:
+
+      - type: text
+        title: Echo
+        content: |
+          **Type 8 — Echo Request**
+          **Code 0**
+
+          → Requête envoyée notamment par la commande ping.
+
+          **Type 0 — Echo Reply**
+          **Code 0**
+
+          → Réponse à un Echo Request.
+
+      - type: text
+        title: Destination Unreachable
+        content: |
+          **Type 3 — Destination Unreachable**
+
+          Ce type indique qu'un paquet ne peut pas atteindre sa destination.
+
+          Quelques codes importants :
+
+          **Code 0**
+          → Network Unreachable
+
+          **Code 1**
+          → Host Unreachable
+
+          **Code 3**
+          → Port Unreachable
+
+          Le **Port Unreachable** peut notamment apparaître lorsqu'un paquet UDP arrive sur un port qui n'est pas utilisé.
+
+      - type: text
+        title: Time Exceeded
+        content: |
+          **Type 11 — Time Exceeded**
+
+          Ce message est notamment utilisé lorsqu'un paquet atteint un TTL de 0.
+
+          **Code 0**
+          → Time to Live exceeded in Transit
+
+          C'est notamment ce mécanisme qui permet à **traceroute** de découvrir progressivement les routeurs traversés.
+
+      - type: text
+        title: Redirection
+        content: |
+          **Type 5 — Redirect**
+
+          → Indique à un hôte qu'une meilleure passerelle peut être utilisée pour atteindre une destination.
+
+          Ce mécanisme est aujourd'hui beaucoup moins central dans les réseaux modernes, mais il fait partie des messages ICMP classiques.
+
+      - type: text
+        title: Tableau de référence
+        content: |
+          | Type | Code | Message |
+          |---:|---:|---|
+          | **0** | 0 | Echo Reply |
+          | **3** | 0 | Network Unreachable |
+          | **3** | 1 | Host Unreachable |
+          | **3** | 3 | Port Unreachable |
+          | **5** | 0 | Redirect |
+          | **8** | 0 | Echo Request |
+          | **11** | 0 | Time Exceeded |
+
+  # ============================================================
+  # 04 - DÉMO
+  # ============================================================
+
+  - id: demo
+    title: Démo — Ping
+    kicker: "04 / Animation"
+    blocks:
+
+      - type: demo
+        title: "ICMP Echo Request / Echo Reply"
+        intro: "Suivez un ping entre deux machines et observez les messages ICMP."
+
+        nodes:
+          - id: pc-a
+            label: PC A
+            kind: device
+            position: { x: 20, y: 50 }
+
+          - id: pc-b
+            label: PC B
+            kind: device
+            position: { x: 80, y: 50 }
+
+        connections:
+          - from: pc-a
+            to: pc-b
+
+        steps:
+
+          - title: "1. PC A envoie un Echo Request"
+            description: "PC A construit un message ICMP Echo Request et l'envoie vers PC B."
+            active: [pc-a, pc-b]
+            panel: "ICMP Type 8 | Code 0"
+            packets:
+              - from: pc-a
+                to: pc-b
+
+          - title: "2. PC B reçoit le message"
+            description: "PC B reçoit le paquet IPv4, identifie ICMP grâce au champ Protocol = 1, puis traite l'Echo Request."
+            active: [pc-b]
+            panel: "IPv4 Protocol = 1 → ICMP"
+
+          - title: "3. PC B répond"
+            description: "PC B génère un message ICMP Echo Reply en réponse à la requête."
+            active: [pc-a, pc-b]
+            panel: "ICMP Type 0 | Code 0"
+            packets:
+              - from: pc-b
+                to: pc-a
+
+          - title: "4. PC A reçoit la réponse"
+            description: "PC A reçoit l'Echo Reply et peut calculer le temps aller-retour du ping."
+            active: [pc-a]
+            panel: "Echo Reply reçu"
+
+  # ============================================================
+  # 05 - SYNTHÈSE
+  # ============================================================
+
+  - id: conclusion
+    title: À retenir
+    kicker: "05 / Synthèse"
+    blocks:
+
+      - type: text
+        title: Le repère simple
+        content: |
+          **ICMP → contrôle, diagnostic et erreurs liés à IP**
+
+          **IPv4 Protocol = 1 → ICMP**
+
+          Un message ICMP possède notamment :
+
+          → **Type** : catégorie du message
+
+          → **Code** : précision sur cette catégorie
+
+          Les types à connaître en priorité :
+
+          → **Type 8 / Code 0** → Echo Request
+
+          → **Type 0 / Code 0** → Echo Reply
+
+          → **Type 3** → Destination Unreachable
+
+          → **Type 11 / Code 0** → Time Exceeded
+
+          **Ping** utilise principalement Echo Request et Echo Reply.
+
+          **Traceroute** exploite notamment les messages Time Exceeded pour identifier les routeurs traversés.

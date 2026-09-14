@@ -1,0 +1,326 @@
+id: arp-frame
+slug: arp-frame
+title: Trame ARP
+description: Comprendre à quoi sert ARP et comment une requête et une réponse ARP permettent d'associer une adresse IP à une adresse MAC.
+level: Débutant
+duration: 8 min
+themeId: ARP
+color: blue
+
+objectives:
+  - Comprendre pourquoi ARP est nécessaire dans un réseau IPv4
+  - Comprendre la différence entre une requête ARP et une réponse ARP
+  - Identifier les principaux champs d'une trame ARP
+  - Comprendre le rôle des adresses MAC et IP source et cible
+  - Comprendre le fonctionnement d'un échange ARP
+
+sections:
+
+  # ============================================================
+  # 01 - POURQUOI ARP ?
+  # ============================================================
+
+  - id: utilite
+    title: Pourquoi ARP ?
+    kicker: "01 / Découverte"
+    blocks:
+
+      - type: text
+        title: IP et MAC ne servent pas au même niveau
+        content: |
+          Sur un réseau Ethernet, une machine utilise :
+
+          **Adresse IP** → pour identifier une interface dans le réseau IP
+
+          **Adresse MAC** → pour identifier une interface au niveau Ethernet
+
+          Lorsqu'un PC connaît l'adresse IP d'un autre PC, il doit néanmoins connaître sa **MAC** pour pouvoir lui envoyer une trame Ethernet.
+
+      - type: text
+        title: Le problème
+        content: |
+          PC A veut envoyer des données à : **192.168.1.20**
+
+          Mais PC A ne connaît pas encore la MAC correspondant à cette adresse IP.
+
+          Il doit donc demander : **« Qui possède 192.168.1.20 ? »**
+
+          C'est le rôle d'**ARP** (*Address Resolution Protocol*).
+
+      - type: text
+        title: Le principe
+        content: |
+          ARP permet de résoudre : **Adresse IP → Adresse MAC**
+
+          Exemple :
+
+          **192.168.1.20** → ARP → **AA:BB:CC:DD:EE:FF**
+
+          Une fois la MAC connue, le PC peut construire une trame Ethernet destinée à cette interface.
+
+          **ARP ne transporte donc pas directement les données applicatives.**
+
+          Il permet de résoudre l'adresse nécessaire à la communication Ethernet.
+
+  # ============================================================
+  # 03 - TRAME ARP
+  # ============================================================
+
+  - id: trame
+    title: La trame ARP
+    kicker: "02 / Structure"
+    blocks:
+
+      - type: text
+        title: Une trame Ethernet particulière
+        content: |
+          ARP est encapsulé dans une trame Ethernet.
+
+          Cette trame est particulière car elle utilise un **type Ethernet spécifique** : 0x0806.
+
+          Le reste de la trame contient les informations nécessaires à la résolution d'adresse.
+
+      - type: frame
+        title: "Trame ARP"
+        bitsPerRow: 32
+        fields:
+          - { id: hardware-type, label: "Hardware Type", bits: 16, color: blue, description: "Hardware Type" }
+          - { id: protocol-type, label: "Protocol Type", bits: 16, color: teal, description: "Protocol Type" }
+          - { id: hardware-size, label: "Hardware Size", bits: 8, color: green, description: "Hardware Size" }
+          - { id: protocol-size, label: "Protocol Size", bits: 8, color: coral, description: "Protocol Size" }
+          - { id: operation, label: "Operation", bits: 16, color: yellow, description: "Operation" }
+          - { id: sender-mac, label: "MAC source", bits: 48, color: blue, description: "MAC source" }
+          - { id: sender-ip, label: "IP source", bits: 32, color: teal, description: "IP source" }
+          - { id: target-mac, label: "MAC cible", bits: 48, color: coral, description: "MAC cible" }
+          - { id: target-ip, label: "IP cible", bits: 32, color: green, description: "IP cible" }
+
+  # ============================================================
+  # 03 - REQUÊTE ARP
+  # ============================================================
+
+  - id: request
+    title: La requête ARP
+    kicker: "03 / Requête"
+    blocks:
+
+      - type: text
+        title: « Qui possède cette IP ? »
+        content: |
+          PC A connaît l'adresse IP de PC B mais ne connaît pas sa MAC.
+
+          PC A diffuse alors une **requête ARP** sur son réseau local.
+
+          La question est : **« Qui possède 192.168.1.20 ? »**
+
+          Toutes les machines du domaine de broadcast peuvent recevoir la requête.
+
+      - type: text
+        title: Les champs importants
+        content: |
+          Une requête ARP contient notamment :
+
+          - **MAC source** → MAC de la machine qui demande
+          - **IP source** → IP de la machine qui demande
+          - **MAC cible** → inconnue au moment de la requête : 00:00:00:00:00:00
+          - **IP cible** → IP recherchée
+
+          **Opération** → requête ARP
+
+      - type: text
+        title: Exemple
+        content: |
+          PC A :
+          - IP = 192.168.1.10
+          - MAC = AA:AA:AA:AA:AA:AA
+
+          PC A cherche :
+          - IP = 192.168.1.20
+
+          La requête contient donc :
+          - **Opération : Request**
+          - **MAC source : AA:AA:AA:AA:AA:AA**
+          - **IP source : 192.168.1.10**
+          - **MAC cible : inconnue (00:00:00:00:00:00)**
+          - **IP cible : 192.168.1.20**
+
+  # ============================================================
+  # 04 - RÉPONSE ARP
+  # ============================================================
+
+  - id: response
+    title: La réponse ARP
+    kicker: "04 / Réponse"
+    blocks:
+
+      - type: text
+        title: PC B répond
+        content: |
+          PC B reçoit la requête.
+
+          Il constate que l'IP recherchée correspond à sa propre adresse : **192.168.1.20**
+
+          Il répond alors directement à PC A avec sa MAC.
+
+      - type: text
+        title: La réponse
+        content: |
+          PC B indique : **« 192.168.1.20 correspond à AA:BB:BB:BB:BB:BB »**
+
+          La réponse ARP contient notamment :
+
+          - **Opération : Reply**
+          - **MAC source : AA:BB:BB:BB:BB:BB**
+          - **IP source : 192.168.1.20**
+          - **MAC cible : AA:AA:AA:AA:AA:AA**
+          - **IP cible : 192.168.1.10**
+
+      - type: text
+        title: Après la réponse
+        content: |
+          PC A connaît maintenant l'association : **192.168.1.20 → AA:BB:BB:BB:BB:BB**
+
+          Il peut donc construire une trame Ethernet avec : **MAC destination = AA:BB:BB:BB:BB:BB**
+
+          et envoyer ses données.
+
+  # ============================================================
+  # 05 - STRUCTURE
+  # ============================================================
+
+  - id: structure
+    title: Les informations transportées par ARP
+    kicker: "05 / Structure"
+    blocks:
+
+      - type: text
+        title: Les champs à retenir
+        content: |
+          Pour comprendre ARP, retiens principalement quatre informations :
+
+          - **Hardware Type** : 1 pour Ethernet 
+          - **Protocol Type** : 0x0800 pour IPv4
+          - **Hardware Size** : 6 octets pour une adresse MAC
+          - **Protocol Size** : 4 octets pour une adresse IPv4
+          - **Operation** : 1 pour une requête ARP, 2 pour une réponse ARP
+          - **MAC source** : adresse MAC de l'émetteur
+          - **IP source** : adresse IP de l'émetteur
+          - **MAC cible** : adresse MAC recherchée ou destinataire (00:00:00:00:00:00 pour une requete)
+          - **IP cible** : adresse IP de la cible
+
+      - type: text
+        title: Le repère simple
+        content: |
+          Une requête ARP demande : **IP cible → « Quelle est ta MAC ? »**
+
+          Une réponse ARP fournit : **IP cible → « Ma MAC est X. »**
+
+  # ============================================================
+  # 06 - DÉMO
+  # ============================================================
+
+  - id: demo
+    title: Démo — Une résolution ARP
+    kicker: "06 / Animation"
+    blocks:
+
+      - type: demo
+        title: "PC A cherche la MAC de PC B"
+        intro: "Suivez l'échange ARP complet entre deux machines du même réseau."
+
+        nodes:
+          - id: pc-a
+            label: PC A
+            kind: device
+            position: { x: 20, y: 50 }
+
+          - id: switch
+            label: Switch
+            kind: device
+            position: { x: 50, y: 50 }
+
+          - id: pc-b
+            label: PC B
+            kind: device
+            position: { x: 80, y: 50 }
+
+        connections:
+          - from: pc-a
+            to: switch
+
+          - from: switch
+            to: pc-b
+
+        steps:
+
+          - title: "1. PC A veut communiquer avec PC B"
+            description: "PC A connaît l'IP de PC B mais ne connaît pas encore sa MAC."
+            active: [pc-a]
+            panel: "PC A : 192.168.1.10 | Recherche : 192.168.1.20"
+
+          - title: "2. PC A diffuse une requête ARP"
+            description: "PC A envoie une requête ARP sur le réseau local pour demander quelle machine possède l'adresse IP 192.168.1.20."
+            active: [pc-a, switch, pc-b]
+            panel: "Who has 192.168.1.20?"
+            packets:
+              - from: pc-a
+                to: switch
+
+          - title: "3. Le switch diffuse la requête"
+            description: "La requête ARP est diffusée dans le domaine de broadcast. PC B reçoit donc la requête."
+            active: [switch, pc-b]
+            panel: "Broadcast ARP"
+            packets:
+              - from: switch
+                to: pc-b
+
+          - title: "4. PC B reconnaît son adresse IP"
+            description: "PC B possède bien l'adresse 192.168.1.20. Il prépare une réponse ARP."
+            active: [pc-b]
+            panel: "192.168.1.20 → AA:BB:BB:BB:BB:BB"
+
+          - title: "5. PC B répond"
+            description: "PC B envoie une réponse ARP directement à PC A pour lui indiquer sa MAC."
+            active: [pc-a, pc-b]
+            panel: "192.168.1.20 = AA:BB:BB:BB:BB:BB"
+            packetGroups:
+              -
+                - from: pc-b
+                  to: switch
+              -
+                - from: switch
+                  to: pc-a
+
+          - title: "6. PC A connaît maintenant la MAC"
+            description: "PC A peut maintenant construire une trame Ethernet destinée à PC B."
+            active: [pc-a]
+            panel: "192.168.1.20 → AA:BB:BB:BB:BB:BB"
+
+  # ============================================================
+  # 07 - SYNTHÈSE
+  # ============================================================
+
+  - id: conclusion
+    title: À retenir
+    kicker: "07 / Synthèse"
+    blocks:
+
+      - type: text
+        title: Le repère simple
+        content: |
+          **ARP** → résout une adresse IPv4 en adresse MAC
+
+          **Request** → diffusion sur le réseau local
+
+          **Reply** → réponse de la machine concernée
+
+          **Résultat** → IP connue + MAC connue → la trame Ethernet peut être envoyée
+
+      - type: text
+        title: La séquence
+        content: |
+          1. **Je connais l'IP**
+          2. **Je ne connais pas la MAC**
+          3. **Requête ARP**
+          4. **Réponse ARP**
+          5. **IP → MAC**
+          6. **Envoi de la trame Ethernet**

@@ -1,0 +1,124 @@
+id: tcp-udp
+slug: tcp-udp
+title: TCP et UDP
+description: Comprendre les ports, le fonctionnement de TCP et UDP et leurs différences fondamentales.
+level: Débutant
+duration: 10 min
+themeId: IPv4
+color: blue
+
+objectives:
+  - Comprendre le rôle des ports
+  - Comprendre TCP et UDP
+  - Comprendre le handshake TCP
+  - Distinguer protocole connecté et non connecté
+  - Comprendre les principaux usages de TCP et UDP
+
+sections:
+
+  - id: ports
+    title: Les ports
+    kicker: "01 / Transport"
+    blocks:
+
+      - type: text
+        title: Identifier une application
+        content: |
+          Une adresse IP permet d'identifier une interface réseau.
+          Mais une machine peut exécuter plusieurs applications simultanément.
+          Les **ports** permettent donc d'identifier le service ou le processus concerné.
+
+          Exemple : **192.168.1.10:443**
+
+          signifie : **IP = 192.168.1.10** et **Port = 443**
+
+      - type: text
+        title: IP + port
+        content: |
+          On peut voir une communication comme : **IP source : port source** → **IP destination : port destination**
+
+          Exemple : **192.168.1.10:53000** → **192.168.1.20:443**
+
+  - id: tcp
+    title: TCP
+    kicker: "02 / TCP"
+    blocks:
+
+      - type: text
+        title: Une communication orientée connexion
+        content: |
+          **TCP** établit une connexion avant de transmettre les données.
+
+          Il fournit notamment :
+          - accusés de réception
+          - retransmission des données perdues
+          - contrôle du flux
+          - remise en ordre des données
+
+      - type: text
+        title: Le Three-Way Handshake
+        content: |
+          L'établissement d'une connexion TCP se fait généralement en trois étapes :
+
+          1. **SYN**
+
+            Client → Serveur
+
+            « Je souhaite établir une connexion. »
+
+          2. **SYN-ACK**
+
+            Serveur → Client
+
+            « J'accepte et je réponds. »
+
+          3. **ACK**
+
+            Client → Serveur
+
+            « Confirmation reçue. »
+
+  - id: udp
+    title: UDP
+    kicker: "03 / UDP"
+    blocks:
+
+      - type: text
+        title: Sans établissement de connexion
+        content: |
+          **UDP** ne réalise pas de handshake avant l'envoi.
+
+          Il est plus simple que TCP et ajoute peu de mécanismes au-dessus d'IP.
+
+          UDP ne garantit pas :
+          - la livraison
+          - l'ordre
+          - la retransmission
+
+          En contrepartie, il possède moins de surcharge et peut être adapté aux communications où la rapidité ou la simplicité sont prioritaires.
+
+      - type: text
+        title: Exemples
+        content: |
+          UDP est notamment utilisé par **DNS** et **DHCP**
+          et de nombreux protocoles temps réel ou applicatifs.
+
+  - id: comparison
+    title: TCP vs UDP
+    kicker: "04 / Comparaison"
+    blocks:
+
+      - type: text
+        title: Le repère simple
+        content: |
+          **TCP**
+          - orienté connexion
+          - fiable
+          - ordonné
+          - retransmission
+
+          **UDP**
+          - sans connexion
+          - pas de garantie de livraison
+          - pas de garantie d'ordre
+          - faible surcharge

@@ -1,0 +1,76 @@
+id: route-aggregation
+slug: route-aggregation
+title: Agrégation de routes
+description: Comprendre comment plusieurs réseaux peuvent être regroupés dans une route plus générale.
+level: Débutant
+duration: 7 min
+themeId: IPv4
+color: green
+
+objectives:
+  - Comprendre le principe de l'agrégation
+  - Identifier des réseaux pouvant être regroupés
+  - Comprendre l'intérêt de réduire une table de routage
+
+sections:
+
+  - id: principle
+    title: Pourquoi agréger ?
+    kicker: "01 / Principe"
+    blocks:
+
+      - type: text
+        title: Objectif
+        content: |
+          L'agrégation est l'opération inverse des masqus variables.
+          Au lieu de découper un réseau en pluieurs sous-réseaux, on va
+          regrouper plusieurs sous-réseaux contigus en un seul réseau avec un masque plus court.
+          Ce nouveau doit correspondre parfaitemet à l'ancien, sans oubler d'adresses ou en avoir en plus.
+
+
+      - type: text
+        title: Plusieurs routes
+        content: |
+          Un routeur peut avoir plusieurs routes :
+
+          **192.168.0.0/24**
+
+          **192.168.1.0/24**
+
+          **192.168.2.0/24**
+
+          **192.168.3.0/24**
+
+          Si ces réseaux sont contigus et correctement alignés, ils peuvent être représentés par une route agrégée :
+
+          **192.168.0.0/22**
+
+      - type: text
+        title: L'intérêt
+        content: |
+          L'agrégation permet de réduire le nombre d'entrées dans les tables de routage.
+
+          Au lieu de mémoriser plusieurs routes spécifiques, un routeur peut mémoriser une route résumée.
+
+          **Moins de routes → tables plus petites → routage plus efficace.**
+
+  - id: exercise
+    title: Exercice
+    kicker: "02 / Calcul"
+    blocks:
+
+      - type: text
+        title: À vous de jouer
+        content: |
+          Peut-on agréger les réseaux suivants ?
+
+          **10.0.0.0/24**
+
+          **10.0.1.0/24**
+
+          **10.0.2.0/24**
+
+          **10.0.3.0/24**
+
+          Si oui, quel serait le préfixe agrégé ?
+

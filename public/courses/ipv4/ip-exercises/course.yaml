@@ -1,0 +1,292 @@
+# ============================================================
+# IP — 10 / EXERCICES TRANSVERSAUX
+# ============================================================
+
+id: ip-exercises
+slug: ip-exercises
+title: Exercices IPv4, DHCP et DNS
+description: Série d'exercices transversaux pour réviser l'adressage IPv4, les sous-réseaux, les paquets IP, DHCP et DNS.
+level: Débutant
+duration: 20 min
+themeId: IPv4
+color: coral
+
+objectives:
+  - Calculer des sous-réseaux IPv4
+  - Lire un en-tête IPv4
+  - Identifier le rôle du TTL et du protocole
+  - Comprendre DHCP
+  - Comprendre DNS
+  - Relier les différents mécanismes réseau
+
+sections:
+
+  # ==========================================================
+  # 01 - SOUS-RÉSEAUX
+  # ==========================================================
+
+  - id: subnetting
+    title: Calcul de sous-réseaux
+    kicker: "01 / Exercices"
+    blocks:
+
+      - type: text
+        title: Exercice 1
+        content: |
+          Machine :
+
+          **192.168.10.75/26**
+
+          Déterminez :
+
+          → l'adresse réseau
+
+          → l'adresse broadcast
+
+          → la première adresse utilisable
+
+          → la dernière adresse utilisable
+
+          → le nombre d'hôtes utilisables
+
+      - type: text
+        title: Exercice 2
+        content: |
+          Machine :
+
+          **172.16.50.130/27**
+
+          Déterminez :
+
+          → l'adresse réseau
+
+          → l'adresse broadcast
+
+          → la plage d'hôtes
+
+          → le nombre d'hôtes utilisables
+
+      - type: text
+        title: Exercice 3
+        content: |
+          Un réseau doit accueillir au minimum **50 machines**.
+
+          Quel préfixe CIDR permet d'avoir suffisamment d'adresses ?
+
+  # ==========================================================
+  # 02 - ANALYSE IP
+  # ==========================================================
+
+  - id: packet-analysis
+    title: Analyse d'un paquet
+    kicker: "02 / Analyse"
+    blocks:
+
+      - type: text
+        title: Exercice 4
+        content: |
+          On observe un paquet IPv4 avec :
+
+          **Version : 4**
+
+          **TTL : 64**
+
+          **Protocol : 6**
+
+          **Source : 192.168.1.10**
+
+          **Destination : 10.0.0.20**
+
+          Questions :
+
+          → Quelle version d'IP est utilisée ?
+
+          → Quel protocole est encapsulé ?
+
+          → Que signifie TTL = 64 ?
+
+          → Quelle est l'adresse IP source ?
+
+          → Quelle est l'adresse IP destination ?
+
+      - type: text
+        title: Exercice 5
+        content: |
+          Le paquet précédent traverse trois routeurs.
+
+          Quel sera son TTL après ces trois passages ?
+
+  # ==========================================================
+  # 03 - DHCP
+  # ==========================================================
+
+  - id: dhcp-exercise
+    title: Analyse DHCP
+    kicker: "03 / DHCP"
+    blocks:
+
+      - type: text
+        title: Exercice 6
+        content: |
+          Un PC vient de démarrer et n'a pas encore d'adresse IP.
+
+          Il échange les messages suivants :
+
+          **Message 1 : Discover**
+
+          **Message 2 : Offer**
+
+          **Message 3 : Request**
+
+          **Message 4 : ACK**
+
+          Questions :
+
+          → Quel est le nom de cette séquence ?
+
+          → Qui envoie le Discover ?
+
+          → Qui propose l'adresse IP ?
+
+          → À quel moment l'attribution est-elle confirmée ?
+
+      - type: text
+        title: Exercice 7
+        content: |
+          Le serveur DHCP fournit au client :
+
+          **IP : 192.168.1.50**
+
+          **Masque : 255.255.255.0**
+
+          **Passerelle : 192.168.1.1**
+
+          **DNS : 192.168.1.2**
+
+          Expliquez le rôle de chacun de ces quatre paramètres.
+
+  # ==========================================================
+  # 04 - DNS
+  # ==========================================================
+
+  - id: dns-exercise
+    title: Analyse DNS
+    kicker: "04 / DNS"
+    blocks:
+
+      - type: text
+        title: Exercice 8
+        content: |
+          Un utilisateur saisit :
+
+          **www.example.com**
+
+          dans son navigateur.
+
+          Questions :
+
+          → Pourquoi utilise-t-on DNS ?
+
+          → Que cherche le client ?
+
+          → Quel type d'enregistrement permet de trouver une adresse IPv4 ?
+
+          → Que peut faire le client une fois l'adresse IP obtenue ?
+
+      - type: text
+        title: Exercice 9
+        content: |
+          Associez chaque enregistrement à son rôle :
+
+          **A**
+
+          **AAAA**
+
+          **CNAME**
+
+          **MX**
+
+          **NS**
+
+          Rôles :
+
+          → Adresse IPv4
+
+          → Adresse IPv6
+
+          → Alias
+
+          → Serveurs mail
+
+          → Serveurs DNS autoritaires
+
+  # ==========================================================
+  # 05 - EXERCICE GLOBAL
+  # ==========================================================
+
+  - id: global
+    title: Exercice de synthèse
+    kicker: "05 / Challenge"
+    blocks:
+
+      - type: text
+        title: Situation
+        content: |
+          Un PC possède :
+
+          **IP : 192.168.1.20/24**
+
+          **Passerelle : 192.168.1.1**
+
+          Il veut accéder à :
+
+          **www.example.com**
+
+          Questions :
+
+          **1.** Le PC connaît-il forcément l'adresse IP du serveur ?
+
+          **2.** Quel protocole peut être utilisé pour obtenir cette IP ?
+
+          **3.** Une fois l'IP obtenue, le PC détermine-t-il si la destination est locale ou distante ?
+
+          **4.** Si la destination est distante, vers quelle machine le PC envoie-t-il sa première trame Ethernet ?
+
+          **5.** Comment le PC peut-il connaître la MAC de cette machine ?
+
+          **6.** Quel équipement va ensuite router le paquet ?
+
+          **7.** Quel champ IPv4 est décrémenté à chaque passage par un routeur ?
+
+      - type: text
+        title: Objectif
+        content: |
+          Cet exercice permet de relier les notions étudiées :
+
+          **DNS**
+
+          → nom → IP
+
+          **Masque**
+
+          → réseau local ou distant
+
+          **ARP**
+
+          → IP du next-hop → MAC
+
+          **Ethernet**
+
+          → transport local de la trame
+
+          **IPv4**
+
+          → adressage logique et routage
+
+          **Routeur**
+
+          → passage d'un réseau à un autre
+
+          **TTL**
+
+          → limitation du nombre de sauts

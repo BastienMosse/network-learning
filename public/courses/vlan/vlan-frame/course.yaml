@@ -1,0 +1,512 @@
+id: vlan-frame
+slug: vlan-frame
+title: Trame VLAN — 802.1Q
+description: Comprendre comment les VLAN sont identifiés dans les trames Ethernet grâce au tag IEEE 802.1Q, et distinguer les ports access, trunk et le native VLAN.
+level: Débutant
+duration: 10 min
+themeId: VLAN
+color: teal
+
+objectives:
+  - Comprendre pourquoi une trame VLAN peut contenir un tag 802.1Q
+  - Comprendre le rôle du VLAN ID
+  - Savoir distinguer un port access d'un port trunk
+  - Comprendre le principe du native VLAN
+  - Comprendre quand une trame est taguée ou non taguée
+  - Savoir suivre une trame entre deux switches
+
+sections:
+
+  # ============================================================
+  # 01 - LE TAG 802.1Q
+  # ============================================================
+
+  - id: tag-8021q
+    title: Le tag 802.1Q
+    kicker: "01 / Trame Ethernet"
+    blocks:
+
+      - type: text
+        title: Pourquoi identifier le VLAN ?
+        content: |
+          Un switch peut transporter plusieurs VLAN.
+
+          Lorsqu'une trame passe d'un switch à un autre, le switch récepteur doit savoir à quel VLAN cette trame appartient.
+
+          Il faut donc pouvoir transporter l'information :
+
+          **« Cette trame appartient au VLAN 10. »**
+
+          C'est notamment le rôle du **tag IEEE 802.1Q**.
+
+      - type: frame
+        title: "Trame Ethernet avec tag 802.1Q"
+        bitsPerRow: 64
+        fields:
+          - { id: dst-mac, label: "MAC destination", bits: 6, color: coral, description: "MAC destination" }
+          - { id: src-mac, label: "MAC source", bits: 6, color: blue, description: "Adresse MAC de l'émetteur de la trame" }
+          - { id: tpid, label: TPID, bits: 2, color: teal, description: "TPID" }
+          - { id: pcp-dei, label: "PCP + DEI", bits: 1, color: green, description: "PCP + DEI" }
+          - { id: vlan-id, label: "VLAN ID", bits: 3, color: yellow, description: "VLAN IDVLAN ID" }
+          - { id: ether-type, label: "EtherType", bits: 4, color: blue, description: "EtherType" }
+          - { id: payload, label: "Données", bits: 4, variable: true, color: teal, description: "Données" }
+          - { id: fcs, label: FCS, bits: 4, color: coral, description: "FCS" }
+
+      - type: text
+        title: Le VLAN ID
+        content: |
+          Le champ **VLAN ID** permet d'identifier le VLAN auquel appartient la trame.
+
+          Le VLAN ID est codé sur **12 bits** dans le tag 802.1Q.
+
+          Il permet donc d'identifier différents VLAN dans une infrastructure Ethernet.
+
+          Exemple :
+
+          **VLAN ID = 10**
+
+          → la trame appartient au VLAN 10.
+
+          **VLAN ID = 20**
+
+          → la trame appartient au VLAN 20.
+
+      - type: text
+        title: Le tag est ajouté dans la trame
+        content: |
+          Le tag 802.1Q est inséré entre :
+
+          **MAC source**
+
+          et
+
+          **EtherType / longueur**
+
+          Une trame Ethernet taguée contient donc l'information permettant aux switches de connaître son VLAN.
+
+  # ============================================================
+  # 02 - ACCESS PORT
+  # ============================================================
+
+  - id: access-port
+    title: Le port Access
+    kicker: "02 / Ports de switch"
+    blocks:
+
+      - type: text
+        title: Qu'est-ce qu'un port Access ?
+        content: |
+          Un **port Access** est généralement utilisé pour connecter un équipement terminal à un switch :
+
+          - PC
+          - imprimante
+          - serveur
+          - téléphone IP selon la configuration
+
+          Le port Access est associé à **un VLAN**.
+
+          Exemple :
+
+          **Port 5 → VLAN 10**
+
+          Un PC connecté au port 5 appartient donc au VLAN 10.
+
+      - type: text
+        title: Côté PC
+        content: |
+          Le PC n'a normalement pas besoin de connaître le VLAN.
+
+          Il envoie une trame Ethernet classique, sans tag 802.1Q.
+
+          Le switch reçoit cette trame sur son port Access et sait qu'elle appartient au VLAN configuré sur ce port.
+
+          Exemple :
+
+          **PC → trame non taguée → port Access VLAN 10**
+
+      - type: text
+        title: Le switch ajoute le contexte VLAN
+        content: |
+          Lorsqu'une trame arrive sur un port Access, le switch l'associe au VLAN du port.
+
+          Le switch peut ensuite transporter cette trame à l'intérieur de son infrastructure VLAN.
+
+          Le terminal n'a donc pas besoin d'ajouter lui-même le tag dans le cas classique d'un port Access.
+
+  # ============================================================
+  # 03 - TRUNK
+  # ============================================================
+
+  - id: trunk
+    title: Le port Trunk
+    kicker: "03 / Transport des VLAN"
+    blocks:
+
+      - type: text
+        title: Pourquoi utiliser un trunk ?
+        content: |
+          Imaginons deux switches :
+
+          **SW1**
+
+          VLAN 10
+          VLAN 20
+
+          **SW2**
+
+          VLAN 10
+          VLAN 20
+
+          Il faut pouvoir transporter les deux VLAN entre les switches.
+
+          On pourrait utiliser un câble physique par VLAN, mais ce serait peu pratique.
+
+          Un **trunk** permet de transporter plusieurs VLAN sur une même liaison.
+
+      - type: text
+        title: Le principe
+        content: |
+          Une liaison trunk transporte plusieurs VLAN.
+
+          Les trames sont généralement identifiées grâce à leur **tag 802.1Q**.
+
+          Exemple :
+
+          **SW1 ═════ trunk ═════ SW2**
+
+          Le trunk peut transporter :
+
+          **VLAN 10**
+
+          **VLAN 20**
+
+          **VLAN 30**
+
+          sur la même liaison physique.
+
+      - type: text
+        title: Access vs Trunk
+        content: |
+          **Access**
+
+          → généralement un seul VLAN
+          → utilisé vers les équipements terminaux
+          → trames généralement non taguées côté terminal
+
+          **Trunk**
+
+          → plusieurs VLAN
+          → utilisé notamment entre switches
+          → les VLAN sont généralement identifiés par des tags 802.1Q
+
+  # ============================================================
+  # 04 - NATIVE VLAN
+  # ============================================================
+
+  - id: native-vlan
+    title: Le Native VLAN
+    kicker: "04 / Trunk"
+    blocks:
+
+      - type: text
+        title: Pourquoi un Native VLAN ?
+        content: |
+          Sur un trunk 802.1Q, certaines trames peuvent être envoyées **sans tag**.
+
+          Ces trames non taguées sont associées au **Native VLAN** du trunk.
+
+          Le Native VLAN est donc le VLAN utilisé pour les trames non taguées sur une liaison trunk.
+
+      - type: text
+        title: Exemple
+        content: |
+          Imaginons :
+
+          Trunk entre SW1 et SW2
+
+          Native VLAN = 99
+
+          Une trame arrive sur le trunk sans tag.
+
+          Le switch l'interprète comme appartenant au :
+
+          **VLAN 99**
+
+          À l'inverse, une trame portant :
+
+          **VLAN ID = 10**
+
+          appartient au VLAN 10.
+
+      - type: text
+        title: Attention
+        content: |
+          Le Native VLAN ne signifie pas que le trunk ne transporte qu'un seul VLAN.
+
+          Le trunk peut transporter plusieurs VLAN.
+
+          Le Native VLAN désigne simplement le VLAN associé aux **trames non taguées** sur ce trunk.
+
+  # ============================================================
+  # 05 - DÉMO
+  # ============================================================
+
+  - id: demo
+    title: Démo — Une trame traverse un trunk
+    kicker: "05 / Animation"
+    blocks:
+
+      - type: demo
+        title: "PC → Access → Trunk → Access → PC"
+        intro: "Suivez une trame du PC A vers le PC B et observez quand le VLAN est associé à la trame et quand le tag 802.1Q est utilisé."
+
+        nodes:
+          - id: pc-a
+            label: PC A
+            kind: device
+            position: { x: 10, y: 50 }
+
+          - id: sw1
+            label: SW1
+            kind: device
+            position: { x: 35, y: 50 }
+
+          - id: sw2
+            label: SW2
+            kind: device
+            position: { x: 65, y: 50 }
+
+          - id: pc-b
+            label: PC B
+            kind: device
+            position: { x: 90, y: 50 }
+
+        connections:
+          - from: pc-a
+            to: sw1
+
+          - from: sw1
+            to: sw2
+
+          - from: sw2
+            to: pc-b
+
+        steps:
+
+          - title: "1. PC A est connecté à un port Access"
+            description: "Le port de SW1 auquel PC A est connecté appartient au VLAN 10."
+            active: [pc-a, sw1]
+            panel: "PC A → Access → VLAN 10"
+
+          - title: "2. PC A envoie une trame"
+            description: "PC A envoie une trame Ethernet classique. Dans ce scénario, le PC n'ajoute pas lui-même de tag 802.1Q."
+            active: [pc-a, sw1]
+            panel: "Trame non taguée | VLAN associé par le port Access"
+            packets:
+              - from: pc-a
+                to: sw1
+
+          - title: "3. SW1 associe la trame au VLAN 10"
+            description: "SW1 reçoit la trame sur son port Access VLAN 10. Il sait donc que cette trame appartient au VLAN 10."
+            active: [sw1]
+            panel: "VLAN = 10"
+
+          - title: "4. SW1 envoie la trame sur le trunk"
+            description: "La liaison entre SW1 et SW2 est un trunk. Pour transporter le VLAN 10 sur cette liaison, la trame est identifiée par un tag 802.1Q."
+            active: [sw1, sw2]
+            panel: "Trunk → 802.1Q → VLAN ID = 10"
+            packets:
+              - from: sw1
+                to: sw2
+
+          - title: "5. SW2 lit le VLAN ID"
+            description: "SW2 reçoit la trame taguée et lit le VLAN ID. Il sait que la trame appartient au VLAN 10."
+            active: [sw2]
+            panel: "VLAN ID = 10"
+
+          - title: "6. SW2 transmet vers le port Access"
+            description: "PC B est connecté à un port Access appartenant au VLAN 10. Le switch transmet la trame vers ce port."
+            active: [sw2, pc-b]
+            panel: "VLAN 10 → Port Access"
+            packets:
+              - from: sw2
+                to: pc-b
+
+          - title: "7. PC B reçoit une trame Ethernet classique"
+            description: "Sur le port Access, le PC reçoit normalement une trame Ethernet sans le tag 802.1Q ajouté pour le transport sur le trunk."
+            active: [pc-b]
+            panel: "PC B ← trame Ethernet non taguée"
+
+      - type: text
+        title: Ce qu'il faut observer
+        content: |
+          Le VLAN est associé à la trame dès son entrée dans le switch par le port Access.
+
+          Sur le trunk, le VLAN est transporté grâce au **tag 802.1Q**.
+
+          Lorsqu'elle sort vers le PC sur un port Access, la trame est normalement envoyée sans tag.
+
+          On peut donc retenir :
+
+          **PC → Access → VLAN**
+
+          **Trunk → tag 802.1Q**
+
+          **Access → PC**
+
+  # ============================================================
+  # 06 - EXERCICE
+  # ============================================================
+
+  - id: exercice
+    title: Exercice — Access ou Trunk ?
+    kicker: "06 / Mise en pratique"
+    blocks:
+
+      - type: text
+        title: Situation
+        content: |
+          On possède deux switches :
+
+          **SW1**
+
+          Port 1 → PC A → VLAN 10
+          Port 2 → PC B → VLAN 20
+          Port 24 → SW2
+
+          **SW2**
+
+          Port 1 → PC C → VLAN 10
+          Port 2 → PC D → VLAN 20
+          Port 24 → SW1
+
+          **Questions :**
+
+          1. Quel type de port faut-il utiliser pour PC A ?
+          2. Quel type de port faut-il utiliser entre SW1 et SW2 ?
+          3. Pourquoi le lien entre SW1 et SW2 doit-il pouvoir transporter plusieurs VLAN ?
+          4. Quel VLAN ID sera utilisé pour une trame du VLAN 10 sur le trunk ?
+
+      - type: text
+        title: Correction
+        content: |
+          **1. PC A**
+
+          PC A est connecté à un seul VLAN.
+
+          → **Port Access**
+
+          → VLAN 10
+
+          **2. SW1 ↔ SW2**
+
+          Cette liaison doit transporter le VLAN 10 et le VLAN 20.
+
+          → **Port Trunk**
+
+          **3. Pourquoi un trunk ?**
+
+          Parce qu'une seule liaison physique doit transporter plusieurs VLAN.
+
+          Le trunk permet de distinguer les trames grâce au tag 802.1Q.
+
+          **4. VLAN 10**
+
+          Une trame du VLAN 10 transportée sur le trunk porte :
+
+          **VLAN ID = 10**
+
+  # ============================================================
+  # 07 - SYNTHÈSE
+  # ============================================================
+
+  - id: conclusion
+    title: À retenir
+    kicker: "07 / Synthèse"
+    blocks:
+
+      - type: text
+        title: Le repère simple
+        content: |
+          **VLAN**
+
+          → partition logique du réseau
+          → chaque VLAN est un domaine de broadcast
+
+          **802.1Q**
+
+          → mécanisme permettant d'identifier le VLAN dans une trame Ethernet
+
+          **VLAN ID**
+
+          → identifie le VLAN auquel appartient la trame
+
+          **Access**
+
+          → généralement un seul VLAN
+          → utilisé vers les équipements terminaux
+          → trames généralement non taguées côté terminal
+
+          **Trunk**
+
+          → plusieurs VLAN sur une même liaison
+          → utilise généralement 802.1Q pour identifier les VLAN
+
+          **Native VLAN**
+
+          → VLAN associé aux trames non taguées sur un trunk
+
+      - type: text
+        title: Le chemin à mémoriser
+        content: |
+          Pour un PC connecté à un switch :
+
+          **PC**
+
+          ↓
+
+          **Port Access**
+
+          ↓
+
+          **VLAN**
+
+          ↓
+
+          **Port Trunk**
+
+          ↓
+
+          **Tag 802.1Q + VLAN ID**
+
+          ↓
+
+          **Autre switch**
+
+          ↓
+
+          **Port Access**
+
+          ↓
+
+          **PC**
+
+      - type: text
+        title: La distinction fondamentale
+        content: |
+          Ne pas confondre :
+
+          **VLAN**
+          → séparation logique du réseau
+
+          **802.1Q**
+          → mécanisme utilisé pour transporter l'identification du VLAN dans une trame
+
+          **Access**
+          → connexion d'un équipement à un VLAN
+
+          **Trunk**
+          → transport de plusieurs VLAN sur une même liaison
+
+          **Native VLAN**
+          → VLAN associé aux trames non taguées sur un trunk

@@ -1,0 +1,605 @@
+id: spanning-tree-protocol
+slug: spanning-tree-protocol
+title: Spanning Tree Protocol (STP)
+description: Comprendre comment STP évite les boucles de niveau 2 en élisant un Root Bridge et en plaçant certains ports en état bloqué.
+level: Débutant
+duration: 10 min
+themeId: ethernet
+color: teal
+
+objectives:
+  - Comprendre pourquoi les boucles de niveau 2 sont dangereuses
+  - Comprendre le rôle du Spanning Tree Protocol
+  - Savoir ce qu'est un Root Bridge
+  - Comprendre le rôle des BPDU
+  - Savoir distinguer Root Port, Designated Port et Blocked Port
+  - Comprendre comment le Root Bridge est élu
+  - Savoir déterminer les ports bloqués sur une topologie simple
+
+sections:
+
+  # ============================================================
+  # 01 - POURQUOI STP ?
+  # ============================================================
+
+  - id: pourquoi-stp
+    title: Pourquoi avoir besoin de Spanning Tree ?
+    kicker: "01 / Fondations"
+    blocks:
+
+      - type: text
+        title: Le problème des boucles
+        content: |
+          Les switches permettent de créer des chemins redondants afin d'améliorer la disponibilité du réseau.
+
+          Cependant, plusieurs chemins entre les mêmes switches peuvent créer une **boucle de niveau 2**.
+
+      - type: code
+        code: |
+          Switch A ─── Switch B
+             │            │
+             └── Switch C ┘
+
+      - type: text
+        content: |
+          Les trois switches forment un triangle.
+
+          Si une trame doit être diffusée sur le réseau, elle peut potentiellement tourner indéfiniment dans cette boucle.
+
+      - type: text
+        title: Pourquoi une boucle est dangereuse ?
+        content: |
+          Ethernet ne possède pas de mécanisme équivalent au TTL d'IP permettant de faire disparaître automatiquement une trame qui tourne en boucle.
+
+          Une boucle de niveau 2 peut provoquer :
+
+          - des **broadcast storms**
+          - des trames dupliquées
+          - une saturation des liens
+          - des instabilités dans les tables MAC des switches
+
+          Une simple boucle physique peut donc rendre un réseau inutilisable.
+
+      - type: text
+        title: |
+          La solution : STP
+        content: |
+          Le **Spanning Tree Protocol (STP)** permet de conserver les chemins redondants tout en empêchant les boucles de niveau 2.
+
+          STP construit logiquement une topologie sans boucle appelée **arbre couvrant** (*Spanning Tree*).
+
+          Les liens redondants ne sont pas supprimés physiquement : certains ports sont placés dans un état **bloqué**.
+
+          Si un chemin actif tombe, STP peut réactiver un chemin auparavant bloqué.
+
+          **Redondance physique + absence de boucle logique**
+
+      - type: demo
+        title: "Pourquoi STP est nécessaire ?"
+        intro: "Une boucle physique entre des switches peut provoquer une boucle de trames. STP conserve la redondance mais bloque un chemin pour supprimer la boucle logique."
+
+        nodes:
+          - id: pc-a
+            label: PC A
+            kind: device
+            position: { x: 30, y: 20 }
+
+          - id: sw1
+            label: SW1
+            kind: device
+            position: { x: 30, y: 70 }
+
+          - id: sw2
+            label: SW2
+            kind: device
+            position: { x: 60, y: 20 }
+
+          - id: sw3
+            label: SW3
+            kind: device
+            position: { x: 60, y: 70 }
+
+        connections:
+          - from: pc-a
+            to: sw1
+
+          - from: sw1
+            to: sw2
+
+          - from: sw2
+            to: sw3
+
+          - from: sw3
+            to: sw1
+
+        steps:
+
+          - title: "1. Une topologie redondante"
+            description: "Les trois switches sont reliés en triangle. Il existe donc plusieurs chemins entre les switches."
+            active: [sw1, sw2, sw3]
+            panel: "3 switches + 3 liens = une boucle physique"
+
+          - title: "2. PC A envoie un broadcast"
+            description: "PC A envoie une trame de broadcast. Le switch SW1 doit la diffuser sur ses autres ports."
+            active: [pc-a, sw1]
+            panel: "Broadcast : FF:FF:FF:FF:FF:FF"
+            packets:
+              - from: pc-a
+                to: sw1
+
+          - title: "3. SW1 diffuse la trame"
+            description: "SW1 ne connaît pas de destination précise pour un broadcast. Il transmet donc la trame vers SW2 et SW3."
+            active: [sw1, sw2, sw3]
+            panel: "SW1 → diffusion vers SW2 et SW3"
+            packets:
+              - from: sw1
+                to: sw2
+              - from: sw1
+                to: sw3
+
+          - title: "4. Sans STP : la boucle commence"
+            description: "SW2 et SW3 reçoivent la trame et peuvent à leur tour la diffuser sur leurs autres ports. La trame peut alors revenir vers un switch déjà traversé."
+            active: [sw1, sw2, sw3]
+            panel: "La trame peut tourner dans la boucle"
+            packets:
+              - from: sw2
+                to: sw3
+              - from: sw3
+                to: sw1
+
+          - title: "5. Les trames se multiplient"
+            description: "Chaque switch peut recevoir puis rediffuser les copies reçues. Les broadcasts peuvent ainsi circuler continuellement dans la boucle."
+            active: [sw1, sw2, sw3]
+            panel: "Broadcast Storm"
+            packets:
+              - from: sw1
+                to: sw2
+              - from: sw1
+                to: sw3
+              - from: sw2
+                to: sw1
+              - from: sw2
+                to: sw3
+              - from: sw3
+                to: sw1
+              - from: sw3
+                to: sw2
+
+          - title: "6. Le problème"
+            description: "Une boucle de niveau 2 peut provoquer des trames dupliquées, des broadcast storms et une saturation du réseau. Il faut conserver la redondance sans laisser les trames boucler."
+            active: [sw1, sw2, sw3]
+            panel: "BOUCLE DE NIVEAU 2 → réseau instable"
+
+          - title: "7. STP entre en action"
+            description: "STP détecte la topologie redondante et construit un arbre logique sans boucle. Un des chemins redondants est placé en état bloqué."
+            active: [sw1, sw2, sw3]
+            panel: "STP → suppression de la boucle logique"
+
+          - title: "8. Un port est bloqué"
+            description: "Le lien physique entre SW2 et SW3 existe toujours, mais un des ports est bloqué. Les trames ne peuvent donc plus utiliser ce lien comme chemin actif."
+            active: [sw1, sw2, sw3]
+            panel: "SW2 ───── X ───── SW3"
+
+          - title: "9. Le broadcast peut maintenant circuler sans boucle"
+            description: "PC A envoie à nouveau un broadcast. La trame est diffusée sur la topologie active, mais le chemin bloqué empêche la formation d'une boucle."
+            active: [pc-a, sw1, sw2, sw3]
+            panel: "Broadcast contrôlé par STP"
+            packetGroups:
+              -
+                - from: pc-a
+                  to: sw1
+              -
+                - from: sw1
+                  to: sw2
+                - from: sw1
+                  to: sw3
+
+          - title: "10. Résultat"
+            description: "STP conserve les liens physiques redondants tout en empêchant les boucles logiques. Si un lien actif tombe, le chemin redondant peut être utilisé."
+            active: [sw1, sw2, sw3]
+            panel: "Redondance physique + topologie logique sans boucle"
+
+  # ============================================================
+  # 02 - BPDU
+  # ============================================================
+
+  - id: bpdu
+    title: Les BPDU
+    kicker: "02 / Échange d'informations"
+    blocks:
+
+      - type: text
+        title: Qu'est-ce qu'une BPDU ?
+        content: |
+          Les **BPDU** (*Bridge Protocol Data Units*) sont des trames utilisées par les switches pour échanger les informations nécessaires au fonctionnement de STP.
+
+          Les switches utilisent notamment les BPDU pour déterminer :
+
+          - quel switch doit devenir le **Root Bridge**
+          - le meilleur chemin vers le Root Bridge
+          - quels ports doivent être utilisés
+          - quels ports doivent être bloqués
+
+      - type: text
+        title: Les informations importantes
+        content: |
+          Une BPDU contient notamment des informations permettant d'identifier le bridge qui l'émet et de comparer les chemins vers le Root Bridge.
+
+          Parmi les informations importantes :
+
+          - **Bridge ID**
+          - **Root Bridge ID**
+          - **Root Path Cost**
+          - informations relatives au port
+
+          Les switches comparent ces informations afin de construire une topologie sans boucle.
+
+      - type: text
+        title: Le principe
+        content: |
+          Chaque switch commence par considérer qu'il pourrait être le Root Bridge.
+          Il échange ensuite des BPDU avec les autres switches.
+          Les informations reçues sont comparées.
+
+          Progressivement, tous les switches convergent vers le même Root Bridge et déterminent leur meilleur chemin pour l'atteindre.
+
+  # ============================================================
+  # 03 - ROOT BRIDGE
+  # ============================================================
+
+  - id: root-bridge
+    title: L'élection du Root Bridge
+    kicker: "03 / Élection"
+    blocks:
+
+      - type: text
+        title: Qu'est-ce que le Root Bridge ?
+        content: |
+          Le **Root Bridge** est le switch de référence de l'arbre STP.
+
+          Tous les autres switches déterminent leur meilleur chemin vers lui.
+
+          Il n'a pas de **Root Port**, puisqu'il est lui-même la racine de l'arbre.
+
+      - type: text
+        title: Comment le Root Bridge est-il élu ?
+        content: |
+          STP élit le switch possédant le **Bridge ID le plus faible**.
+          *("C'est toujours celui qui a la plus petite qui gagne")*
+
+          Le Bridge ID est notamment composé de :
+
+          - une **priorité STP**
+          - une adresse **MAC**
+
+          La comparaison se fait donc en priorité sur la priorité STP.
+
+          Si plusieurs switches ont la même priorité, l'adresse MAC permet de les départager.
+
+          **Plus petit Bridge ID = Root Bridge**
+
+      - type: text
+        title: Exemple d'élection
+        content: |
+          Trois switches sont présents :
+
+      - type: code
+        code: |
+          Switch A
+          Priority = 32768
+          MAC = AA:AA:AA:AA:AA:AA
+
+      - type: code
+        code: |
+          Switch B
+          Priority = 32768
+          MAC = BB:BB:BB:BB:BB:BB
+
+      - type: code
+        code: |
+          Switch C
+          Priority = 32768
+          MAC = CC:CC:CC:CC:CC:CC
+
+      - type: text
+        content: |
+          Les priorités sont identiques.
+
+          On compare donc les adresses MAC :
+
+          AA < BB < CC
+
+          Le Switch A possède le plus petit Bridge ID.
+
+          **Switch A devient le Root Bridge.**
+
+      - type: text
+        title: Attention à la priorité
+        content: |
+          Un switch avec une adresse MAC plus faible ne devient pas nécessairement Root Bridge.
+
+          La priorité est comparée avant la MAC.
+
+          Exemple :
+
+      - type: code
+        code: |
+          Switch A
+          Priority = 32768
+          MAC = AA:AA:AA:AA:AA:AA
+
+      - type: code
+        code: |
+          Switch B
+          Priority = 4096
+          MAC = FF:FF:FF:FF:FF:FF
+
+      - type: text
+        content: |
+          Malgré sa MAC plus élevée, le Switch B possède une priorité plus faible.
+
+          **Switch B devient donc Root Bridge.**
+
+  # ============================================================
+  # 04 - DÉMO : TRIANGLE
+  # ============================================================
+
+  - id: demo-triangle
+    title: Élection du Root Bridge sur un triangle
+    kicker: "04 / Animation"
+    blocks:
+
+      - type: demo
+        title: "Élection du Root Bridge"
+        intro: "Suivez l'échange des BPDU, l'élection du Root Bridge et le blocage du lien redondant."
+
+        nodes:
+          - id: sw1
+            label: SW1
+            kind: device
+            position: { x: 50, y: 20 }
+
+          - id: sw2
+            label: SW2
+            kind: device
+            position: { x: 20, y: 75 }
+
+          - id: sw3
+            label: SW3
+            kind: device
+            position: { x: 80, y: 75 }
+
+        connections:
+          - from: sw1
+            to: sw2
+
+          - from: sw1
+            to: sw3
+
+          - from: sw2
+            to: sw3
+
+        steps:
+
+          - title: "1. Les switches échangent des BPDU"
+            description: "Au démarrage de STP, chaque switch considère qu'il pourrait être le Root Bridge. Les switches échangent des BPDU pour comparer leurs informations STP."
+            active: [sw1, sw2, sw3]
+            panel: "Échange des BPDU"
+            packets:
+              - from: sw1
+                to: sw2
+              - from: sw1
+                to: sw3
+              - from: sw2
+                to: sw1
+              - from: sw2
+                to: sw3
+              - from: sw3
+                to: sw1
+              - from: sw3
+                to: sw2
+
+          - title: "2. Comparaison des Bridge ID"
+            description: "Les switches comparent les Bridge ID reçus dans les BPDU. Le Bridge ID le plus faible est préféré."
+            active: [sw1, sw2, sw3]
+            panel: "SW1 = 10 | SW2 = 20 | SW3 = 30"
+            table:
+              headers: [Switch, Bridge ID, Statut]
+              rows:
+                - [SW1, 10, Candidat]
+                - [SW2, 20, Candidat]
+                - [SW3, 30, Candidat]
+
+          - title: "3. SW1 devient Root Bridge"
+            description: "SW1 possède le plus petit Bridge ID. Il est donc élu Root Bridge."
+            active: [sw1]
+            panel: "Root Bridge : SW1"
+            table:
+              headers: [Switch, Bridge ID, Rôle]
+              rows:
+                - [SW1, 10, Root Bridge]
+                - [SW2, 20, Non-root]
+                - [SW3, 30, Non-root]
+
+          - title: "4. SW2 choisit son Root Port"
+            description: "SW2 recherche son meilleur chemin vers le Root Bridge. Son lien direct vers SW1 possède le meilleur coût."
+            active: [sw1, sw2]
+            panel: "SW2 → Root Port → SW1"
+            packets:
+              - from: sw1
+                to: sw2
+
+          - title: "5. SW3 choisit son Root Port"
+            description: "SW3 recherche également son meilleur chemin vers le Root Bridge. Son lien direct vers SW1 possède le meilleur coût."
+            active: [sw1, sw3]
+            panel: "SW3 → Root Port → SW1"
+            packets:
+              - from: sw1
+                to: sw3
+
+          - title: "6. Le lien SW2 ↔ SW3 est redondant"
+            description: "SW2 et SW3 possèdent déjà chacun un chemin direct vers le Root Bridge. Le lien entre eux crée donc une boucle potentielle."
+            active: [sw2, sw3]
+            panel: "Lien redondant : SW2 ↔ SW3"
+
+          - title: "7. STP départage les deux ports"
+            description: "Les deux ports du segment SW2 ↔ SW3 sont comparés. SW2 possède le Bridge ID le plus faible et son port est donc préféré."
+            active: [sw2, sw3]
+            panel: "SW2 : Designated Port | SW3 : Alternate / Blocked Port"
+
+          - title: "8. La boucle est supprimée"
+            description: "Le port de SW3 vers SW2 est bloqué. Le lien physique existe toujours, mais les trames ne peuvent plus former une boucle logique."
+            active: [sw1, sw2, sw3]
+            panel: "Topologie logique sans boucle"
+
+  # ============================================================
+  # 07 - EXERCICE
+  # ============================================================
+
+  - id: exercice
+    title: Exercice — Trouver le Root Bridge et le port bloqué
+    kicker: "07 / Mise en pratique"
+    blocks:
+
+      - type: text
+        title: Topologie
+        content: |
+          On considère la topologie en triangle suivante :
+
+      - type: code
+        code: |
+          .
+                    SW1
+                   /   \
+                  /     \
+                SW2 ─── SW3
+
+      - type: text
+        content: |
+          Les Bridge ID sont :
+
+      - type: code
+        code: |
+          SW1 = 10
+          SW2 = 20
+          SW3 = 30
+
+      - type: text
+        content: |
+          Tous les liens ont le même coût.
+
+          **Questions :**
+
+          1. Quel switch devient Root Bridge ?
+          2. Quel est le Root Port de SW2 ?
+          3. Quel est le Root Port de SW3 ?
+          4. Que se passe-t-il sur le lien SW2 ↔ SW3 ?
+          5. Quel port doit être bloqué pour supprimer la boucle ?
+
+      - type: text
+        title: Correction
+        content: |
+          **1. Root Bridge**
+
+          SW1 possède le plus petit Bridge ID :
+
+          SW1 = 10
+
+          **SW1 devient Root Bridge.**
+
+          **2. Root Port de SW2**
+
+          SW2 possède un lien direct vers SW1.
+
+          Ce chemin possède le coût le plus faible.
+
+          **Le port de SW2 connecté à SW1 devient son Root Port.**
+
+          **3. Root Port de SW3**
+
+          SW3 possède également un lien direct vers SW1.
+
+          **Le port de SW3 connecté à SW1 devient son Root Port.**
+
+          **4. Lien SW2 ↔ SW3**
+
+          Ce lien est redondant.
+
+          Les deux switches ont déjà un chemin vers le Root Bridge par SW1.
+
+          Le lien SW2 ↔ SW3 ne doit donc pas être actif des deux côtés.
+
+          **5. Port bloqué**
+
+          Les informations STP permettent de départager SW2 et SW3.
+
+          Comme SW2 possède le Bridge ID le plus faible, son port est préféré sur ce segment.
+
+          Le port de SW3 connecté à SW2 devient donc le port non désigné et est placé en **blocking**.
+
+          Résultat :
+
+                    SW1
+                   /   \
+                  /     \
+                SW2     SW3
+                       X
+                  port bloqué
+
+          La boucle physique existe toujours, mais la boucle logique est supprimée.
+
+  # ============================================================
+  # 08 - SYNTHÈSE
+  # ============================================================
+
+  - id: conclusion
+    title: À retenir
+    kicker: "08 / Synthèse"
+    blocks:
+
+      - type: text
+        title: Le repère simple
+        content: |
+          **STP → empêche les boucles de couche 2**
+
+          **BPDU → permet aux switches d'échanger les informations STP**
+
+          **Root Bridge → switch de référence de l'arbre**
+
+          **Root Port → meilleur chemin d'un switch non-root vers le Root Bridge**
+
+          **Designated Port → meilleur port pour un segment donné**
+
+          **Blocked / Alternate Port → chemin redondant empêché de transmettre**
+
+      - type: text
+        title: Élection du Root Bridge
+        content: |
+          Le Root Bridge est le switch possédant le **plus petit Bridge ID**.
+
+          Le Bridge ID dépend notamment de :
+
+          **Priority → puis MAC**
+
+          Une priorité plus faible est donc préférée.
+
+          Si les priorités sont identiques, la MAC la plus faible permet de départager les switches.
+
+      - type: text
+        title: La logique complète
+        content: |
+          On peut résumer le fonctionnement de STP en quatre étapes :
+
+          **1. Élection du Root Bridge**
+          → plus petit Bridge ID
+
+          **2. Calcul du meilleur chemin vers le Root**
+          → plus petit Root Path Cost
+
+          **3. Sélection des Root Ports et Designated Ports**
+          → les meilleurs chemins sont conservés
+
+          **4. Blocage des chemins redondants**
+          → les boucles de couche 2 sont supprimées
+
+          STP permet ainsi de conserver la **redondance physique** tout en garantissant une **topologie logique sans boucle**.

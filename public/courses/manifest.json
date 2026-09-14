@@ -1,0 +1,361 @@
+{
+  "themes": [
+    {
+      "id": "bases",
+      "title": "Fondamentaux des réseaux",
+      "eyebrow": "Parcours essentiel",
+      "description": "Les concepts qui permettent de comprendre ce qui circule entre deux machines.",
+      "accent": "coral",
+      "courseIds": [
+        "osi",
+        "tcp-ip",
+        "lan-man-wan",
+        "standards-iso-ieee",
+        "equipements-reseau"
+      ]
+    },
+    {
+      "id": "ethernet",
+      "title": "Ethernet",
+      "eyebrow": "Parcours essentiel",
+      "description": "Comprendre l'origine du réseau.",
+      "accent": "blue",
+      "courseIds": [
+        "csma-cd",
+        "trame-mac",
+        "domaine-collision-broadcast",
+        "spanning-tree-protocol",
+        "ethernet-training"
+      ]
+    },
+    {
+      "id": "VLAN",
+      "title": "VLAN",
+      "eyebrow": "Bientôt disponible",
+      "description": "",
+      "accent": "green",
+      "courseIds": [
+        "vlan-discovery",
+        "vlan-frame"
+      ]
+    },
+    {
+      "id": "ARP",
+      "title": "Adress Resolution Protocol",
+      "eyebrow": "Bientôt disponible",
+      "description": "",
+      "accent": "yellow",
+      "courseIds": [
+        "arp-frame",
+        "arp-table",
+        "arp-routing"
+      ]
+    },
+    {
+      "id": "IPv4",
+      "title": "IPv4",
+      "eyebrow": "Bientôt disponible",
+      "description": "",
+      "accent": "teal",
+      "courseIds": [
+        "ipv4-frame",
+        "ipv4-subnetting",
+        "route-aggregation",
+        "ipv4-fragmentation",
+        "icmp",
+        "tcp-udp",
+        "nat-pat",
+        "dhcp",
+        "dns",
+        "ip-exercises"
+      ]
+    },
+    {
+      "id": "IPv6",
+      "title": "IPv6",
+      "eyebrow": "Bientôt disponible",
+      "description": "",
+      "accent": "green",
+      "courseIds": []
+    }
+  ],
+  "courses": [
+    {
+      "id": "osi",
+      "slug": "osi",
+      "title": "Le modèle OSI",
+      "description": "Comprendre pourquoi les réseaux sont organisés en couches et découvrir le rôle de chacune des 7 couches du modèle OSI.",
+      "level": "Débutant",
+      "duration": "20 min",
+      "themeId": "bases",
+      "color": "blue"
+    },
+    {
+      "id": "tcp-ip",
+      "slug": "tcp-ip",
+      "title": "Le modèle TCP/IP",
+      "description": "Découvrir le modèle TCP/IP, ses 4 couches et les protocoles associés, et comprendre pourquoi c'est ce modèle qui fait réellement fonctionner Internet.",
+      "level": "Débutant",
+      "duration": "20 min",
+      "themeId": "bases",
+      "color": "green"
+    },
+    {
+      "id": "lan-man-wan",
+      "slug": "lan-man-wan",
+      "title": "LAN, MAN, WAN",
+      "description": "Distinguer les réseaux selon leur échelle géographique et comprendre qui gère quoi entre LAN, MAN et WAN.",
+      "level": "Débutant",
+      "duration": "10 min",
+      "themeId": "bases",
+      "color": "blue"
+    },
+    {
+      "id": "standards-iso-ieee",
+      "slug": "standards-iso-ieee",
+      "title": "Standards ISO et IEEE",
+      "description": "Comprendre à quoi servent les organismes de normalisation ISO et IEEE dans les réseaux, et le rôle des standards IEEE 802.x.",
+      "level": "Débutant",
+      "duration": "5 min",
+      "themeId": "bases",
+      "color": "blue"
+    },
+    {
+      "id": "equipements-reseau",
+      "slug": "equipements-reseau",
+      "title": "Équipements réseau — Hub, Bridge, Switch et Routeur",
+      "description": "Comprendre le rôle et les différences entre un hub, un bridge, un switch et un routeur, ainsi que les couches OSI et les adresses utilisées.",
+      "level": "Débutant",
+      "duration": "40 min",
+      "themeId": "bases",
+      "color": "blue"
+    },
+    {
+      "id": "csma-cd",
+      "slug": "csma-cd",
+      "title": "CSMA/CD",
+      "description": "Découvrir le protocole CSMA/CD et comprendre comment il permet de gérer les collisions sur un réseau Ethernet.",
+      "level": "Débutant",
+      "duration": "15 min",
+      "themeId": "ethernet",
+      "color": "yellow"
+    },
+    {
+      "id": "trame-mac",
+      "slug": "trame-mac",
+      "title": "Trame Ethernet et adresses MAC",
+      "description": "Comprendre ce qu'est une trame Ethernet, son rôle dans la communication locale et le fonctionnement des adresses MAC.",
+      "level": "Débutant",
+      "duration": "10 min",
+      "themeId": "ethernet",
+      "color": "blue"
+    },
+    {
+      "id": "domaine-collision-broadcast",
+      "slug": "domaine-collision-broadcast",
+      "title": "Domaines de collision et de broadcast",
+      "description": "Comprendre ce qu'est un domaine de collision et un domaine de broadcast, et comment les équipements réseau les gèrent.",
+      "level": "Débutant",
+      "duration": "10 min",
+      "themeId": "ethernet",
+      "color": "blue"
+    },
+    {
+      "id": "spanning-tree-protocol",
+      "slug": "spanning-tree-protocol",
+      "title": "Spanning Tree Protocol (STP)",
+      "description": "Comprendre comment STP évite les boucles de niveau 2 en élisant un Root Bridge et en plaçant certains ports en état bloqué.",
+      "level": "Débutant",
+      "duration": "10 min",
+      "themeId": "ethernet",
+      "color": "teal"
+    },
+    {
+      "id": "vlan-discovery",
+      "slug": "vlan-discovery",
+      "title": "Découverte des VLAN",
+      "description": "Comprendre le problème d'un réseau unique et découvrir comment les VLAN permettent de partitionner logiquement un réseau en plusieurs domaines de broadcast.",
+      "level": "Débutant",
+      "duration": "8 min",
+      "themeId": "VLAN",
+      "color": "blue"
+    },
+    {
+      "id": "vlan-frame",
+      "slug": "vlan-frame",
+      "title": "Trame VLAN — 802.1Q",
+      "description": "Comprendre comment les VLAN sont identifiés dans les trames Ethernet grâce au tag IEEE 802.1Q, et distinguer les ports access, trunk et le native VLAN.",
+      "level": "Débutant",
+      "duration": "10 min",
+      "themeId": "VLAN",
+      "color": "teal"
+    },
+    {
+      "id": "ethernet-training",
+      "slug": "ethernet-training",
+      "title": "Training — Ethernet",
+      "description": "Exercice de synthèse permettant de mobiliser les notions de trame Ethernet, adresses MAC, table MAC, domaines de collision et de broadcast, ainsi que les couches du modèle OSI.",
+      "level": "Débutant",
+      "duration": "15 min",
+      "themeId": "ethernet",
+      "color": "blue"
+    },
+    {
+      "id": "arp-frame",
+      "slug": "arp-frame",
+      "title": "Trame ARP",
+      "description": "Comprendre à quoi sert ARP et comment une requête et une réponse ARP permettent d'associer une adresse IP à une adresse MAC.",
+      "level": "Débutant",
+      "duration": "8 min",
+      "themeId": "ARP",
+      "color": "blue"
+    },
+    {
+      "id": "arp-table",
+      "slug": "arp-table",
+      "title": "Tables ARP",
+      "description": "Comprendre comment une table ARP se construit progressivement à partir des échanges ARP.",
+      "level": "Débutant",
+      "duration": "8 min",
+      "themeId": "ARP",
+      "color": "teal"
+    },
+    {
+      "id": "arp-routing",
+      "slug": "arp-routing",
+      "title": "ARP et routage",
+      "description": "Comprendre le rôle d'ARP lorsqu'une destination IP se trouve hors du réseau local et pourquoi la machine résout la MAC du next-hop plutôt que celle de la destination finale.",
+      "level": "Débutant",
+      "duration": "8 min",
+      "themeId": "ARP",
+      "color": "coral"
+    },
+    {
+      "id": "ipv4-frame",
+      "slug": "ipv4-frame",
+      "title": "IPv4 et trame IP",
+      "description": "Comprendre les adresses IPv4, leur notation et la structure d'un paquet IPv4.",
+      "level": "Débutant",
+      "duration": "10 min",
+      "themeId": "IPv4",
+      "color": "blue"
+    },
+    {
+      "id": "ipv4-subnetting",
+      "slug": "ipv4-subnetting",
+      "title": "Masque, CIDR et classes IPv4",
+      "description": "Comprendre les masques IPv4, la notation CIDR, les classes historiques et calculer réseau, broadcast et nombre d'hôtes.",
+      "level": "Débutant",
+      "duration": "15 min",
+      "themeId": "IPv4",
+      "color": "teal"
+    },
+    {
+      "id": "route-aggregation",
+      "slug": "route-aggregation",
+      "title": "Agrégation de routes",
+      "description": "Comprendre comment plusieurs réseaux peuvent être regroupés dans une route plus générale.",
+      "level": "Débutant",
+      "duration": "7 min",
+      "themeId": "IPv4",
+      "color": "green"
+    },
+    {
+      "id": "ipv4-fragmentation",
+      "slug": "ipv4-fragmentation",
+      "title": "Fragmentation IPv4",
+      "description": "Comprendre la MTU et le mécanisme de fragmentation IPv4 avec les flags et le fragment offset.",
+      "level": "Débutant",
+      "duration": "10 min",
+      "themeId": "IPv4",
+      "color": "coral"
+    },
+    {
+      "id": "icmp",
+      "slug": "icmp",
+      "title": "ICMP",
+      "description": "Comprendre le protocole ICMP, la structure de ses messages, son rôle dans le diagnostic réseau et le fonctionnement de ping.",
+      "level": "Débutant",
+      "duration": "10 min",
+      "themeId": "IPv4",
+      "color": "yellow"
+    },
+    {
+      "id": "tcp-udp",
+      "slug": "tcp-udp",
+      "title": "TCP et UDP",
+      "description": "Comprendre les ports, le fonctionnement de TCP et UDP et leurs différences fondamentales.",
+      "level": "Débutant",
+      "duration": "10 min",
+      "themeId": "IPv4",
+      "color": "blue"
+    },
+    {
+      "id": "nat-pat",
+      "slug": "nat-pat",
+      "title": "NAT et PAT",
+      "description": "Comprendre pourquoi NAT existe et comment NAT statique, NAT dynamique et PAT traduisent les adresses.",
+      "level": "Débutant",
+      "duration": "10 min",
+      "themeId": "IPv4",
+      "color": "coral"
+    },
+    {
+      "id": "dhcp",
+      "slug": "dhcp",
+      "title": "DHCP",
+      "description": "Comprendre comment DHCP attribue automatiquement une configuration réseau à une machine.",
+      "level": "Débutant",
+      "duration": "10 min",
+      "themeId": "IPv4",
+      "color": "green"
+    },
+    {
+      "id": "dns",
+      "slug": "dns",
+      "title": "DNS",
+      "description": "Comprendre comment DNS traduit les noms de domaine en adresses IP et comment fonctionne sa hiérarchie.",
+      "level": "Débutant",
+      "duration": "10 min",
+      "themeId": "IPv4",
+      "color": "teal"
+    },
+    {
+      "id": "ip-exercises",
+      "slug": "ip-exercises",
+      "title": "Exercices IPv4, DHCP et DNS",
+      "description": "Série d'exercices transversaux pour réviser l'adressage IPv4, les sous-réseaux, les paquets IP, DHCP et DNS.",
+      "level": "Débutant",
+      "duration": "20 min",
+      "themeId": "IPv4",
+      "color": "coral"
+    }
+  ],
+  "courseFiles": {
+    "arp-frame": "/courses/arp/arp-frame/course.yaml",
+    "arp-routing": "/courses/arp/arp-routing/course.yaml",
+    "arp-table": "/courses/arp/arp-table/course.yaml",
+    "equipements-reseau": "/courses/bases/equipements-reseau/course.yaml",
+    "lan-man-wan": "/courses/bases/lan-man-wan/course.yaml",
+    "osi": "/courses/bases/modele-osi/course.yaml",
+    "standards-iso-ieee": "/courses/bases/standards-iso-ieee/course.yaml",
+    "tcp-ip": "/courses/bases/tcp-ip/course.yaml",
+    "csma-cd": "/courses/ethernet/csma-cd/course.yaml",
+    "domaine-collision-broadcast": "/courses/ethernet/domaine-collision-broadcast/course.yaml",
+    "ethernet-training": "/courses/ethernet/ethernet-training/course.yaml",
+    "spanning-tree-protocol": "/courses/ethernet/spanning-tree-protocol/course.yaml",
+    "trame-mac": "/courses/ethernet/trame-mac/course.yaml",
+    "dhcp": "/courses/ipv4/dhcp/course.yaml",
+    "dns": "/courses/ipv4/dns/course.yaml",
+    "icmp": "/courses/ipv4/icmp/course.yaml",
+    "ip-exercises": "/courses/ipv4/ip-exercises/course.yaml",
+    "ipv4-fragmentation": "/courses/ipv4/ipv4-fragmentation/course.yaml",
+    "ipv4-frame": "/courses/ipv4/ipv4-frame/course.yaml",
+    "ipv4-subnetting": "/courses/ipv4/ipv4-subnetting/course.yaml",
+    "nat-pat": "/courses/ipv4/nat-pat/course.yaml",
+    "route-aggregation": "/courses/ipv4/route-aggregation/course.yaml",
+    "tcp-udp": "/courses/ipv4/tcp-udp/course.yaml",
+    "vlan-discovery": "/courses/vlan/vlan-discovery/course.yaml",
+    "vlan-frame": "/courses/vlan/vlan-frame/course.yaml"
+  }
+}

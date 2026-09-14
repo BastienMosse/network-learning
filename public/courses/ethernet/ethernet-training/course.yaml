@@ -1,0 +1,140 @@
+id: ethernet-training
+slug: ethernet-training
+title: Training — Ethernet
+description: Exercice de synthèse permettant de mobiliser les notions de trame Ethernet, adresses MAC, table MAC, domaines de collision et de broadcast, ainsi que les couches du modèle OSI.
+level: Débutant
+duration: 15 min
+themeId: ethernet
+color: blue
+
+objectives:
+  - Identifier les domaines de collision dans une topologie
+  - Identifier les domaines de broadcast dans une topologie
+  - Construire une table MAC à partir de trames reçues par un switch
+  - Identifier la couche OSI principale de chaque équipement
+  - Distinguer les rôles du hub, du bridge, du switch et du routeur
+  - Comprendre le chemin d'une trame Ethernet dans un réseau local
+
+sections:
+
+  # ============================================================
+  # 01 - EXO 1
+  # ============================================================
+
+  - id: exo-1
+    title: Exercice 1
+    kicker: "01 / Exercice 1"
+    blocks:
+
+      - type: text
+        title: Topologe
+        
+      - type: image
+        src: /courses/ethernet/ethernet-training/images/exo-1.png
+
+      - type: text
+        title: Question
+        content: |
+          - Donner le nombre de Domaines de Collision (CD) et le nombre de Domaines de Broadcast (BD)
+
+
+  # ============================================================
+  # 02 - EXO 1 - Solutions
+  # ============================================================
+
+  - id: exo-1-sol
+    title: Exercice 1 - Solution
+    kicker: "02 / Exercice 1 - Solution"
+    blocks:
+        
+      - type: image
+        title: Donner le nombre de Domaines de Collision (CD) et le nombre de Domaines de Broadcast (BD)
+        src: /courses/ethernet/ethernet-training/images/exo-1-sol.png
+
+
+  # ============================================================
+  # 03 - EXO 2
+  # ============================================================
+
+  - id: exo-2
+    title: Exercice 2
+    kicker: "03 / Exercice 2"
+    blocks:
+
+      - type: text
+        title: Topologe
+        
+      - type: image
+        src: /courses/ethernet/ethernet-training/images/exo-2.png
+
+      - type: text
+        title: Questions
+        content: |
+          - Determiner la couche OSI de chaque élément de l'architecture donnée.
+          - Donner le nombre de Domaines de Collision (CD)
+          - Donner le nombre de Domaines de Broadcast (BD)
+
+
+  # ============================================================
+  # 04 - EXO 2 - Solutions
+  # ============================================================
+
+  - id: exo-2-sol
+    title: Exercice 2 - Solution
+    kicker: "04 / Exercice 2 - Solution"
+    blocks:
+
+      - type: image
+        title: Determiner la couche OSI de chaque élément de l'architecture donnée.
+        src: /courses/ethernet/ethernet-training/images/exo-2-sol-1.png
+
+      - type: image
+        title: Donner le nombre de Domaines de Collision (CD)
+        src: /courses/ethernet/ethernet-training/images/exo-2-sol-2.png
+
+      - type: image
+        title: Donner le nombre de Domaines de Broadcast (BD)
+        src: /courses/ethernet/ethernet-training/images/exo-2-sol-3.png
+
+
+  # ============================================================
+  # 05 - EXO 3
+  # ============================================================
+
+  - id: exo-3
+    title: Exercice 3
+    kicker: "05 / Exercice 3"
+    blocks:
+
+      - type: text
+        title: Topologe
+        
+      - type: image
+        src: /courses/ethernet/ethernet-training/images/exo-3.png
+
+      - type: text
+        title: Questions
+        content: |
+          - Determiner la table d'adressage MAC de chacun des ports du Switch 4 (S4)
+
+
+  # ============================================================
+  # 06 - EXO 23- Solutions
+  # ============================================================
+
+  - id: exo-3-sol
+    title: Exercice 3 - Solution
+    kicker: "06 / Exercice 3 - Solution"
+    blocks:
+
+      - type: image
+        title: Determiner la table d'adressage MAC de chacun des ports du Switch 4 (S4) - Port 1
+        src: /courses/ethernet/ethernet-training/images/exo-3-sol-1.png
+
+      - type: image
+        title: Determiner la table d'adressage MAC de chacun des ports du Switch 4 (S4) - Port 2
+        src: /courses/ethernet/ethernet-training/images/exo-3-sol-2.png
+
+      - type: image
+        title: Determiner la table d'adressage MAC de chacun des ports du Switch 4 (S4) - Port 3
+        src: /courses/ethernet/ethernet-training/images/exo-3-sol-3.png

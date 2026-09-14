@@ -1,0 +1,139 @@
+id: tcp-ip
+slug: tcp-ip
+title: Le modèle TCP/IP
+description: Découvrir le modèle TCP/IP, ses 4 couches et les protocoles associés, et comprendre pourquoi c'est ce modèle qui fait réellement fonctionner Internet.
+level: Débutant
+duration: 20 min
+themeId: bases
+color: green
+objectives:
+  - Comprendre pourquoi le modèle TCP/IP est le modèle réellement utilisé sur Internet
+  - Identifier les 4 couches du modèle TCP/IP et le rôle de chacune
+  - Associer chaque couche aux protocoles qu'elle contient
+  - Suivre l'encapsulation des données à travers les 4 couches
+  - Comparer le modèle TCP/IP avec le modèle OSI
+sections:
+
+  # ============================================================
+  # 01 - INTRODUCTION
+  # ============================================================
+
+  - id: introduction
+    title: Un modèle né sur le terrain
+    kicker: 01 / Introduction
+    blocks:
+      - type: text
+        title: Un modèle pratique avant d'être théorique
+        content: |
+          Le modèle **TCP/IP** est antérieur au modèle OSI. Il a été développé dans les années 1970 pour les besoins d'ARPANET, l'ancêtre d'Internet, avant même que l'ISO ne publie le modèle OSI.
+          Contrairement à OSI, qui est un modèle théorique pensé pour décrire toutes les communications réseau possibles, TCP/IP a été conçu directement à partir de protocoles réels et fonctionnels.
+
+      - type: text
+        title: Le modèle réellement utilisé aujourd'hui
+        content: |
+          Sur Internet et dans la quasi-totalité des réseaux actuels, ce sont les protocoles du modèle TCP/IP qui circulent réellement : IP, TCP, UDP, HTTP, DNS...
+          Le modèle OSI reste surtout un outil pédagogique et un vocabulaire de référence pour parler des réseaux, mais ce sont les couches TCP/IP qui décrivent la pile réellement implémentée dans les systèmes d'exploitation et les équipements.
+
+  # ============================================================
+  # 02 - LES BASES
+  # ============================================================
+
+  - id: bases
+    title: Les 4 couches du modèle TCP/IP
+    kicker: 02 / Fondations
+    blocks:
+      - type: text
+        title: Vue d'ensemble
+        content: |
+          Le modèle TCP/IP regroupe les échanges réseau en 4 couches, de la plus basse à la plus haute :
+
+          - Couche Accès réseau : achemine les données sur le support physique local et gère l'adressage MAC — PDU : Trame / Bit
+          - Couche Internet : achemine les données d'un réseau à un autre grâce à l'adressage IP et au routage — PDU : Paquet
+          - Couche Transport : assure l'acheminement de bout en bout entre applications, avec ou sans garantie de livraison — PDU : Segment
+          - Couche Application : fournit les services utilisés directement par l'utilisateur ou les logiciels — PDU : Données
+
+      - type: mermaid
+        title: Les 4 couches et leurs PDU
+        width: 50%
+        height: 10%
+        diagram: |
+          flowchart TD
+              L4["Application"]
+              L3["Transport"]
+              L2["Internet"]
+              L1["Accès réseau"]
+              L4 --> L3 --> L2 --> L1
+
+      - type: text
+        title: Couche Accès réseau
+        content: |
+          La couche Accès réseau regroupe tout ce qui concerne la transmission locale des données : le format des trames, l'adressage **MAC** et la transmission des bits sur le support (cuivre, fibre, ondes).
+          Elle correspond aux couches Liaison de données et Physique du modèle OSI réunies en une seule couche. C'est ici qu'interviennent Ethernet et Wi-Fi.
+
+      - type: text
+        title: Couche Internet
+        content: |
+          La couche Internet s'appuie sur le protocole **IP** pour acheminer les paquets d'un réseau à un autre grâce à l'adressage logique et au routage.
+          Elle comprend aussi des protocoles complémentaires comme **ICMP**, utilisé pour signaler des erreurs ou tester l'accessibilité d'une machine (ping).
+
+      - type: text
+        title: Couche Transport
+        content: |
+          La couche Transport assure l'acheminement de bout en bout entre deux applications, identifiées par des **ports**.
+          Deux protocoles principaux : **TCP**, fiable et connecté (accusés de réception, retransmission), et **UDP**, plus rapide mais sans garantie de livraison.
+
+      - type: text
+        title: Couche Application
+        content: |
+          La couche Application regroupe les protocoles directement utilisés par les logiciels et les utilisateurs : **HTTP** (web), **DNS** (résolution de noms), **SMTP** (email), **FTP** (transfert de fichiers), entre autres.
+          Elle correspond aux couches Session, Présentation et Application du modèle OSI réunies en une seule couche.
+
+  # ============================================================
+  # 03 - TCP/IP vs OSI
+  # ============================================================
+
+  - id: tcpip-vs-osi
+    title: TCP/IP vs OSI
+    kicker: 03 / Comparaison
+    blocks:
+      - type: text
+        title: Un modèle simplifié
+        content: |
+          Le modèle TCP/IP regroupe en 4 couches ce qu'OSI décrit en 7, sans changer la logique générale de découpage :
+
+          - Couche Application (TCP/IP) → Application, Présentation, Session (OSI)
+          - Couche Transport (TCP/IP) → Transport (OSI)
+          - Couche Internet (TCP/IP) → Réseau (OSI)
+          - Couche Accès réseau (TCP/IP) → Liaison de données, Physique (OSI)
+
+      - type: text
+        title: Pourquoi deux modèles ?
+        content: |
+          OSI reste utile pour raisonner finement sur les responsabilités de chaque couche, notamment en formation ou pour isoler un problème lors d'un dépannage.
+          TCP/IP, plus proche de l'implémentation réelle, est le modèle à connaître pour comprendre concrètement comment circulent les données sur Internet.
+
+      - type: image
+        title: Les 4 couches TCP/IP et les 7 couches OSI
+        src: /courses/bases/tcp-ip/images/tcpip-vs-osi.png
+        alt: Comparaison des 4 couches du modèle TCP/IP avec les 7 couches du modèle OSI
+
+  # ============================================================
+  # 04 - SYNTHÈSE
+  # ============================================================
+
+  - id: conclusion
+    title: À retenir
+    kicker: 04 / Synthèse
+    blocks:
+      - type: text
+        title: Les 4 couches à retenir
+        content: |
+          Le modèle TCP/IP découpe la communication réseau en 4 couches, chacune associée à des protocoles concrets :
+          **Application (HTTP, DNS, SMTP...) → Transport (TCP, UDP) → Internet (IP, ICMP) → Accès réseau (Ethernet, Wi-Fi)**
+          C'est ce modèle, et non le modèle OSI, qui décrit la pile réellement implémentée sur les machines et les équipements réseau.
+
+      - type: text
+        title: Le point essentiel
+        content: |
+          Le principe d'encapsulation/désencapsulation reste identique à celui vu avec OSI, simplement réparti sur 4 couches au lieu de 7.
+          Ce modèle sera la référence pour la suite du parcours : trame Ethernet et adresse MAC (couche Accès réseau), adresse IP et routage (couche Internet), ports et TCP/UDP (couche Transport).

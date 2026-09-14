@@ -1,0 +1,240 @@
+id: ipv4-frame
+slug: ipv4-frame
+title: IPv4 et trame IP
+description: Comprendre les adresses IPv4, leur notation et la structure d'un paquet IPv4.
+level: Débutant
+duration: 10 min
+themeId: IPv4
+color: blue
+
+objectives:
+  - Comprendre ce qu'est une adresse IPv4
+  - Comprendre la notation décimale pointée
+  - Distinguer partie réseau et partie hôte
+  - Identifier les principaux champs d'un en-tête IPv4
+  - Comprendre le rôle du TTL, du protocole et du checksum
+  - Savoir lire un paquet IPv4
+
+sections:
+
+  # ==========================================================
+  # 01 - ADRESSE IPv4
+  # ==========================================================
+
+  - id: address
+    title: L'adresse IPv4
+    kicker: "01 / Fondations"
+    blocks:
+
+      - type: text
+        title: Une adresse sur 32 bits
+        content: |
+          Une adresse IPv4 est une adresse de **32 bits**.
+
+          Elle est généralement représentée sous forme de quatre nombres décimaux séparés par des points.
+
+          Exemple :
+
+          **192.168.1.25**
+
+          Chaque nombre représente un **octet**, soit 8 bits.
+
+          Une adresse IPv4 contient donc :
+
+          **4 x 8 bits = 32 bits**
+
+      - type: text
+        title: Notation décimale pointée
+        content: |
+          Chaque octet peut prendre une valeur comprise entre :
+
+          **0 et 255**
+
+          Exemple :
+
+          **192.168.1.25**
+
+          correspond à :
+
+          **11000000.10101000.00000001.00011001**
+
+      - type: text
+        title: Réseau et hôte
+        content: |
+          Une adresse IPv4 est divisée en deux parties :
+
+          **Partie réseau**
+          → identifie le réseau auquel appartient la machine.
+
+          **Partie hôte**
+          → identifie la machine à l'intérieur de ce réseau.
+
+          La séparation entre ces deux parties est déterminée par le **masque de sous-réseau (ou CIDR)**.
+
+  # ==========================================================
+  # 02 - EN-TÊTE
+  # ==========================================================
+
+  - id: header
+    title: L'en-tête IPv4
+    kicker: "02 / Structure"
+    blocks:
+
+      - type: frame
+        title: "En-tête IPv4 (20 octets, sans options)"
+        bitsPerRow: 32
+        fields:
+          - { id: version, label: Version, bits: 4, color: blue, description: "Version du protocole IP. 4 pour IPv4." }
+          - { id: ihl, label: IHL, bits: 4, color: teal, description: "Longueur de l'en-tête IPv4 en mots de 32 bits." }
+          - { id: tos, label: "DSCP / ECN", bits: 8, color: green, description: "Informations utilisées notamment pour la qualité de service et la congestion." }
+          - { id: total-length, label: "Longueur totale", bits: 16, color: coral, description: "Taille totale du paquet IPv4, en-tête et données comprises." }
+          - { id: identification, label: Identification, bits: 16, color: yellow, description: "Identifie les fragments appartenant au même paquet original." }
+          - { id: flags, label: Flags, bits: 3, color: blue, description: "Indicateurs liés notamment à la fragmentation." }
+          - { id: fragment-offset, label: "Fragment Offset", bits: 13, color: teal, description: "Indique la position d'un fragment dans le paquet original." }
+          - { id: ttl, label: TTL, bits: 8, color: green, description: "Nombre maximal de sauts restant avant destruction du paquet." }
+          - { id: protocol, label: Protocole, bits: 8, color: coral, description: "Indique le protocole transporté : TCP, UDP, ICMP, etc." }
+          - { id: checksum, label: Checksum, bits: 16, color: yellow, description: "Somme de contrôle de l'en-tête IPv4." }
+          - { id: src-ip, label: "IP source", bits: 32, color: blue, description: "Adresse IPv4 de l'émetteur." }
+          - { id: dst-ip, label: "IP destination", bits: 32, color: coral, description: "Adresse IPv4 du destinataire." }
+
+      - type: text
+        title: Version
+        content: |
+          La **version** permet aux machines d'identifier le type de paquet IP recu (IPv4 ou IPv6)
+
+          IP version :
+          - 4 pour IPv4
+          - 6 pour IPv6
+
+      - type: text
+        title: TTL
+        content: |
+          Le **TTL (Time To Live)** limite le nombre de routeurs qu'un paquet peut traverser.
+
+          À chaque passage par un routeur :
+
+          **TTL = TTL - 1**
+
+          Lorsque le TTL atteint 0, le paquet est détruit.
+
+          Cela évite notamment qu'un paquet reste indéfiniment dans une boucle de routage.
+
+      - type: text
+        title: Protocol
+        content: |
+          Le champ **Protocol** indique ce qui est encapsulé dans le paquet IPv4.
+
+          Quelques valeurs importantes :
+          - **1  (0x01) → ICMP**
+          - **6  (0x06) → TCP**
+          - **17 (0x11) → UDP**
+
+      - type: text
+        title: Checksum
+        content: |
+          Le checksum IPv4 permet de détecter certaines erreurs concernant **l'en-tête IPv4**.
+
+          Il est recalculé notamment lorsqu'un routeur modifie le TTL.
+
+  # ==========================================================
+  # 03 - ANALYSE
+  # ==========================================================
+
+  - id: analysis
+    title: Analyse d'un paquet IPv4
+    kicker: "03 / Analyse"
+    blocks:
+
+      - type: demo
+        title: "Lecture d'un paquet IPv4"
+        intro: "Analysez les champs essentiels d'un paquet IPv4."
+
+        nodes:
+          - id: pc-a
+            label: PC A
+            kind: device
+            position: { x: 15, y: 50 }
+
+          - id: router
+            label: Routeur
+            kind: device
+            position: { x: 50, y: 50 }
+
+          - id: pc-b
+            label: PC B
+            kind: device
+            position: { x: 85, y: 50 }
+
+        connections:
+          - from: pc-a
+            to: router
+
+          - from: router
+            to: pc-b
+
+        steps:
+
+          - title: "1. PC A construit le paquet"
+            description: "PC A envoie un paquet IPv4 vers PC B."
+            active: [pc-a]
+            panel: |
+              Source : 192.168.1.10
+              Destination : 192.168.2.20
+
+          - title: "2. Le paquet arrive au routeur"
+            description: "Le routeur examine l'en-tête IPv4 pour déterminer comment acheminer le paquet."
+            active: [pc-a, router]
+            panel: "TTL = 64"
+            packets:
+              - from: pc-a
+                to: router
+
+          - title: "3. Le routeur décrémente le TTL"
+            description: "Le routeur décrémente le TTL avant de transmettre le paquet."
+            active: [router]
+            panel: "TTL : 64 → 63"
+
+          - title: "3. Le routeur décrémente le TTL"
+            description: "Le TTL est positif, on transmet le paquet."
+            active: [router]
+            panel: "TTL > 0"
+
+          - title: "4. Le routeur transmet"
+            description: "Le paquet conserve son IP destination mais est encapsulé dans une nouvelle trame sur le lien suivant."
+            active: [router, pc-b]
+            panel: "IP destination = 192.168.2.20"
+            packets:
+              - from: router
+                to: pc-b
+
+  # ==========================================================
+  # 04 - SYNTHÈSE
+  # ==========================================================
+
+  - id: conclusion
+    title: À retenir
+    kicker: "04 / Synthèse"
+    blocks:
+
+      - type: text
+        title: Le repère simple
+        content: |
+          **IPv4**
+
+          → adresse de 32 bits
+
+          → partie réseau + partie hôte
+
+          → transportée dans un paquet IP
+
+          **TTL**
+          → limite les sauts
+
+          **Protocol**
+          → indique TCP, UDP, ICMP...
+
+          **Checksum**
+          → contrôle l'en-tête IPv4
+
+          **IP source / destination**
+          → indiquent les extrémités logiques de la communication.

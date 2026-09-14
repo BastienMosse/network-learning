@@ -1,0 +1,375 @@
+id: domaine-collision-broadcast
+slug: domaine-collision-broadcast
+title: Domaines de collision et de broadcast
+description: Comprendre ce qu'est un domaine de collision et un domaine de broadcast, et comment les équipements réseau les gèrent.
+level: Débutant
+duration: 10 min
+themeId: ethernet
+color: blue
+objectives:
+  - 
+  - 
+sections:
+
+  # ============================================================
+  # 01 - DOMAINE DE COLLISION
+  # ============================================================
+
+  - id: collision-domain
+    title: Domaine de collision
+    kicker: "01 / Couche 1 et 2"
+    blocks:
+
+      - type: text
+        title: Qu'est-ce qu'un domaine de collision ?
+        content: |
+          Un **domaine de collision** est une partie du réseau dans laquelle plusieurs équipements peuvent potentiellement transmettre en même temps et provoquer une collision.
+
+          Les collisions sont principalement liées aux réseaux Ethernet utilisant un support partagé et le fonctionnement **half-duplex**.
+
+          Plus les équipements partagent le même domaine de collision, plus ils peuvent se retrouver en concurrence pour transmettre.
+
+      - type: text
+        title: Le hub
+        content: |
+          Un **hub** fonctionne en couche 1.
+
+          Il ne comprend pas les adresses MAC et ne prend aucune décision sur les trames.
+          Lorsqu'il reçoit un signal sur un port, il le répète sur ses autres ports.
+
+          Tous les équipements connectés au même hub partagent donc le **même domaine de collision**.
+
+      - type: code
+        code: |
+          PC A ─┐
+          PC B ─┼── HUB
+          PC C ─┤
+          PC D ─┘
+
+      - type: text
+        content: |
+          **Résultat : 1 seul domaine de collision.**
+
+      - type: text
+        title: Le switch
+        content: |
+          Un **switch** fonctionne en couche 2.
+
+          Contrairement au hub, il sépare les domaines de collision entre ses ports.
+
+          Chaque liaison Ethernet connectée à un port constitue donc généralement un **domaine de collision distinct**.
+
+      - type: code
+        code: |
+          PC A ───┐
+          PC B ───┤
+          PC C ───┤ SWITCH
+          PC D ───┘
+
+      - type: text
+        content: |
+          Chaque liaison possède son propre domaine de collision.
+
+          **4 liaisons vers 4 machines → 4 domaines de collision.**
+
+          En Ethernet moderne, les liaisons sont généralement en **full-duplex**, ce qui élimine les collisions sur ces liaisons.
+
+      - type: text
+        title: Le bridge
+        content: |
+          Un **bridge** fonctionne en couche 2 et sépare les domaines de collision entre ses interfaces.
+
+          Un bridge à deux ports relie deux segments :
+
+      - type: code
+        code: |
+          Segment A ─── Port 1 [ BRIDGE ] Port 2 ─── Segment B
+
+      - type: text
+        content: |
+          Chaque côté constitue un domaine de collision distinct.
+
+          **Résultat : 2 domaines de collision.**
+
+          Le bridge peut filtrer les trames grâce à sa table MAC, mais il ne sépare pas les domaines de broadcast.
+
+      - type: text
+        title: Le routeur
+        content: |
+          Un **routeur** sépare également les domaines de collision entre ses interfaces.
+
+          Chaque interface du routeur appartient à un réseau différent et constitue une frontière entre deux segments de couche 2.
+
+      - type: code
+        code: |
+          Réseau A ─── Interface 1 [ ROUTEUR ] Interface 2 ─── Réseau B
+
+      - type: text
+        content: |
+          **Résultat : 2 domaines de collision.**
+
+      - type: text
+        title: Comment compter ?
+        content: |
+          Pour compter les domaines de collision, il faut identifier les parties du réseau dans lesquelles les équipements partagent potentiellement le même support de transmission.
+
+          Repères simples :
+
+          - **Hub** → tous ses ports appartiennent au même domaine de collision
+          - **Switch** → généralement 1 domaine de collision par port
+          - **Bridge** → 1 domaine de collision par interface/segment
+          - **Routeur** → chaque interface sépare les domaines de collision
+
+      - type: text
+        title: Exercice
+        content: |
+          On considère la topologie suivante :
+
+      - type: code
+        code: |
+          PC A ─┐
+          PC B ─┤
+          PC C ─┼── HUB ─── SWITCH ─── PC D
+          PC E ─┘             | |
+                              | └── PC F
+                              └── PC G
+
+      - type: text
+        content: |
+          **Question : combien y a-t-il de domaines de collision ?**
+
+      - type: text
+        title: Correction
+        content: |
+          Commençons par le hub.
+
+          PC A, PC B, PC C et PC E sont connectés au même hub.
+          Ils partagent donc **1 domaine de collision**.
+
+          Le lien entre le hub et le switch constitue un autre domaine de collision.
+
+          Puis, chaque liaison du switch vers une machine constitue son propre domaine :
+
+          - Hub → Switch : 1 domaine
+          - Switch → PC D : 1 domaine
+          - Switch → PC F : 1 domaine
+          - Switch → PC G : 1 domaine
+
+          Le hub constitue également :
+
+          - PC A + PC B + PC C + PC E : 1 domaine
+
+          **Total : 5 domaines de collision.**
+
+          À retenir :
+
+          **Un hub regroupe les équipements dans un même domaine de collision, tandis qu'un switch les sépare généralement port par port.**
+
+  # ============================================================
+  # 02 - DOMAINE DE BROADCAST
+  # ============================================================
+
+  - id: broadcast-domain
+    title: Domaine de broadcast
+    kicker: "02 / Couche 2 et 3"
+    blocks:
+
+      - type: text
+        title: Qu'est-ce qu'un domaine de broadcast ?
+        content: |
+          Un **domaine de broadcast** est l'ensemble des équipements qui peuvent recevoir une trame Ethernet envoyée en **broadcast**.
+
+          Une trame Ethernet broadcast utilise l'adresse MAC :
+
+          **FF:FF:FF:FF:FF:FF**
+
+          Elle est destinée à tous les équipements présents dans le même domaine de broadcast.
+
+      - type: text
+        title: Le hub et le broadcast
+        content: |
+          Un hub fonctionne en couche 1 et répète les signaux sur ses autres ports.
+
+          Il ne bloque donc pas les broadcasts.
+
+      - type: code
+        code: |
+          PC A ─┐
+          PC B ─┼── HUB
+          PC C ─┤
+          PC D ─┘
+
+      - type: text
+        content: |
+          Si PC A envoie une trame broadcast, les autres machines connectées au hub la reçoivent.
+
+          **Le hub ne sépare pas les domaines de broadcast.**
+
+      - type: text
+        title: Le switch et le broadcast
+        content: |
+          Un switch fonctionne en couche 2.
+
+          Il apprend les adresses MAC et peut transmettre une trame unicast vers le bon port.
+
+          Cependant, lorsqu'il reçoit une trame broadcast, il la diffuse sur les autres ports du même réseau local.
+
+      - type: code
+        code: |
+          PC A ─┐
+          PC B ─┤
+          PC C ─┼── SWITCH
+          PC D ─┘
+
+      - type: text
+        content: |
+          Un broadcast envoyé par PC A peut atteindre PC B, PC C et PC D.
+
+          **Un switch ne sépare donc pas le domaine de broadcast.**
+
+      - type: text
+        title: Le routeur sépare les broadcasts
+        content: |
+          Un **routeur** fonctionne en couche 3.
+
+          Il constitue une frontière entre plusieurs réseaux IP et ne transmet pas les broadcasts Ethernet d'une interface vers une autre.
+
+      - type: code
+        code: |
+          PC A ─── SWITCH ─── ROUTEUR ─── SWITCH ─── PC B
+          Réseau A                            Réseau B
+
+      - type: text
+        content: |
+          Un broadcast envoyé par PC A reste dans le réseau A.
+
+          Il n'est pas transmis directement au réseau B par le routeur.
+
+          **Le routeur sépare donc les domaines de broadcast.**
+
+      - type: text
+        title: Comment compter ?
+        content: |
+          Pour compter les domaines de broadcast, il faut identifier les frontières de couche 3.
+
+          Repères simples :
+
+          - **Hub** → ne sépare pas les broadcasts
+          - **Switch** → ne sépare pas les broadcasts
+          - **Bridge** → ne sépare pas les broadcasts
+          - **Routeur** → sépare les broadcasts entre ses interfaces
+          - **Chaque interface de routeur** appartient à un domaine de broadcast différent
+
+          Dans un réseau simple sans VLAN, on peut donc retenir :
+
+          **Un domaine de broadcast = un réseau local de couche 2 relié sans routeur.**
+
+      - type: text
+        title: Exercice
+        content: |
+          On considère la topologie suivante :
+
+      - type: code
+        code: |
+          PC A ─┐
+          PC B ─┤
+                SWITCH 1
+                   │
+                   │
+                ROUTEUR
+                   │
+                   │
+                SWITCH 2
+          PC C ─┤
+          PC D ─┘
+
+      - type: text
+        content: |
+          Le routeur possède une interface dans le réseau A et une interface dans le réseau B.
+
+          **Questions :**
+
+          1. Combien y a-t-il de domaines de broadcast ?
+          2. Si PC A envoie une trame broadcast, quelles machines peuvent la recevoir ?
+          3. PC C peut-il recevoir directement ce broadcast ?
+
+      - type: text
+        title: Correction
+        content: |
+          **1. Nombre de domaines de broadcast**
+
+          Le routeur possède deux interfaces appartenant à deux réseaux différents.
+
+          Il sépare donc les deux domaines :
+
+          **Réseau A → Domaine de broadcast 1**
+
+          **Réseau B → Domaine de broadcast 2**
+
+          **Total : 2 domaines de broadcast.**
+
+          **2. Broadcast envoyé par PC A**
+
+          PC A se trouve dans le domaine de broadcast du réseau A.
+
+          Le broadcast peut donc atteindre :
+
+          - PC B
+          - les autres équipements du réseau A
+          - l'interface du routeur située dans le réseau A
+
+          Le switch ne bloque pas le broadcast.
+
+          **3. PC C peut-il recevoir ce broadcast ?**
+
+          Non.
+
+          Le routeur ne transmet pas le broadcast Ethernet du réseau A vers le réseau B.
+
+          PC C et PC D appartiennent donc à un autre domaine de broadcast.
+
+      - type: text
+        title: Synthèse
+        content: |
+          Il faut bien distinguer les deux notions :
+
+          **Domaine de collision**
+
+          Il concerne la possibilité de collisions sur un support partagé.
+
+          - Hub → même domaine de collision
+          - Switch → sépare les domaines de collision
+          - Bridge → sépare les domaines de collision
+          - Routeur → sépare les domaines de collision
+
+          **Domaine de broadcast**
+
+          Il concerne la propagation des trames broadcast.
+
+          - Hub → laisse passer le broadcast
+          - Switch → laisse passer le broadcast
+          - Bridge → laisse passer le broadcast
+          - Routeur → bloque la propagation du broadcast entre ses interfaces
+
+          Le repère essentiel est donc :
+
+          **Switch = sépare les collisions**
+
+          **Routeur = sépare les broadcasts**
+
+  - id: conclusion
+    title: À retenir
+    kicker: 03 / Synthèse
+    blocks:
+      - type: text
+        title: Résumé
+        content: |
+          - Un **domaine de collision** est une partie du réseau dans laquelle plusieurs équipements peuvent transmettre en même temps et provoquer une collision.
+          - Un **domaine de broadcast** est l'ensemble des équipements qui peuvent recevoir une trame Ethernet envoyée en broadcast.
+          - Un **hub (L1)** ne sépare ni les collisions ni les broadcasts.
+          - Un **switch (L2)** sépare les collisions mais laisse passer les broadcasts.
+          - Un **bridge (L2)** sépare les collisions mais laisse passer les broadcasts.
+          - Un **routeur (L3)** sépare à la fois les collisions et les broadcasts entre ses interfaces.
+        
+      - type: image
+        src: /courses/ethernet/domaine-collision-broadcast/images/cd-bd.png

@@ -1,0 +1,207 @@
+id: osi
+slug: osi
+title: Le modèle OSI
+description: Comprendre pourquoi les réseaux sont organisés en couches et découvrir le rôle de chacune des 7 couches du modèle OSI.
+level: Débutant
+duration: 20 min
+themeId: bases
+color: blue
+objectives:
+  - Comprendre pourquoi un modèle en couches est nécessaire pour les réseaux
+  - Identifier les 7 couches du modèle OSI et le rôle de chacune
+  - Associer chaque couche à sa PDU (bit, trame, paquet, segment, données)
+  - Expliquer le principe d'encapsulation et de désencapsulation
+  - Comparer le modèle OSI et le modèle TCP/IP
+sections:
+
+  # ============================================================
+  # 01 - INTRODUCTION
+  # ============================================================
+
+  - id: introduction
+    title: Pourquoi un modèle en couches ?
+    kicker: 01 / Introduction
+    blocks:
+      - type: text
+        title: Le problème sans modèle
+        content: |
+          Faire communiquer deux machines implique de résoudre énormément de problèmes différents : sur quel support physique envoyer le signal, comment identifier les machines, comment s'assurer que les données arrivent sans erreur, comment l'application qui reçoit les données doit les interpréter...
+          Si chaque constructeur ou éditeur logiciel traitait tous ces problèmes à sa manière, les équipements et les logiciels de fournisseurs différents ne pourraient pas communiquer entre eux.
+
+      - type: text
+        title: Le modèle OSI
+        content: |
+          Le modèle **OSI** (Open Systems Interconnection) a été défini par l'ISO pour découper la communication réseau en **7 couches** indépendantes, chacune ayant un rôle précis.
+          Chaque couche ne communique qu'avec la couche directement au-dessus et en dessous d'elle, et rend un service à la couche supérieure sans se soucier de la manière dont les couches inférieures fonctionnent réellement.
+          Ce découpage permet l'interopérabilité entre équipements et logiciels de fournisseurs différents, facilite la conception (chaque couche peut évoluer indépendamment) et simplifie le dépannage (on peut isoler le problème à une couche précise).
+
+  # ============================================================
+  # 02 - LES BASES
+  # ============================================================
+
+  - id: bases
+    title: Les 7 couches du modèle OSI
+    kicker: 02 / Fondations
+    blocks:
+      - type: text
+        title: Vue d'ensemble
+        content: |
+          Le modèle OSI comprend 7 couches, numérotées de 1 (la plus basse, la plus proche du support physique) à 7 (la plus haute, la plus proche de l'utilisateur) :
+
+          - Couche 7 - Application : fournit les services réseau utilisés directement par l'utilisateur (HTTP, DNS, FTP...)
+          - Couche 6 - Présentation : met les données dans un format compréhensible (chiffrement, compression, encodage)
+          - Couche 5 - Session : ouvre, gère et ferme les sessions de communication entre deux machines
+          - Couche 4 - Transport : assure l'acheminement de bout en bout, la fiabilité et le découpage en segments (TCP/UDP)
+          - Couche 3 - Réseau : achemine les données d'un réseau à un autre grâce à l'adressage logique (IP)
+          - Couche 2 - Liaison de données : achemine les données entre deux machines du même réseau local (MAC)
+          - Couche 1 - Physique : transmet les signaux bruts sur le support (câble, fibre, ondes)
+
+          Un moyen mnémotechnique courant pour les retenir de bas en haut : 
+          **P**artour **L**e **R**oi **T**rouve **S**a **P**lace **A**ssise
+
+      - type: image
+        title: Les 7 couches
+        src: /courses/bases/modele-osi/images/osi-layers.png
+
+      - type: text
+        title: Couche 1 - Physique
+        content: |
+          La couche Physique s'occupe de la transmission des **bits bruts** sur le support de transmission : tensions électriques sur un câble cuivre, impulsions lumineuses sur fibre optique, ondes radio en sans-fil.
+          Elle ne connaît ni adresse, ni contenu : elle transmet simplement des 0 et des 1.
+
+      - type: text
+        title: Couche 2 - Liaison de données
+        content: |
+          La couche Liaison de données organise les bits en **trames** et gère la communication entre deux machines directement voisines sur le même réseau local.
+          Elle utilise l'**adresse MAC** pour identifier les machines, et intègre des mécanismes de détection d'erreur (FCS) et, historiquement, de gestion des accès au support partagé (CSMA/CD).
+
+      - type: text
+        title: Couche 3 - Réseau
+        content: |
+          La couche Réseau s'occupe d'acheminer les données d'un réseau à un autre grâce à un adressage logique, l'**adresse IP**.
+          C'est à cette couche qu'interviennent le routage et le découpage en **paquets**.
+
+      - type: text
+        title: Couche 4 - Transport
+        content: |
+          La couche Transport découpe les données en **segments** et assure l'acheminement de bout en bout entre deux applications, identifiées par des **ports**.
+          Deux protocoles principaux : **TCP**, fiable et connecté (accusés de réception, retransmission), et **UDP**, plus rapide mais sans garantie de livraison.
+
+      - type: text
+        title: Couches 5, 6 et 7 - Session, Présentation, Application
+        content: |
+          Ces trois couches manipulent directement les **données** de l'application, sans les redécouper :
+
+          - **Session** : ouvre, synchronise et ferme la session de communication entre deux machines.
+          - **Présentation** : met en forme les données (chiffrement, compression, encodage de caractères) pour qu'elles soient compréhensibles des deux côtés.
+          - **Application** : fournit les services que l'utilisateur ou un logiciel utilise directement, comme HTTP, DNS ou FTP.
+
+  # ============================================================
+  # 03 - MISE EN PRATIQUE
+  # ============================================================
+
+  - id: pratique
+    title: Encapsulation et désencapsulation
+    kicker: 03 / Démonstration
+    blocks:
+      - type: text
+        title: Le principe
+        content: |
+          Quand une machine envoie des données, celles-ci traversent les couches de haut en bas (7 vers 1). À chaque couche, un en-tête (et parfois une en-queue) est ajouté autour des données : c'est l'**encapsulation**.
+          À la réception, la machine distante fait le chemin inverse, de bas en haut (1 vers 7), en retirant les en-têtes couche par couche : c'est la **désencapsulation**.
+
+      - type: demo
+        title: Envoyer une requête HTTP à travers les 7 couches
+        intro: Suivez le parcours des données depuis l'application jusqu'au support physique, puis leur remontée chez le destinataire.
+        steps:
+          - title: 1. Couche Application - Données
+            description: |
+              L'utilisateur déclenche une requête HTTP. Le navigateur produit les données brutes de la requête.
+            panel: Couche Application - Données
+            media:
+              src: /courses/bases/modele-osi/images/step_1.png
+              alt: Les données applicatives avant encapsulation
+
+          - title: 2. Couche Transport - Segment
+            description: |
+              La couche Transport ajoute un en-tête TCP contenant les ports source et destination : les données deviennent un segment.
+            panel: Couche Transport - Segment
+            media:
+              src: /courses/bases/modele-osi/images/step_2.png
+              alt: Le segment TCP avec son en-tête
+
+          - title: 3. Couche Réseau - Paquet
+            description: |
+              La couche Réseau ajoute un en-tête IP contenant les adresses IP source et destination : le segment devient un paquet.
+            panel: Couche Réseau - Paquet
+            media:
+              src: /courses/bases/modele-osi/images/step_3.png
+              alt: Le paquet IP avec son en-tête
+
+          - title: 4. Couche Liaison de données - Trame
+            description: |
+              La couche Liaison de données ajoute un en-tête (adresses MAC source et destination) et une en-queue (FCS) : le paquet devient une trame.
+            panel: Couche Liaison de données - Trame
+            media:
+              src: /courses/bases/modele-osi/images/step_4.png
+              alt: La trame Ethernet avec en-tête MAC et FCS
+
+          - title: 5. Couche Physique - Bits
+            description: |
+              La couche Physique convertit la trame en bits et les transmet sur le support (signal électrique, lumineux ou radio).
+            panel: Couche Physique - Bits
+            media:
+              src: /courses/bases/modele-osi/images/step_5.png
+              alt: La transmission des bits sur le support physique
+
+          - title: 6. Désencapsulation côté destinataire
+            description: |
+              La machine destinataire reçoit les bits et remonte les couches une par une : elle reconstitue la trame, retire l'en-tête MAC pour obtenir le paquet, retire l'en-tête IP pour obtenir le segment, puis retire l'en-tête TCP pour retrouver les données originales.
+            panel: Désencapsulation côté destinataire
+            media:
+              src: /courses/bases/modele-osi/images/step_6.png
+              alt: La désencapsulation couche par couche côté destinataire
+
+  # ============================================================
+  # 04 - OSI vs TCP/IP
+  # ============================================================
+
+  - id: osi-vs-tcpip
+    title: OSI vs TCP/IP
+    kicker: 04 / Comparaison
+    blocks:
+      - type: text
+        title: Deux modèles, un même besoin
+        content: |
+          Le modèle **OSI** est un modèle théorique en 7 couches, utilisé surtout pour enseigner et raisonner sur les réseaux.
+          Le modèle **TCP/IP**, lui, est le modèle réellement utilisé sur Internet, plus simple avec seulement 4 couches. Certaines couches OSI y sont regroupées.
+
+      - type: text
+        title: Correspondance entre les deux modèles
+        content: |
+          Correspondance entre les deux modèles, du plus haut niveau au plus bas :
+          - Application, Présentation, Session (OSI) → Application (TCP/IP)
+          - Transport (OSI) → Transport (TCP/IP)
+          - Réseau (OSI) → Internet (TCP/IP)
+          - Liaison de données, Physique (OSI) → Accès réseau (TCP/IP)
+
+  # ============================================================
+  # 05 - SYNTHÈSE
+  # ============================================================
+
+  - id: conclusion
+    title: À retenir
+    kicker: 05 / Synthèse
+    blocks:
+      - type: text
+        title: Le modèle en couches
+        content: |
+          Le modèle OSI découpe la communication réseau en 7 couches indépendantes, chacune avec un rôle précis et une PDU associée :
+          **Application → Présentation → Session → Transport (Segment) → Réseau (Paquet) → Liaison de données (Trame) → Physique (Bit)**
+          Chaque couche ne dialogue qu'avec ses voisines immédiates, ce qui permet l'interopérabilité entre équipements et logiciels différents.
+
+      - type: text
+        title: Le point essentiel
+        content: |
+          L'encapsulation (à l'émission) et la désencapsulation (à la réception) sont le mécanisme concret qui traduit ce découpage en couches : à chaque couche descendante, un en-tête est ajouté ; à chaque couche montante, il est retiré.
+          Ce principe reviendra à chaque fois qu'on étudiera une nouvelle couche du modèle : trame Ethernet (couche 2), paquet IP (couche 3), segment TCP (couche 4).

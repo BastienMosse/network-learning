@@ -1,0 +1,171 @@
+id: dns
+slug: dns
+title: DNS
+description: Comprendre comment DNS traduit les noms de domaine en adresses IP et comment fonctionne sa hiérarchie.
+level: Débutant
+duration: 10 min
+themeId: IPv4
+color: teal
+
+objectives:
+  - Comprendre le rôle de DNS
+  - Comprendre la résolution nom → IP
+  - Comprendre la hiérarchie DNS
+  - Identifier les principaux types d'enregistrements
+  - Comprendre le rôle du résolveur DNS
+
+sections:
+
+  - id: principle
+    title: Pourquoi DNS ?
+    kicker: "01 / Principe"
+    blocks:
+
+      - type: text
+        title: Des noms plutôt que des IP
+        content: |
+          Les humains préfèrent utiliser des noms :
+
+          **www.example.com**
+
+          plutôt qu'une adresse IP :
+
+          **93.184.216.34**
+
+          DNS permet d'effectuer cette résolution.
+
+          **Nom → Adresse IP**
+
+      - type: text
+        title: Le résolveur
+        content: |
+          Le client interroge généralement un **résolveur DNS**.
+
+          Le résolveur recherche la réponse nécessaire et la retourne au client.
+
+  - id: hierarchy
+    title: La hiérarchie DNS
+    kicker: "02 / Hiérarchie"
+    blocks:
+
+      - type: text
+        title: Les niveaux
+        content: |
+          DNS est organisé hiérarchiquement.
+
+          Exemple :
+
+          **www.example.com**
+
+          **.**
+          → racine
+
+          **com**
+          → domaine de premier niveau (TLD)
+
+          **example**
+          → domaine
+
+          **www**
+          → nom d'hôte
+
+      - type: text
+        title: Pourquoi une hiérarchie ?
+        content: |
+          Il n'existe pas un unique serveur contenant tous les noms Internet.
+
+          La hiérarchie permet de répartir l'information entre de nombreux serveurs DNS.
+
+  - id: records
+    title: Les enregistrements DNS
+    kicker: "03 / Enregistrements"
+    blocks:
+
+      - type: text
+        title: Types courants
+        content: |
+          **A**
+
+          → associe un nom à une adresse IPv4.
+
+          **AAAA**
+
+          → associe un nom à une adresse IPv6.
+
+          **CNAME**
+
+          → alias vers un autre nom.
+
+          **MX**
+
+          → indique les serveurs responsables du courrier électronique du domaine.
+
+          **NS**
+
+          → indique les serveurs DNS faisant autorité pour une zone.
+
+  - id: demo
+    title: Démo — Résolution DNS
+    kicker: "04 / Animation"
+    blocks:
+
+      - type: demo
+        title: "Résoudre www.example.com"
+        intro: "Suivez le chemin d'une requête DNS."
+
+        nodes:
+          - id: client
+            label: Client
+            kind: device
+            position: { x: 15, y: 50 }
+
+          - id: resolver
+            label: Résolveur DNS
+            kind: device
+            position: { x: 50, y: 50 }
+
+          - id: server
+            label: Serveur DNS
+            kind: device
+            position: { x: 85, y: 50 }
+
+        connections:
+          - from: client
+            to: resolver
+
+          - from: resolver
+            to: server
+
+        steps:
+
+          - title: "1. Le client demande l'adresse"
+            description: "Le client veut connaître l'adresse IP correspondant à www.example.com."
+            active: [client, resolver]
+            panel: "www.example.com → ?"
+            packets:
+              - from: client
+                to: resolver
+
+          - title: "2. Le résolveur recherche la réponse"
+            description: "Le résolveur effectue les recherches DNS nécessaires."
+            active: [resolver, server]
+            panel: "Recherche DNS"
+            packets:
+              - from: resolver
+                to: server
+
+          - title: "3. Le serveur répond"
+            description: "Le serveur DNS fournit l'enregistrement correspondant."
+            active: [server, resolver]
+            panel: "A → 93.184.216.34"
+            packets:
+              - from: server
+                to: resolver
+
+          - title: "4. Le résolveur répond au client"
+            description: "Le client reçoit l'adresse IP et peut maintenant établir sa communication avec le serveur."
+            active: [resolver, client]
+            panel: "www.example.com → 93.184.216.34"
+            packets:
+              - from: resolver
+                to: client

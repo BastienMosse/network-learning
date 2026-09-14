@@ -1,0 +1,267 @@
+id: arp-routing
+slug: arp-routing
+title: ARP et routage
+description: Comprendre le rôle d'ARP lorsqu'une destination IP se trouve hors du réseau local et pourquoi la machine résout la MAC du next-hop plutôt que celle de la destination finale.
+level: Débutant
+duration: 8 min
+themeId: ARP
+color: coral
+
+objectives:
+  - Comprendre pourquoi ARP ne recherche pas toujours la MAC de la destination finale
+  - Comprendre le rôle de la gateway par défaut
+  - Comprendre le concept de next-hop
+  - Comprendre le fonctionnement d'ARP lors d'un routage
+  - Distinguer adresse IP destination et adresse MAC destination
+
+sections:
+
+  # ============================================================
+  # 01 - DESTINATION LOCALE
+  # ============================================================
+
+  - id: local
+    title: Quand la destination est sur le réseau local
+    kicker: "01 / Réseau local"
+    blocks:
+
+      - type: text
+        title: PC A → PC B
+        content: |
+          PC A : **192.168.1.10/24**
+
+          PC B : **192.168.1.20/24**
+
+          Les deux machines appartiennent au même réseau : **192.168.1.0/24**
+
+          PC A peut donc communiquer directement avec PC B au niveau Ethernet.
+
+  # ============================================================
+  # 02 - DESTINATION DISTANTE
+  # ============================================================
+
+  - id: distant
+    title: Quand la destination est hors du réseau local
+    kicker: "02 / Routage"
+    blocks:
+
+      - type: text
+        title: PC A → PC B sur un autre réseau
+        content: |
+          PC A : **192.168.1.10/24**
+
+          PC B : **192.168.2.20/24**
+
+          PC A constate que : **192.168.2.20**
+
+          n'appartient pas à son réseau local : **192.168.1.0/24**
+
+          PC A doit donc envoyer le paquet à son **routeur / gateway par défaut**.
+
+      - type: text
+        title: Le piège important
+        content: |
+          PC A ne cherche **pas** la MAC de PC B. 
+          PC B est sur un autre réseau et sa MAC n'est pas directement accessible sur le réseau Ethernet de PC A.
+
+          PC A cherche la MAC du **next-hop**. 
+          Ici : **Next-hop = routeur**
+
+  # ============================================================
+  # 03 - LE ROUTEUR
+  # ============================================================
+
+  - id: router
+    title: Ce que fait le routeur
+    kicker: "03 / Next-hop"
+    blocks:
+
+      - type: text
+        title: Réception de la trame
+        content: |
+          Le routeur reçoit la trame Ethernet parce que sa MAC correspond à la MAC destination de la trame.
+          Il retire l'encapsulation Ethernet et examine le paquet IP.
+
+          Il voit : **Destination IP = 192.168.2.20**
+
+      - type: text
+        title: Le routeur cherche le prochain réseau
+        content: |
+          Le routeur consulte sa table de routage pour déterminer où envoyer le paquet.
+          Il peut alors avoir besoin d'effectuer une résolution ARP sur son interface de sortie.
+          Cette fois, il cherche la MAC correspondant au **next-hop sur le réseau suivant**.
+
+      - type: text
+        title: Une nouvelle trame
+        content: |
+          Le routeur construit ensuite une nouvelle trame Ethernet.
+
+          Les adresses MAC sont donc adaptées à la liaison suivante.
+
+          Exemple :
+
+          1. **Trame 1** : MAC PC A → MAC Routeur
+          2. **Trame 2** : MAC Routeur → MAC du prochain équipement
+          3. **Trame 3** : MAC Routeur suivant → MAC PC B
+
+          Les adresses IP du paquet permettent au routeur de suivre la destination logique.
+          Les adresses MAC servent à transporter le paquet sur la liaison locale actuelle.
+
+  # ============================================================
+  # 04 - DÉMO
+  # ============================================================
+
+  - id: demo
+    title: Démo — ARP vers le next-hop
+    kicker: "04 / Animation"
+    blocks:
+
+      - type: demo
+        title: "PC A communique avec un autre réseau"
+        intro: "Observez pourquoi PC A résout la MAC de sa gateway et non celle du PC distant."
+
+        nodes:
+          - id: pc-a
+            label: PC A
+            kind: device
+            position: { x: 15, y: 50 }
+
+          - id: r1
+            label: Routeur
+            kind: device
+            position: { x: 50, y: 50 }
+
+          - id: pc-b
+            label: PC B
+            kind: device
+            position: { x: 85, y: 50 }
+
+        connections:
+          - from: pc-a
+            to: r1
+
+          - from: r1
+            to: pc-b
+
+        steps:
+
+          - title: "1. PC A veut joindre PC B"
+            description: "PC A veut envoyer un paquet à 192.168.2.20. Cette adresse n'appartient pas au réseau local de PC A."
+            active: [pc-a, pc-b]
+            panel: |
+              PC A : 192.168.1.10
+              Destination : 192.168.2.20
+
+          - title: "2. PC A détermine que la destination est distante"
+            description: "PC A compare son propre réseau avec celui de la destination. Le paquet doit être envoyé à la gateway par défaut."
+            active: [pc-a, r1]
+            panel: "Réseau distant → Next-hop = gateway"
+
+          - title: "3. PC A fait un ARP pour la gateway"
+            description: "PC A recherche la MAC de 192.168.1.1, qui est l'adresse IP de son routeur sur le réseau local."
+            active: [pc-a, r1]
+            panel: "Who has 192.168.1.1?"
+            packets:
+              - from: pc-a
+                to: r1
+
+          - title: "4. Le routeur répond"
+            description: "Le routeur indique la MAC correspondant à son interface du réseau de PC A."
+            active: [pc-a, r1]
+            panel: "192.168.1.1 → RR:RR:RR:RR:RR:RR"
+            packets:
+              - from: r1
+                to: pc-a
+
+          - title: "5. PC A envoie la trame au routeur"
+            description: "La trame Ethernet est destinée à la MAC du routeur. Le paquet IP conserve comme destination 192.168.2.20."
+            active: [pc-a, r1]
+            panel: |
+              MAC destination = Routeur
+              IP destination = PC B
+            packets:
+              - from: pc-a
+                to: r1
+
+          - title: "6. Le routeur achemine le paquet"
+            description: "Le routeur consulte sa table de routage et transmet le paquet vers le réseau de PC B."
+            active: [r1, pc-b]
+            panel: "Routage vers 192.168.2.0/24"
+
+          - title: "7. Le routeur utilise la MAC du prochain réseau"
+            description: "Sur le réseau de destination, le routeur doit connaître la MAC du prochain équipement local. Il utilise ARP si cette association n'est pas déjà connue."
+            active: [r1, pc-b]
+            panel: "ARP → MAC du next-hop / destinataire local"
+            packets:
+              - from: r1
+                to: pc-b
+
+  # ============================================================
+  # 05 - IP VS MAC
+  # ============================================================
+
+  - id: distinction
+    title: IP destination vs MAC destination
+    kicker: "05 / Notion essentielle"
+    blocks:
+
+      - type: text
+        title: La distinction fondamentale
+        content: |
+          Lorsqu'une destination est distante :
+          - **Adresse IP destination** → reste celle de la destination finale
+          - **Adresse MAC destination** → correspond au prochain équipement sur la liaison locale
+
+          ARP ne signifie pas : **« Trouve-moi la MAC de la destination finale. »**
+
+          ARP signifie plutôt : **« Quelle MAC correspond à cette adresse IP sur mon réseau local ? »**
+
+          Si la destination IP est distante, l'adresse IP recherchée par ARP est généralement celle du **next-hop local**, souvent la gateway par défaut.
+
+  # ============================================================
+  # 06 - SYNTHÈSE
+  # ============================================================
+
+  - id: conclusion
+    title: À retenir
+    kicker: "06 / Synthèse"
+    blocks:
+
+      - type: text
+        title: Destination locale
+        content: |
+          **Destination sur mon réseau**
+
+          → ARP pour la MAC de la destination
+
+          → trame vers la destination
+
+      - type: text
+        title: Destination distante
+        content: |
+          **Destination hors de mon réseau**
+
+          → ARP pour la MAC du next-hop
+
+          → généralement la passerelle par défaut
+
+          → trame vers le routeur
+
+          → le routeur achemine le paquet
+
+      - type: text
+        title: Le repère final
+        content: |
+          **IP** → destination logique du paquet
+
+          **MAC** → destination de la trame sur la liaison locale
+
+          **ARP** → permet de trouver la MAC correspondant à l'IP du prochain équipement local.
+
+          Donc :
+
+          **Destination locale :**
+          - `IP destination → ARP → MAC destination`
+
+          **Destination distante :**
+          - `IP destination distante → next-hop → ARP → MAC du next-hop`

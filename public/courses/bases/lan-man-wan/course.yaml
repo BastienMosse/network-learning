@@ -1,0 +1,80 @@
+id: lan-man-wan
+slug: lan-man-wan
+title: LAN, MAN, WAN
+description: Distinguer les réseaux selon leur échelle géographique et comprendre qui gère quoi entre LAN, MAN et WAN.
+level: Débutant
+duration: 10 min
+themeId: bases
+color: blue
+objectives:
+  - Distinguer LAN, MAN et WAN selon leur échelle géographique
+  - Associer chaque type de réseau à des exemples concrets
+  - Identifier qui possède et gère chaque type de réseau
+
+sections:
+
+  # ============================================================
+  # 01 - INTRODUCTION
+  # ============================================================
+
+  - id: introduction
+    title: Classer les réseaux par taille
+    kicker: 01 / Introduction
+    blocks:
+      - type: text
+        title: Pourquoi cette classification ?
+        content: |
+          Tous les réseaux ne se ressemblent pas : le réseau Wi-Fi d'un appartement et Internet ne partagent ni la même échelle, ni les mêmes technologies, ni les mêmes propriétaires.
+          On classe traditionnellement les réseaux en trois catégories selon leur **étendue géographique** : LAN, MAN et WAN.
+
+  # ============================================================
+  # 02 - LES BASES
+  # ============================================================
+
+  - id: bases
+    title: LAN, MAN, WAN
+    kicker: 02 / Fondations
+    blocks:
+      - type: text
+        title: LAN — Local Area Network
+        content: |
+          Le LAN est un réseau **local**, limité à un bâtiment, un étage ou un campus (de quelques mètres à environ 1 km).
+
+          - **Exemples** : réseau d'une maison, d'un bureau, d'une salle de classe, d'un data center
+          - **Technologies** : Ethernet, Wi-Fi
+          - **Qui gère** : l'entreprise ou le particulier lui-même, avec son propre matériel (switchs, câblage, box, borne Wi-Fi)
+
+      - type: text
+        title: MAN — Metropolitan Area Network
+        content: |
+          Le MAN relie plusieurs sites à l'échelle d'une **ville ou d'une agglomération** (quelques km à environ 50 km).
+
+          - **Exemples** : réseau reliant mairie, écoles et médiathèques d'une même ville, réseau fibre d'un campus universitaire multi-sites
+          - **Technologies** : fibre optique métropolitaine, parfois MPLS
+          - **Qui gère** : une collectivité locale ou un opérateur régional qui exploite ou loue la fibre entre les sites
+
+      - type: text
+        title: WAN — Wide Area Network
+        content: |
+          Le WAN s'étend au-delà d'une ville : un **pays, un continent ou le monde entier**.
+
+          - **Exemples** : Internet, réseau reliant les agences d'une entreprise dans plusieurs pays, réseau d'un opérateur télécom
+          - **Technologies** : liaisons longue distance, satellites, câbles sous-marins, routage IP inter-opérateurs
+          - **Qui gère** : des opérateurs télécoms et fournisseurs d'accès (FAI) ; aucun acteur ne possède la totalité, c'est un ensemble de réseaux interconnectés
+
+  # ============================================================
+  # 03 - SYNTHÈSE
+  # ============================================================
+
+  - id: conclusion
+    title: À retenir
+    kicker: 03 / Synthèse
+    blocks:
+      - type: text
+        title: Le repère simple
+        content: |
+          - **LAN** = à moi (mon bâtiment, mon matériel)
+          - **MAN** = à l'échelle d'une ville
+          - **WAN** = ça dépasse une ville, et ça implique forcément des tiers (opérateurs)
+
+          Plus l'échelle géographique augmente, plus le nombre d'acteurs impliqués dans la gestion du réseau augmente aussi.

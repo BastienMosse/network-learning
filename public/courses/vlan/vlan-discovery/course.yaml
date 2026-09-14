@@ -1,0 +1,277 @@
+id: vlan-discovery
+slug: vlan-discovery
+title: Découverte des VLAN
+description: Comprendre le problème d'un réseau unique et découvrir comment les VLAN permettent de partitionner logiquement un réseau en plusieurs domaines de broadcast.
+level: Débutant
+duration: 8 min
+themeId: VLAN
+color: blue
+
+objectives:
+  - Comprendre le problème d'un réseau entièrement dans le même domaine de broadcast
+  - Comprendre le principe d'un VLAN
+  - Comprendre qu'un VLAN est une séparation logique
+  - Comprendre qu'un switch peut transporter plusieurs VLAN
+  - Comprendre qu'un VLAN constitue un domaine de broadcast distinct
+
+sections:
+
+  # ============================================================
+  # 01 - LE PROBLÈME
+  # ============================================================
+
+  - id: probleme
+    title: |
+      Le problème : un seul grand réseau
+    kicker: "01 / Découverte"
+    blocks:
+
+      - type: text
+        title: Un réseau sans VLAN
+        content: |
+          Imaginons une entreprise avec un seul switch et plusieurs services :
+
+          - Administration
+          - Comptabilité
+          - Développement
+
+          Si toutes les machines sont connectées au même réseau local, elles appartiennent au même **domaine de broadcast**.
+
+          Un broadcast envoyé par une machine peut donc atteindre toutes les autres machines du réseau.
+
+          Le réseau devient alors un seul grand domaine de broadcast.
+
+      - type: text
+        title: Le problème
+        content: |
+          On pourrait utiliser plusieurs switches physiquement séparés :
+
+          - un switch pour l'administration
+          - un switch pour la comptabilité
+          - un switch pour le développement
+
+          Mais cela oblige à multiplier les équipements physiques.
+
+          On aimerait pouvoir utiliser le **même switch physique** tout en séparant logiquement les réseaux.
+
+      - type: text
+        title: C'est là qu'interviennent les VLAN
+        content: |
+          Un **VLAN** (*Virtual Local Area Network*) permet de créer une séparation logique à l'intérieur d'un réseau commuté.
+
+          Un même switch physique peut donc être découpé en plusieurs réseaux logiques.
+
+          Par exemple :
+
+          **VLAN 10 → Administration**
+
+          **VLAN 20 → Comptabilité**
+
+          **VLAN 30 → Développement**
+
+          Chaque VLAN constitue son propre **domaine de broadcast**.
+
+  # ============================================================
+  # 02 - AVANT / APRÈS
+  # ============================================================
+
+  - id: avant-apres
+    title: Avant et après les VLAN
+    kicker: "02 / Partition logique"
+    blocks:
+
+      - type: demo
+        title: "Un switch, puis plusieurs VLAN"
+        intro: "Comparez un réseau où toutes les machines appartiennent au même domaine de broadcast avec un réseau partitionné en plusieurs VLAN."
+
+        nodes:
+          - id: switch
+            label: Switch
+            kind: device
+            position: { x: 50, y: 50 }
+
+          - id: admin-1
+            label: Admin 1
+            kind: device
+            position: { x: 15, y: 20 }
+
+          - id: admin-2
+            label: Admin 2
+            kind: device
+            position: { x: 15, y: 80 }
+
+          - id: compta-1
+            label: Compta 1
+            kind: device
+            position: { x: 85, y: 20 }
+
+          - id: compta-2
+            label: Compta 2
+            kind: device
+            position: { x: 85, y: 80 }
+
+        connections:
+          - from: admin-1
+            to: switch
+
+          - from: admin-2
+            to: switch
+
+          - from: compta-1
+            to: switch
+
+          - from: compta-2
+            to: switch
+
+        steps:
+
+          - title: "1. Sans VLAN"
+            description: "Toutes les machines sont connectées au même réseau logique. Elles appartiennent donc au même domaine de broadcast."
+            active: []
+            panel: "1 switch → 1 domaine de broadcast"
+
+          - title: "2. Un broadcast est envoyé"
+            description: "Une machine envoie une trame broadcast. Le switch la diffuse vers les autres ports appartenant au même domaine."
+            active: [admin-1, admin-2, compta-1, compta-2]
+            panel: "Broadcast → tout le réseau"
+            packetGroups:
+              -
+                - from: admin-1
+                  to: switch
+              -
+                - from: switch
+                  to: admin-2
+                - from: switch
+                  to: compta-1
+                - from: switch
+                  to: compta-2
+
+          - title: "3. On crée des VLAN"
+            description: "Le switch est maintenant partitionné logiquement. Les machines d'administration sont placées dans le VLAN 10 et les machines de comptabilité dans le VLAN 20."
+            active: [admin-1, admin-2, compta-1, compta-2, switch]
+            panel: |
+              VLAN 10 = Administration
+              VLAN 20 = Comptabilité
+
+          - title: "4. Les VLAN créent deux domaines de broadcast"
+            description: "Les machines du VLAN 10 appartiennent à un domaine de broadcast différent de celui du VLAN 20."
+            active: [admin-1, admin-2]
+            panel: "VLAN 10 → domaine de broadcast 1"
+
+          - title: "5. Un broadcast du VLAN 10"
+            description: "Un broadcast envoyé par une machine du VLAN 10 est transmis uniquement aux autres ports appartenant au VLAN 10."
+            active: [admin-1, admin-2]
+            panel: "Broadcast VLAN 10 → uniquement VLAN 10"
+            packetGroups:
+              -
+                - from: admin-1
+                  to: switch
+              -
+                - from: switch
+                  to: admin-2
+
+          - title: "6. Le VLAN 20 reste isolé"
+            description: "Les machines du VLAN 20 ne reçoivent pas le broadcast provenant du VLAN 10."
+            active: [compta-1, compta-2]
+            panel: "VLAN 20 → aucun broadcast provenant du VLAN 10"
+
+          - title: "7. Résultat"
+            description: "Un seul switch physique permet maintenant de créer plusieurs réseaux logiques indépendants."
+            active: [admin-1, admin-2, compta-1, compta-2, switch]
+            panel: "1 switch physique → plusieurs domaines de broadcast"
+
+  # ============================================================
+  # 03 - PRINCIPE
+  # ============================================================
+
+  - id: principe
+    title: Le principe d'un VLAN
+    kicker: "03 / Fonctionnement"
+    blocks:
+
+      - type: text
+        title: Un VLAN est une séparation logique
+        content: |
+          Un VLAN permet de regrouper certains ports d'un switch dans un même réseau logique.
+
+          Exemple :
+
+          **VLAN 10** → Ports 1, 2 et 3
+
+          **VLAN 20** → Ports 4, 5 et 6
+
+          Même si les ports appartiennent au même switch physique, les deux groupes sont séparés au niveau logique.
+
+      - type: text
+        title: VLAN et domaine de broadcast
+        content: |
+          Chaque VLAN constitue son propre **domaine de broadcast**.
+
+          Si un switch possède :
+
+          - VLAN 10
+          - VLAN 20
+          - VLAN 30
+
+          alors il possède :
+
+          **3 domaines de broadcast.**
+
+          Un broadcast du VLAN 10 reste dans le VLAN 10.
+
+          Il ne traverse pas automatiquement vers les VLAN 20 ou 30.
+
+      - type: text
+        title: Les VLAN ne sont pas des switches physiques
+        content: |
+          Un VLAN ne correspond pas à un équipement physique supplémentaire.
+
+          Il s'agit d'une **partition logique** du réseau.
+
+          Un seul switch peut donc transporter plusieurs VLAN simultanément.
+
+      - type: text
+        title: Communication entre VLAN
+        content: |
+          Deux VLAN différents sont séparés au niveau de la couche 2.
+
+          Une machine du VLAN 10 ne peut donc pas simplement envoyer une trame Ethernet directement à une machine du VLAN 20.
+
+          Pour permettre une communication entre les VLAN, il faut utiliser un équipement de couche 3, généralement un **routeur** ou un **switch de niveau 3**.
+
+          **VLAN 10 ←→ Routeur / L3 ←→ VLAN 20**
+
+  # ============================================================
+  # 04 - SYNTHÈSE
+  # ============================================================
+
+  - id: conclusion
+    title: À retenir
+    kicker: "04 / Synthèse"
+    blocks:
+
+      - type: text
+        title: Le repère simple
+        content: |
+          **VLAN → séparation logique d'un réseau**
+
+          **1 VLAN → 1 domaine de broadcast**
+
+          **Même switch physique → plusieurs VLAN possibles**
+
+          **Broadcast → reste dans son VLAN**
+
+          **Communication entre VLAN → nécessite du routage**
+
+      - type: text
+        title: L'idée essentielle
+        content: |
+          Sans VLAN :
+
+          **un grand réseau → un grand domaine de broadcast**
+
+          Avec VLAN :
+
+          **un switch → plusieurs réseaux logiques → plusieurs domaines de broadcast**
+
+          Le VLAN permet donc de **partitionner logiquement** un réseau sans avoir besoin d'un switch physique par réseau.

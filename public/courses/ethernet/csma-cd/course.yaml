@@ -1,0 +1,193 @@
+id: csma-cd
+slug: csma-cd
+title: CSMA/CD
+description: Découvrir le protocole CSMA/CD et comprendre comment il permet de gérer les collisions sur un réseau Ethernet.
+level: Débutant
+duration: 15 min
+themeId: ethernet
+color: yellow
+objectives:
+  - Comprendre le principe d'écoute du réseau
+  - Expliquer pourquoi CSMA/CD est nécessaire sur un réseau Ethernet partagé
+  - Identifier une collision Ethernet
+  - Décrire les étapes de CSMA/CD, du Carrier Sense au Retry
+  - Expliquer le rôle du signal Jam et du backoff
+sections:
+
+  # ============================================================
+  # 01 - INTRODUCTION
+  # ============================================================
+
+  - id: introduction
+    title: Écouter avant de transmettre
+    kicker: 01 / Introduction
+    blocks:
+      - type: text
+        title: Pourquoi CSMA/CD ?
+        content: |
+          Le CSMA/CD est un mécanisme historiquement utilisé dans les réseaux Ethernet partagés, notamment avec des hubs.
+          Lorsque plusieurs machines utilisent le même support de transmission, deux machines peuvent commencer à transmettre en même temps. Leurs signaux se rencontrent alors sur le support : c'est une collision.
+          Le rôle de CSMA/CD est de détecter ces collisions, de les signaler et de permettre aux machines de réessayer leur transmission.
+
+      - type: text
+        title: Un mécanisme pour Ethernet partagé
+        content: |
+          CSMA/CD est principalement associé aux réseaux Ethernet partagés.
+          C'était notamment le cas des réseaux utilisant des hubs, où plusieurs machines partageaient le même support de transmission.
+          Dans les réseaux Ethernet modernes utilisant des switches, chaque liaison peut transmettre et recevoir simultanément. Les collisions ne se produisent normalement plus et CSMA/CD n'est donc plus nécessaire.
+
+  # ============================================================
+  # 02 - LES BASES
+  # ============================================================
+
+  - id: bases
+    title: Les bases de CSMA/CD
+    kicker: 02 / Fondations
+    blocks:
+      - type: text
+        title: Les trois principes
+        content: |
+          Le nom CSMA/CD décrit trois principes fondamentaux :
+
+          - **Carrier Sense (CS)** : avant de transmettre, une machine écoute le support pour vérifier s'il est libre.
+          - **Multiple Access (MA)** : plusieurs machines peuvent accéder au même support de transmission.
+          - **Collision Detection (CD)** : pendant la transmission, la machine surveille le support afin de détecter une éventuelle collision.
+
+      - type: text
+        title: Comment fonctionne CSMA/CD ?
+        content: |
+          Le fonctionnement peut être résumé en plusieurs étapes :
+
+          1. La machine écoute le support.
+          2. Si le support est occupé, elle attend jusqu'à ce qu'il soit libre.
+          3. Si le support est libre, elle commence à transmettre.
+          4. Pendant la transmission, elle vérifie si une collision se produit.
+          5. En cas de collision, elle arrête sa transmission et émet un signal de brouillage appelé **Jam**.
+          6. Elle augmente son nombre de tentatives et calcule un délai d'attente aléatoire appelé **backoff**.
+          7. Après ce délai, elle revient à l'écoute du support et tente à nouveau de transmettre.
+          8. Après un nombre maximal de tentatives, la transmission est abandonnée.
+
+      - type: mermaid
+        title: Diagramme de flux de CSMA/CD
+        width: 60%
+        height: 10%
+        diagram: |
+          flowchart TD
+
+              A[Le paquet est prêt] --> B{repporter la transmission ?}
+              B -->|Oui| A
+              B -->|Non| C[Lancer la transmission]
+              C --> D{Collision détectée ?}
+              D -->|Non| E{Transmission terminée}
+              D -->|Oui| F[Envoyer un signal de brouillage<br/>Jam]
+              E -->|Oui| G([Transmission réussie])
+              E -->|Non| D
+              F --> H[Augmenter le nombre<br/>de tentatives]
+              H --> I{Nombre de tentatives > 15 ?}
+              I -->|Oui| J([Abandon :<br/>paquet perdu, sur-collisions excessives])
+              I -->|Non| K[Calculer un délai<br/>de backoff]
+              K --> L[Attendre le temps<br/>de backoff]
+              L --> A
+
+      - type: text
+        title: Le signal Jam
+        content: |
+          Lorsqu'une collision est détectée, les stations émettent un signal de brouillage appelé **Jam signal**.
+          Ce signal permet de maintenir la condition de collision suffisamment longtemps pour que les autres stations présentes sur le réseau puissent également détecter qu'une collision a eu lieu.
+          Dans l'Ethernet classique, le signal Jam est généralement constitué de 32 bits.
+
+      - type: text
+        title: Le backoff exponentiel
+        content: |
+          Après une collision, les machines ne réessaient pas immédiatement.
+          Chaque machine choisit un délai d'attente aléatoire avant de retransmettre. Ce mécanisme est appelé **binary exponential backoff**.
+          Plus les collisions se répètent, plus la plage de délais possibles augmente. Cela réduit la probabilité que les mêmes machines retransmettent exactement au même moment.
+          Ethernet limite le nombre de tentatives. Après 16 tentatives infructueuses, la transmission est abandonnée.
+
+
+  # ============================================================
+  # 03 - MISE EN PRATIQUE
+  # ============================================================
+
+  - id: pratique
+    title: Mise en pratique
+    kicker: 03 / Démonstration
+    blocks:
+      - type: demo
+        title: Fonctionnement de CSMA/CD
+        intro: Suivez les étapes de CSMA/CD à partir des schémas.
+        steps:
+          - title: 1. Écouter le réseau - Carrier Sense
+            description: |
+              La Source A écoute le réseau et vérifie si le support est libre.
+              Si le support est occupé, elle attend.
+              Sinon, elle peut transmettre.
+            panel: Écouter le réseau - Carrier Sense
+            media:
+              src: /courses/ethernet/csma-cd/images/step_1.png
+
+          - title: 2. Transmettre - Multiple Access
+            description: |
+              Le support est libre, la Source A transmet sa trame.
+              La machine Destination A reçoit la trame.
+              Les autres machines détectent la trame mais l'ignorent.
+            panel: Transmettre - Multiple Access
+            media:
+              src: /courses/ethernet/csma-cd/images/step_2.png
+
+          - title: 3. Détecter une collision - Collision Detection
+            description: |
+              La Source A et la Source B transmettent en même temps.
+              Leurs signaux se superposent sur le support : une collision se produit.
+              Les sources détectent alors la collision.
+            panel: Détecter une collision - Collision Detection
+            media:
+              src: /courses/ethernet/csma-cd/images/step_3.png
+
+          - title: 4. Signaler la collision - Collision Detection Jam
+            description: |
+              Les deux sources détectent la collision et émettent un signal de brouillage.
+              Le but est d'informer toutes les machines du réseau qu'une collision a eu lieu.
+            panel: Signaler la collision - Collision Detection Jam
+            media:
+              src: /courses/ethernet/csma-cd/images/step_4.png
+
+          - title: 5. Attendre - Backoff Retry
+            description: |
+              Après la collision, les deux sources attendent un temps aléatoire avant de réessayer.
+              Ce mécanisme permet de réduire les risques de collisions répétées.
+            panel: Attendre - Backoff Retry
+            media:
+              src: /courses/ethernet/csma-cd/images/step_5.png
+
+          - title: 6. Rétransmettre - Multiple Access
+            description: |
+              Après le temps d'attente aléatoire, les sources réécoutent le réseau.
+              Si le support est libre, elles peuvent retransmettre leur trame.
+            panel: Rétransmettre - Multiple Access
+            media:
+              src: /courses/ethernet/csma-cd/images/step_6.png
+
+ # ============================================================
+  # 04 - SYNTHÈSE
+  # ============================================================
+
+  - id: conclusion
+    title: À retenir
+    kicker: 04 / Synthèse
+    blocks:
+      - type: text
+        title: Le cycle CSMA/CD
+        content: |
+          CSMA/CD permet à plusieurs machines de partager un même support Ethernet en limitant les conséquences des collisions.
+          Le cycle est le suivant :
+          **Écouter → Transmettre → Détecter → Jam → Backoff → Réessayer**
+          Si aucune collision ne se produit, la transmission est réussie.
+          Si une collision se produit, les machines arrêtent leur transmission, signalent la collision avec un Jam, attendent un délai aléatoire grâce au backoff, puis tentent à nouveau de transmettre.
+
+      - type: text
+        title: Le point essentiel
+        content: |
+          CSMA/CD est principalement associé à l'ancien Ethernet partagé.
+          Les réseaux Ethernet modernes utilisent généralement des switches.
+          Dans ce contexte, les collisions ne se produisent normalement plus et CSMA/CD n'est donc plus utilisé.

@@ -1,0 +1,160 @@
+# ============================================================
+# IP — 07 / NAT ET PAT
+# ============================================================
+
+id: nat-pat
+slug: nat-pat
+title: NAT et PAT
+description: Comprendre pourquoi NAT existe et comment NAT statique, NAT dynamique et PAT traduisent les adresses.
+level: Débutant
+duration: 10 min
+themeId: IPv4
+color: coral
+
+objectives:
+  - Comprendre le problème résolu par NAT
+  - Comprendre NAT statique
+  - Comprendre NAT dynamique
+  - Comprendre PAT
+  - Lire une table de traduction
+
+sections:
+
+  - id: why
+    title: Pourquoi utiliser NAT ?
+    kicker: "01 / Principe"
+    blocks:
+
+      - type: text
+        title: Les adresses privées
+        content: |
+          Les réseaux locaux utilisent souvent des adresses IPv4 privées.
+
+          Elles ne sont pas directement routables sur Internet.
+
+          Le routeur doit donc traduire les adresses privées en une adresse utilisable vers l'extérieur.
+
+      - type: text
+        title: Le principe
+        content: |
+          NAT signifie :
+
+          **Network Address Translation**
+
+          Le routeur modifie certaines informations d'adressage lorsqu'un paquet traverse la frontière entre réseaux.
+
+  - id: types
+    title: Les différents NAT
+    kicker: "02 / Types"
+    blocks:
+
+      - type: text
+        title: NAT statique
+        content: |
+          Une adresse privée est associée de manière fixe à une adresse publique.
+
+          Exemple :
+
+          **192.168.1.10 ↔ 203.0.113.10**
+
+          L'association reste permanente.
+
+      - type: text
+        title: NAT dynamique
+        content: |
+          Une adresse privée est associée temporairement à une adresse publique provenant d'un pool d'adresses disponibles.
+
+      - type: text
+        title: PAT
+        content: |
+          Le **PAT (Port Address Translation)** permet à plusieurs machines privées de partager une même adresse IPv4 publique.
+
+          Le routeur différencie les connexions grâce aux **ports**.
+
+  - id: demo
+    title: Démo — PAT
+    kicker: "03 / Animation"
+    blocks:
+
+      - type: demo
+        title: "Plusieurs machines partagent une IP publique"
+        intro: "Observez comment le routeur utilise les ports pour différencier plusieurs connexions."
+
+        nodes:
+          - id: pc-a
+            label: PC A
+            kind: device
+            position: { x: 15, y: 30 }
+
+          - id: pc-b
+            label: PC B
+            kind: device
+            position: { x: 15, y: 70 }
+
+          - id: router
+            label: Routeur NAT
+            kind: device
+            position: { x: 50, y: 50 }
+
+          - id: internet
+            label: Internet
+            kind: device
+            position: { x: 85, y: 50 }
+
+        connections:
+          - from: pc-a
+            to: router
+
+          - from: pc-b
+            to: router
+
+          - from: router
+            to: internet
+
+        steps:
+
+          - title: "1. PC A ouvre une connexion"
+            description: "PC A utilise son adresse privée et un port source."
+            active: [pc-a, router]
+            panel: "192.168.1.10:50000"
+
+          - title: "2. Le routeur traduit la connexion"
+            description: "Le routeur remplace l'adresse privée par son adresse publique et peut modifier le port source."
+            active: [router]
+            panel: "203.0.113.5:40000"
+
+          - title: "3. PC B ouvre une autre connexion"
+            description: "PC B utilise également l'adresse publique du routeur, mais le routeur utilise un autre port."
+            active: [pc-b, router]
+            panel: "192.168.1.20:50000 → 203.0.113.5:40001"
+
+          - title: "4. Table PAT"
+            description: "Le routeur mémorise les traductions afin de savoir à quelle machine privée retourner les réponses."
+            active: [router]
+            panel: "Table de traduction"
+            table:
+              headers: ["Adresse interne", "Adresse publique"]
+              rows:
+                - ["192.168.1.10:50000", "203.0.113.5:40000"]
+                - ["192.168.1.20:50000", "203.0.113.5:40001"]
+
+  - id: conclusion
+    title: À retenir
+    kicker: "04 / Synthèse"
+    blocks:
+
+      - type: text
+        title: Le repère simple
+        content: |
+          **NAT statique**
+
+          → association fixe
+
+          **NAT dynamique**
+
+          → association depuis un pool
+
+          **PAT**
+
+          → plusieurs machines partagent une IP publique grâce aux ports
+
