@@ -1,0 +1,70 @@
+.live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--coral);
+  margin-right: 6px;
+  box-shadow: 0 0 0 4px var(--coral-soft);
+}
+
+.demo-block {
+  max-width: 780px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  margin: 42px 0 51px;
+  box-shadow: var(--shadow);
+}
+
+.demo-title {
+  padding: 25px 25px 22px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.demo-kicker { display: block; color: var(--coral); font: 10px 'DM Mono'; text-transform: uppercase; margin-bottom: 12px; }
+.demo-title h3 { font: 600 23px 'Space Grotesk'; margin: 0 0 6px; }
+.demo-title p { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 0; max-width: 430px; }
+.reset-button { align-self: start; border: 0; padding: 0; font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+.demo-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  padding: 15px 20px;
+}
+
+.step-dots { display: flex; gap: 7px; }
+.step-dots button { border: 0; padding: 0; background: none; cursor: pointer; }
+.step-dots span { border: 1px solid var(--line); width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); font: 10px 'DM Mono'; }
+.step-dots button.current span { border-color: var(--coral); background: var(--coral); color: #fff; }
+.step-dots button.done span { background: var(--coral-soft); color: var(--coral); border-color: var(--coral-soft); }
+
+.demo-actions { display: flex; gap: 7px; }
+.demo-actions button { border: 1px solid var(--line); background: transparent; color: var(--ink); width: 29px; height: 29px; display: grid; place-items: center; cursor: pointer; }
+.demo-actions button:disabled { opacity: .35; cursor: default; }
+.demo-actions .play-button { width: auto; padding: 0 12px; display: inline-flex; gap: 5px; font: 11px 'DM Mono'; }
+
+@media (min-width: 801px) {
+  .live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--coral);
+  margin-right: 6px;
+  box-shadow: 0 0 0 4px var(--coral-soft);
+}
+
+.demo-block { max-width: none; }
+}
+
+@media (max-width: 800px) {
+  .demo-title { display: block; }
+  .reset-button { margin-top: 18px; }
+  .demo-controls { gap: 12px; align-items: flex-end; flex-direction: column; }
+  .demo-title h3 { font-size: 20px; }
+}

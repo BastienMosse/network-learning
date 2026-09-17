@@ -1,0 +1,13 @@
+.text-block { max-width: 690px; margin: 0 0 31px; }
+.text-block h3 { font: 600 21px 'Space Grotesk'; margin: 0 0 9px; }
+
+.rich-text { color: var(--muted); font-size: 15px; line-height: 1.85; }
+.rich-text p { margin: 0 0 16px; }
+.rich-text p:last-child { margin-bottom: 0; }
+.rich-text ul, .rich-text ol { margin: 8px 0 18px; padding-left: 25px; }
+.rich-text li { padding-left: 5px; margin: 7px 0; }
+.rich-text li::marker { color: var(--coral); font-weight: 700; }
+
+@media (min-width: 801px) {
+  .text-block { max-width: 900px; }
+}

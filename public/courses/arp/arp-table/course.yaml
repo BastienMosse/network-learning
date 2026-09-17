@@ -70,76 +70,63 @@ sections:
       - type: demo
         title: "La table ARP de PC A se construit"
         intro: "Observez comment PC A apprend progressivement les correspondances IP → MAC."
-
-        nodes:
-          - id: pc-a
-            label: PC A
-            kind: device
-            position: { x: 15, y: 50 }
-
-          - id: switch
-            label: Switch
-            kind: device
-            position: { x: 50, y: 50 }
-
-          - id: pc-b
-            label: PC B
-            kind: device
-            position: { x: 85, y: 25 }
-
-          - id: pc-c
-            label: PC C
-            kind: device
-            position: { x: 85, y: 75 }
-
-        connections:
-          - from: pc-a
-            to: switch
-
-          - from: switch
-            to: pc-b
-
-          - from: switch
-            to: pc-c
-
+        network:
+          nodes:
+            - id: pc-a
+              label: PC A
+              kind: device
+              position: { x: 15, y: 50 }
+            - id: switch
+              label: Switch
+              kind: device
+              position: { x: 50, y: 50 }
+            - id: pc-b
+              label: PC B
+              kind: device
+              position: { x: 85, y: 25 }
+            - id: pc-c
+              label: PC C
+              kind: device
+              position: { x: 85, y: 75 }
+          connections:
+            - from: pc-a
+              to: switch
+            - from: switch
+              to: pc-b
+            - from: switch
+              to: pc-c
         steps:
-
           - title: "1. Table ARP vide"
+            panel: "Table ARP de PC A : vide"
             description: "PC A démarre avec une table ARP ne contenant aucune association pour PC B ou PC C."
             active: [pc-a]
-            panel: "Table ARP de PC A : vide"
             table:
               headers: [IP, MAC]
               rows: []
 
           - title: "2. PC A cherche PC B"
+            panel: "Recherche : 192.168.1.20"
             description: "PC A veut communiquer avec 192.168.1.20. Il ne connaît pas encore la MAC correspondante."
             active: [pc-a]
-            panel: "Recherche : 192.168.1.20"
 
           - title: "3. PC B répond"
+            panel: "192.168.1.20 → AA:BB:BB:BB:BB:BB"
             description: "PC A envoie une requete ARP a PC B qui répond à sa requête en indiquant sa MAC, puis envoi son paquet."
             active: [pc-a, pc-b]
-            panel: "192.168.1.20 → AA:BB:BB:BB:BB:BB"
-            packetGroups:
-              -
-                - from: pc-a
+            packets:
+              - - from: pc-a
                   to: switch
-              -
-                - from: switch
+              - - from: switch
                   to: pc-b
-              -
-                - from: pc-b
+              - - from: pc-b
                   to: switch
-              -
-                - from: switch
+              - - from: switch
                   to: pc-a
-              -
-                - from: pc-a
+              - - from: pc-a
                   to: switch
-              -
-                - from: switch
+              - - from: switch
                   to: pc-b
+                  keep: true
 
           - title: "4. PC A ajoute l'entrée"
             description: "PC A mémorise l'association IP → MAC obtenue grâce à la réponse ARP."
@@ -151,38 +138,33 @@ sections:
                 - ["192.168.1.20", "AA:BB:BB:BB:BB:BB"]
 
           - title: "5. PC A cherche PC C"
+            panel: "Recherche : 192.168.1.30"
             description: "PC A veut maintenant communiquer avec 192.168.1.30. Cette adresse n'est pas encore présente dans sa table ARP."
             active: [pc-a, pc-c]
-            panel: "Recherche : 192.168.1.30"
 
           - title: "6. PC C répond"
+            panel: "192.168.1.30 → AA:CC:CC:CC:CC:CC"
             description: "PC A envoie une requete ARP a PC C qui répond à sa requête en indiquant sa MAC, puis envoi son paquet."
             active: [pc-a, pc-c]
-            panel: "192.168.1.30 → AA:CC:CC:CC:CC:CC"
-            packetGroups:
-              -
-                - from: pc-a
+            packets:
+              - - from: pc-a
                   to: switch
-              -
-                - from: switch
+              - - from: switch
                   to: pc-c
-              -
-                - from: pc-c
+              - - from: pc-c
                   to: switch
-              -
-                - from: switch
+              - - from: switch
                   to: pc-a
-              -
-                - from: pc-a
+              - - from: pc-a
                   to: switch
-              -
-                - from: switch
+              - - from: switch
                   to: pc-c
+                  keep: true
 
           - title: "7. La table contient deux associations"
+            panel: "Table ARP mise à jour"
             description: "PC A a maintenant appris les deux correspondances."
             active: [pc-a]
-            panel: "Table ARP mise à jour"
             table:
               headers: [IP, MAC]
               rows:
@@ -190,16 +172,15 @@ sections:
                 - ["192.168.1.30", "AA:CC:CC:CC:CC:CC"]
 
           - title: "8. PC A communique avec PC B"
+            panel: "192.168.1.20 → AA:BB:BB:BB:BB:BB"
             description: "La MAC de PC B est déjà connue. PC A n'a donc pas besoin d'effectuer immédiatement une nouvelle requête ARP."
             active: [pc-a, pc-b]
-            panel: "192.168.1.20 → AA:BB:BB:BB:BB:BB"
-            packetGroups:
-              -
-                - from: pc-a
+            packets:
+              - - from: pc-a
                   to: switch
-              -
-                - from: switch
+              - - from: switch
                   to: pc-b
+                  keep: true
 
   # ============================================================
   # 03 - SYNTHÈSE

@@ -105,44 +105,41 @@ sections:
       - type: demo
         title: "Un paquet traverse une liaison à MTU réduite"
         intro: "Observez comment un paquet trop volumineux est découpé en fragments."
-
-        nodes:
-          - id: r1
-            label: Routeur 1
-            kind: device
-            position: { x: 20, y: 50 }
-
-          - id: r2
-            label: Routeur 2
-            kind: device
-            position: { x: 80, y: 50 }
-
-        connections:
-          - from: r1
-            to: r2
-
+        network:
+          nodes:
+            - id: r1
+              label: Routeur 1
+              kind: device
+              position: { x: 20, y: 50 }
+            - id: r2
+              label: Routeur 2
+              kind: device
+              position: { x: 80, y: 50 }
+          connections:
+            - from: r1
+              to: r2
         steps:
-
           - title: "1. Paquet de 4000 octets"
+            panel: "Paquet = 4000 octets | MTU = 1500"
             description: "Le paquet doit traverser une liaison dont la MTU est de 1500 octets."
             active: [r1]
-            panel: "Paquet = 4000 octets | MTU = 1500"
 
           - title: "2. Le paquet est fragmenté"
+            panel: "Fragmentation"
             description: "Le paquet est découpé afin que chaque fragment puisse respecter la MTU."
             active: [r1]
-            panel: "Fragmentation"
 
           - title: "3. Les fragments traversent la liaison"
+            panel: "Identification + Offset + MF"
             description: "Chaque fragment possède son propre en-tête IPv4."
             active: [r1, r2]
-            panel: "Identification + Offset + MF"
             packets:
-              - from: r1
-                to: r2
+              - - from: r1
+                  to: r2
+                  keep: true
 
           - title: "4. Le destinataire reconstitue le paquet"
+            panel: "Réassemblage"
             description: "Les fragments sont réassemblés par le destinataire."
             active: [r2]
-            panel: "Réassemblage"
 

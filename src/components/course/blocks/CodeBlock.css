@@ -1,0 +1,23 @@
+.code-block {
+  background: var(--ink);
+  color: #d5e1d9;
+  max-width: 690px;
+  margin: 32px 0 44px;
+}
+
+.code-block > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #9cc4ae;
+  border-bottom: 1px solid #3c4b4f;
+  padding: 12px 17px;
+  font: 10px 'DM Mono';
+  text-transform: uppercase;
+}
+
+.code-block pre { font: 13px/1.8 'DM Mono'; padding: 20px; margin: 0; overflow-x: auto; }
+
+@media (min-width: 801px) {
+  .code-block { max-width: 900px; }
+}

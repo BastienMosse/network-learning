@@ -1,0 +1,18 @@
+.demo-network {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 30px 18px;
+  background-image: radial-gradient(var(--line) .7px, transparent .7px);
+  background-size: 15px 15px;
+  overflow: hidden;
+}
+
+@media (max-width: 800px) {
+  .demo-network { min-height: 190px; }
+}
+
+@media (max-width: 480px) {
+  .demo-network { padding: 20px 5px; }
+}

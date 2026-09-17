@@ -119,82 +119,80 @@ sections:
       - type: demo
         title: "PC A communique avec un autre réseau"
         intro: "Observez pourquoi PC A résout la MAC de sa gateway et non celle du PC distant."
-
-        nodes:
-          - id: pc-a
-            label: PC A
-            kind: device
-            position: { x: 15, y: 50 }
-
-          - id: r1
-            label: Routeur
-            kind: device
-            position: { x: 50, y: 50 }
-
-          - id: pc-b
-            label: PC B
-            kind: device
-            position: { x: 85, y: 50 }
-
-        connections:
-          - from: pc-a
-            to: r1
-
-          - from: r1
-            to: pc-b
-
+        network:
+          nodes:
+            - id: pc-a
+              label: PC A
+              kind: device
+              position: { x: 15, y: 50 }
+            - id: r1
+              label: Routeur
+              kind: device
+              position: { x: 50, y: 50 }
+            - id: pc-b
+              label: PC B
+              kind: device
+              position: { x: 85, y: 50 }
+          connections:
+            - from: pc-a
+              to: r1
+            - from: r1
+              to: pc-b
         steps:
-
           - title: "1. PC A veut joindre PC B"
-            description: "PC A veut envoyer un paquet à 192.168.2.20. Cette adresse n'appartient pas au réseau local de PC A."
-            active: [pc-a, pc-b]
             panel: |
               PC A : 192.168.1.10
               Destination : 192.168.2.20
+            description: "PC A veut envoyer un paquet à 192.168.2.20. Cette adresse n'appartient pas au réseau local de PC A."
+            active: [pc-a, pc-b]
 
           - title: "2. PC A détermine que la destination est distante"
+            panel: "Réseau distant → Next-hop = gateway"
             description: "PC A compare son propre réseau avec celui de la destination. Le paquet doit être envoyé à la gateway par défaut."
             active: [pc-a, r1]
-            panel: "Réseau distant → Next-hop = gateway"
 
           - title: "3. PC A fait un ARP pour la gateway"
+            panel: "Who has 192.168.1.1?"
             description: "PC A recherche la MAC de 192.168.1.1, qui est l'adresse IP de son routeur sur le réseau local."
             active: [pc-a, r1]
-            panel: "Who has 192.168.1.1?"
             packets:
-              - from: pc-a
-                to: r1
+              - - from: pc-a
+                  to: r1
+                  keep: true
 
           - title: "4. Le routeur répond"
+            panel: "192.168.1.1 → RR:RR:RR:RR:RR:RR"
             description: "Le routeur indique la MAC correspondant à son interface du réseau de PC A."
             active: [pc-a, r1]
-            panel: "192.168.1.1 → RR:RR:RR:RR:RR:RR"
             packets:
-              - from: r1
-                to: pc-a
+              - - from: r1
+                  to: pc-a
+                  keep: true
 
           - title: "5. PC A envoie la trame au routeur"
-            description: "La trame Ethernet est destinée à la MAC du routeur. Le paquet IP conserve comme destination 192.168.2.20."
-            active: [pc-a, r1]
             panel: |
               MAC destination = Routeur
               IP destination = PC B
+            description: "La trame Ethernet est destinée à la MAC du routeur. Le paquet IP conserve comme destination 192.168.2.20."
+            active: [pc-a, r1]
             packets:
-              - from: pc-a
-                to: r1
+              - - from: pc-a
+                  to: r1
+                  keep: true
 
           - title: "6. Le routeur achemine le paquet"
+            panel: "Routage vers 192.168.2.0/24"
             description: "Le routeur consulte sa table de routage et transmet le paquet vers le réseau de PC B."
             active: [r1, pc-b]
-            panel: "Routage vers 192.168.2.0/24"
 
           - title: "7. Le routeur utilise la MAC du prochain réseau"
+            panel: "ARP → MAC du next-hop / destinataire local"
             description: "Sur le réseau de destination, le routeur doit connaître la MAC du prochain équipement local. Il utilise ARP si cette association n'est pas déjà connue."
             active: [r1, pc-b]
-            panel: "ARP → MAC du next-hop / destinataire local"
             packets:
-              - from: r1
-                to: pc-b
+              - - from: r1
+                  to: pc-b
+                  keep: true
 
   # ============================================================
   # 05 - IP VS MAC

@@ -7,6 +7,23 @@
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+
+  --ink: #1c2b38;
+  --muted: #71808a;
+  --paper: #f4f5f2;
+  --white: #fbfcfa;
+  --line: #d9dfda;
+  --coral: #e45e43;
+  --coral-soft: #f8dfd8;
+  --blue: #2d6e91;
+  --blue-soft: #dcebf0;
+  --green: #3f8068;
+  --green-soft: #dcebe1;
+  --yellow-soft: #f5e8bd;
+  --teal: #347f83;
+  --teal-soft: #d8eceb;
+  --yellow: #ecb94e;
+  --shadow: 0 18px 40px rgba(34, 48, 55, .08);
 }
 
 * { box-sizing: border-box; }

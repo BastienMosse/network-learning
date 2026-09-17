@@ -1,7 +1,3 @@
-# ============================================================
-# IP — 08 / DHCP
-# ============================================================
-
 id: dhcp
 slug: dhcp
 title: DHCP
@@ -77,77 +73,66 @@ sections:
       - type: demo
         title: "Attribution d'une adresse IP avec DHCP"
         intro: "Suivez les quatre messages du processus DORA."
-
-        nodes:
-          - id: client
-            label: Client
-            kind: device
-            position: { x: 20, y: 50 }
-
-          - id: switch
-            label: Switch
-            kind: device
-            position: { x: 50, y: 50 }
-
-          - id: server
-            label: DHCP Server
-            kind: device
-            position: { x: 80, y: 50 }
-
-        connections:
-          - from: client
-            to: switch
-
-          - from: switch
-            to: server
-
+        network:
+          nodes:
+            - id: client
+              label: Client
+              kind: device
+              position: { x: 20, y: 50 }
+            - id: switch
+              label: Switch
+              kind: device
+              position: { x: 50, y: 50 }
+            - id: server
+              label: DHCP Server
+              kind: device
+              position: { x: 80, y: 50 }
+          connections:
+            - from: client
+              to: switch
+            - from: switch
+              to: server
         steps:
-
           - title: "1. DHCP Discover"
+            panel: "DHCP Discover"
             description: "Le client ne possède pas encore d'adresse IP utilisable et cherche un serveur DHCP."
             active: [client, switch, server]
-            panel: "DHCP Discover"
-            packetGroups:
-              -
-                - from: client
+            packets:
+              - - from: client
                   to: switch
-              -
-                - from: switch
+              - - from: switch
                   to: server
+                  keep: true
 
           - title: "2. DHCP Offer"
+            panel: "Offer : 192.168.1.50"
             description: "Le serveur propose une adresse IP et des paramètres réseau."
             active: [server, client]
-            panel: "Offer : 192.168.1.50"
-            packetGroups:
-              -
-                - from: server
+            packets:
+              - - from: server
                   to: switch
-              -
-                - from: switch
+              - - from: switch
                   to: client
+                  keep: true
 
           - title: "3. DHCP Request"
+            panel: "Request : 192.168.1.50"
             description: "Le client indique qu'il souhaite utiliser l'offre proposée."
             active: [client, server]
-            panel: "Request : 192.168.1.50"
-            packetGroups:
-              -
-                - from: client
+            packets:
+              - - from: client
                   to: switch
-              -
-                - from: switch
+              - - from: switch
                   to: server
+                  keep: true
 
           - title: "4. DHCP ACK"
+            panel: "ACK : IP + masque + passerelle + DNS"
             description: "Le serveur confirme l'attribution et fournit la configuration."
             active: [server, client]
-            panel: "ACK : IP + masque + passerelle + DNS"
-            packetGroups:
-              -
-                - from: server
+            packets:
+              - - from: server
                   to: switch
-              -
-                - from: switch
+              - - from: switch
                   to: client
-
+                  keep: true

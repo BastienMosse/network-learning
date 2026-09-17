@@ -1,0 +1,18 @@
+.callout {
+  margin: 32px 0 44px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--blue);
+  background: var(--blue-soft);
+  padding: 22px 25px;
+  max-width: 690px;
+}
+
+.callout p { color: var(--muted); line-height: 1.85; font-size: 15px; margin: 0; }
+.callout.warning { border-left-color: var(--yellow); background: color-mix(in srgb, var(--yellow) 14%, var(--paper)); }
+.callout-tag { display: block; font: 10px 'DM Mono'; text-transform: uppercase; color: var(--blue); margin-bottom: 10px; }
+.warning .callout-tag { color: #a37515; }
+.callout strong { font: 600 17px 'Space Grotesk'; display: block; margin-bottom: 5px; }
+
+@media (min-width: 801px) {
+  .callout { max-width: 900px; }
+}

@@ -112,60 +112,58 @@ sections:
       - type: demo
         title: "Résoudre www.example.com"
         intro: "Suivez le chemin d'une requête DNS."
-
-        nodes:
-          - id: client
-            label: Client
-            kind: device
-            position: { x: 15, y: 50 }
-
-          - id: resolver
-            label: Résolveur DNS
-            kind: device
-            position: { x: 50, y: 50 }
-
-          - id: server
-            label: Serveur DNS
-            kind: device
-            position: { x: 85, y: 50 }
-
-        connections:
-          - from: client
-            to: resolver
-
-          - from: resolver
-            to: server
-
+        network:
+          nodes:
+            - id: client
+              label: Client
+              kind: device
+              position: { x: 15, y: 50 }
+            - id: resolver
+              label: Résolveur DNS
+              kind: device
+              position: { x: 50, y: 50 }
+            - id: server
+              label: Serveur DNS
+              kind: device
+              position: { x: 85, y: 50 }
+          connections:
+            - from: client
+              to: resolver
+            - from: resolver
+              to: server
         steps:
-
           - title: "1. Le client demande l'adresse"
+            panel: "www.example.com → ?"
             description: "Le client veut connaître l'adresse IP correspondant à www.example.com."
             active: [client, resolver]
-            panel: "www.example.com → ?"
             packets:
-              - from: client
-                to: resolver
+              - - from: client
+                  to: resolver
+                  keep: true
 
           - title: "2. Le résolveur recherche la réponse"
+            panel: "Recherche DNS"
             description: "Le résolveur effectue les recherches DNS nécessaires."
             active: [resolver, server]
-            panel: "Recherche DNS"
             packets:
-              - from: resolver
-                to: server
+              - - from: resolver
+                  to: server
+                  keep: true
 
           - title: "3. Le serveur répond"
+            panel: "A → 93.184.216.34"
             description: "Le serveur DNS fournit l'enregistrement correspondant."
             active: [server, resolver]
-            panel: "A → 93.184.216.34"
             packets:
-              - from: server
-                to: resolver
+              - - from: server
+                  to: resolver
+                  keep: true
 
           - title: "4. Le résolveur répond au client"
+            panel: "www.example.com → 93.184.216.34"
             description: "Le client reçoit l'adresse IP et peut maintenant établir sa communication avec le serveur."
             active: [resolver, client]
-            panel: "www.example.com → 93.184.216.34"
             packets:
-              - from: resolver
-                to: client
+              - - from: resolver
+                  to: client
+                  keep: true

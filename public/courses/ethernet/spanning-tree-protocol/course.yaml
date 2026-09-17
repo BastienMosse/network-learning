@@ -77,127 +77,135 @@ sections:
       - type: demo
         title: "Pourquoi STP est nécessaire ?"
         intro: "Une boucle physique entre des switches peut provoquer une boucle de trames. STP conserve la redondance mais bloque un chemin pour supprimer la boucle logique."
-
-        nodes:
-          - id: pc-a
-            label: PC A
-            kind: device
-            position: { x: 30, y: 20 }
-
-          - id: sw1
-            label: SW1
-            kind: device
-            position: { x: 30, y: 70 }
-
-          - id: sw2
-            label: SW2
-            kind: device
-            position: { x: 60, y: 20 }
-
-          - id: sw3
-            label: SW3
-            kind: device
-            position: { x: 60, y: 70 }
-
-        connections:
-          - from: pc-a
-            to: sw1
-
-          - from: sw1
-            to: sw2
-
-          - from: sw2
-            to: sw3
-
-          - from: sw3
-            to: sw1
-
+        network:
+          nodes:
+            - id: pc-a
+              label: PC A
+              kind: device
+              position: { x: 30, y: 20 }
+            - id: sw1
+              label: SW1
+              kind: device
+              position: { x: 30, y: 70 }
+            - id: sw2
+              label: SW2
+              kind: device
+              position: { x: 60, y: 20 }
+            - id: sw3
+              label: SW3
+              kind: device
+              position: { x: 60, y: 70 }
+          connections:
+            - from: pc-a
+              to: sw1
+            - from: sw1
+              to: sw2
+            - from: sw2
+              to: sw3
+            - from: sw3
+              to: sw1
         steps:
-
           - title: "1. Une topologie redondante"
+            panel: "3 switches + 3 liens = une boucle physique"
             description: "Les trois switches sont reliés en triangle. Il existe donc plusieurs chemins entre les switches."
             active: [sw1, sw2, sw3]
-            panel: "3 switches + 3 liens = une boucle physique"
 
           - title: "2. PC A envoie un broadcast"
+            panel: "Broadcast : FF:FF:FF:FF:FF:FF"
             description: "PC A envoie une trame de broadcast. Le switch SW1 doit la diffuser sur ses autres ports."
             active: [pc-a, sw1]
-            panel: "Broadcast : FF:FF:FF:FF:FF:FF"
             packets:
-              - from: pc-a
-                to: sw1
+              - - from: pc-a
+                  to: sw1
+                  keep: true
 
           - title: "3. SW1 diffuse la trame"
+            panel: "SW1 → diffusion vers SW2 et SW3"
             description: "SW1 ne connaît pas de destination précise pour un broadcast. Il transmet donc la trame vers SW2 et SW3."
             active: [sw1, sw2, sw3]
-            panel: "SW1 → diffusion vers SW2 et SW3"
             packets:
-              - from: sw1
-                to: sw2
-              - from: sw1
-                to: sw3
-
-          - title: "4. Sans STP : la boucle commence"
-            description: "SW2 et SW3 reçoivent la trame et peuvent à leur tour la diffuser sur leurs autres ports. La trame peut alors revenir vers un switch déjà traversé."
-            active: [sw1, sw2, sw3]
-            panel: "La trame peut tourner dans la boucle"
-            packets:
-              - from: sw2
-                to: sw3
-              - from: sw3
-                to: sw1
-
-          - title: "5. Les trames se multiplient"
-            description: "Chaque switch peut recevoir puis rediffuser les copies reçues. Les broadcasts peuvent ainsi circuler continuellement dans la boucle."
-            active: [sw1, sw2, sw3]
-            panel: "Broadcast Storm"
-            packets:
-              - from: sw1
-                to: sw2
-              - from: sw1
-                to: sw3
-              - from: sw2
-                to: sw1
-              - from: sw2
-                to: sw3
-              - from: sw3
-                to: sw1
-              - from: sw3
-                to: sw2
-
-          - title: "6. Le problème"
-            description: "Une boucle de niveau 2 peut provoquer des trames dupliquées, des broadcast storms et une saturation du réseau. Il faut conserver la redondance sans laisser les trames boucler."
-            active: [sw1, sw2, sw3]
-            panel: "BOUCLE DE NIVEAU 2 → réseau instable"
-
-          - title: "7. STP entre en action"
-            description: "STP détecte la topologie redondante et construit un arbre logique sans boucle. Un des chemins redondants est placé en état bloqué."
-            active: [sw1, sw2, sw3]
-            panel: "STP → suppression de la boucle logique"
-
-          - title: "8. Un port est bloqué"
-            description: "Le lien physique entre SW2 et SW3 existe toujours, mais un des ports est bloqué. Les trames ne peuvent donc plus utiliser ce lien comme chemin actif."
-            active: [sw1, sw2, sw3]
-            panel: "SW2 ───── X ───── SW3"
-
-          - title: "9. Le broadcast peut maintenant circuler sans boucle"
-            description: "PC A envoie à nouveau un broadcast. La trame est diffusée sur la topologie active, mais le chemin bloqué empêche la formation d'une boucle."
-            active: [pc-a, sw1, sw2, sw3]
-            panel: "Broadcast contrôlé par STP"
-            packetGroups:
-              -
-                - from: pc-a
-                  to: sw1
-              -
-                - from: sw1
+              - - from: sw1
                   to: sw2
+                  keep: true
                 - from: sw1
                   to: sw3
+                  keep: true
+
+          - title: "4. Sans STP : la boucle commence"
+            panel: "La trame peut tourner dans la boucle"
+            description: "SW2 et SW3 reçoivent la trame et peuvent à leur tour la diffuser sur leurs autres ports. La trame peut alors revenir vers un switch déjà traversé."
+            active: [sw1, sw2, sw3]
+            packets:
+              - - from: sw2
+                  to: sw3
+                  keep: true
+                - from: sw2
+                  to: sw1
+                  keep: true
+                - from: sw3
+                  to: sw1
+                  keep: true
+                - from: sw3
+                  to: sw2
+                  keep: true
+
+          - title: "5. Les trames se multiplient"
+            panel: "Broadcast Storm"
+            description: "Chaque switch peut recevoir puis rediffuser les copies reçues. Les broadcasts peuvent ainsi circuler continuellement dans la boucle."
+            active: [sw1, sw2, sw3]
+            packets:
+              - - from: sw1
+                  to: sw2
+                  keep: true
+                - from: sw1
+                  to: sw3
+                  keep: true
+                - from: sw2
+                  to: sw1
+                  keep: true
+                - from: sw2
+                  to: sw3
+                  keep: true
+                - from: sw3
+                  to: sw1
+                  keep: true
+                - from: sw3
+                  to: sw2
+                  keep: true
+
+          - title: "6. Le problème"
+            panel: "BOUCLE DE NIVEAU 2 → réseau instable"
+            description: "Une boucle de niveau 2 peut provoquer des trames dupliquées, des broadcast storms et une saturation du réseau. Il faut conserver la redondance sans laisser les trames boucler."
+            active: [sw1, sw2, sw3]
+
+          - title: "7. STP entre en action"
+            panel: "STP → suppression de la boucle logique"
+            description: "STP détecte la topologie redondante et construit un arbre logique sans boucle. Un des chemins redondants est placé en état bloqué."
+            active: [sw1, sw2, sw3]
+
+          - title: "8. Un port est bloqué"
+            panel: "SW2 ───── X ───── SW3"
+            description: "Le lien physique entre SW2 et SW3 existe toujours, mais un des ports est bloqué. Les trames ne peuvent donc plus utiliser ce lien comme chemin actif."
+            active: [sw1, sw2, sw3]
+
+          - title: "9. Le broadcast peut maintenant circuler sans boucle"
+            panel: "Broadcast contrôlé par STP"
+            description: "PC A envoie à nouveau un broadcast. La trame est diffusée sur la topologie active, mais le chemin bloqué empêche la formation d'une boucle."
+            active: [pc-a, sw1, sw2, sw3]
+            packets:
+              - - from: pc-a
+                  to: sw1
+              - - from: sw1
+                  to: sw2
+                  keep: true
+                - from: sw1
+                  to: sw3
+                  keep: true
 
           - title: "10. Résultat"
+            panel: "Redondance physique + topologie logique sans boucle"
             description: "STP conserve les liens physiques redondants tout en empêchant les boucles logiques. Si un lien actif tombe, le chemin redondant peut être utilisé."
             active: [sw1, sw2, sw3]
-            panel: "Redondance physique + topologie logique sans boucle"
 
   # ============================================================
   # 02 - BPDU
@@ -352,57 +360,56 @@ sections:
       - type: demo
         title: "Élection du Root Bridge"
         intro: "Suivez l'échange des BPDU, l'élection du Root Bridge et le blocage du lien redondant."
-
-        nodes:
-          - id: sw1
-            label: SW1
-            kind: device
-            position: { x: 50, y: 20 }
-
-          - id: sw2
-            label: SW2
-            kind: device
-            position: { x: 20, y: 75 }
-
-          - id: sw3
-            label: SW3
-            kind: device
-            position: { x: 80, y: 75 }
-
-        connections:
-          - from: sw1
-            to: sw2
-
-          - from: sw1
-            to: sw3
-
-          - from: sw2
-            to: sw3
-
+        network:
+          nodes:
+            - id: sw1
+              label: SW1
+              kind: device
+              position: { x: 50, y: 20 }
+            - id: sw2
+              label: SW2
+              kind: device
+              position: { x: 20, y: 75 }
+            - id: sw3
+              label: SW3
+              kind: device
+              position: { x: 80, y: 75 }
+          connections:
+            - from: sw1
+              to: sw2
+            - from: sw1
+              to: sw3
+            - from: sw2
+              to: sw3
         steps:
-
           - title: "1. Les switches échangent des BPDU"
+            panel: "Échange des BPDU"
             description: "Au démarrage de STP, chaque switch considère qu'il pourrait être le Root Bridge. Les switches échangent des BPDU pour comparer leurs informations STP."
             active: [sw1, sw2, sw3]
-            panel: "Échange des BPDU"
             packets:
-              - from: sw1
-                to: sw2
-              - from: sw1
-                to: sw3
-              - from: sw2
-                to: sw1
-              - from: sw2
-                to: sw3
-              - from: sw3
-                to: sw1
-              - from: sw3
-                to: sw2
+              - - from: sw1
+                  to: sw2
+                  keep: true
+                - from: sw1
+                  to: sw3
+                  keep: true
+                - from: sw2
+                  to: sw1
+                  keep: true
+                - from: sw2
+                  to: sw3
+                  keep: true
+                - from: sw3
+                  to: sw1
+                  keep: true
+                - from: sw3
+                  to: sw2
+                  keep: true
 
           - title: "2. Comparaison des Bridge ID"
+            panel: "SW1 = 10 | SW2 = 20 | SW3 = 30"
             description: "Les switches comparent les Bridge ID reçus dans les BPDU. Le Bridge ID le plus faible est préféré."
             active: [sw1, sw2, sw3]
-            panel: "SW1 = 10 | SW2 = 20 | SW3 = 30"
             table:
               headers: [Switch, Bridge ID, Statut]
               rows:
@@ -411,9 +418,9 @@ sections:
                 - [SW3, 30, Candidat]
 
           - title: "3. SW1 devient Root Bridge"
+            panel: "Root Bridge : SW1"
             description: "SW1 possède le plus petit Bridge ID. Il est donc élu Root Bridge."
             active: [sw1]
-            panel: "Root Bridge : SW1"
             table:
               headers: [Switch, Bridge ID, Rôle]
               rows:
@@ -422,35 +429,37 @@ sections:
                 - [SW3, 30, Non-root]
 
           - title: "4. SW2 choisit son Root Port"
+            panel: "SW2 → Root Port → SW1"
             description: "SW2 recherche son meilleur chemin vers le Root Bridge. Son lien direct vers SW1 possède le meilleur coût."
             active: [sw1, sw2]
-            panel: "SW2 → Root Port → SW1"
             packets:
-              - from: sw1
-                to: sw2
+              - - from: sw1
+                  to: sw2
+                  keep: true
 
           - title: "5. SW3 choisit son Root Port"
+            panel: "SW3 → Root Port → SW1"
             description: "SW3 recherche également son meilleur chemin vers le Root Bridge. Son lien direct vers SW1 possède le meilleur coût."
             active: [sw1, sw3]
-            panel: "SW3 → Root Port → SW1"
             packets:
-              - from: sw1
-                to: sw3
+              - - from: sw1
+                  to: sw3
+                  keep: true
 
           - title: "6. Le lien SW2 ↔ SW3 est redondant"
+            panel: "Lien redondant : SW2 ↔ SW3"
             description: "SW2 et SW3 possèdent déjà chacun un chemin direct vers le Root Bridge. Le lien entre eux crée donc une boucle potentielle."
             active: [sw2, sw3]
-            panel: "Lien redondant : SW2 ↔ SW3"
 
           - title: "7. STP départage les deux ports"
+            panel: "SW2 : Designated Port | SW3 : Alternate / Blocked Port"
             description: "Les deux ports du segment SW2 ↔ SW3 sont comparés. SW2 possède le Bridge ID le plus faible et son port est donc préféré."
             active: [sw2, sw3]
-            panel: "SW2 : Designated Port | SW3 : Alternate / Blocked Port"
 
           - title: "8. La boucle est supprimée"
+            panel: "Topologie logique sans boucle"
             description: "Le port de SW3 vers SW2 est bloqué. Le lien physique existe toujours, mais les trames ne peuvent plus former une boucle logique."
             active: [sw1, sw2, sw3]
-            panel: "Topologie logique sans boucle"
 
   # ============================================================
   # 07 - EXERCICE

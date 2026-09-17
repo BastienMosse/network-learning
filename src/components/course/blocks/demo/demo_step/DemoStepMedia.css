@@ -1,0 +1,18 @@
+.demo-media { margin: 16px 0 0; }
+.demo-media img { display: block; width: 100%; max-height: 125px; object-fit: contain; background: var(--paper); border: 1px solid var(--line); }
+.demo-media figcaption { color: var(--muted); font-size: 9px; line-height: 1.4; margin-top: 5px; }
+
+.demo-image-stage {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background-image: radial-gradient(var(--line) .7px, transparent .7px);
+  background-size: 15px 15px;
+}
+
+.demo-image-figure { width: 100%; margin: 0; }
+.demo-image-figure img { display: block; width: 100%; max-height: 310px; object-fit: contain; }
+.demo-image-figure figcaption { color: var(--muted); font-size: 10px; line-height: 1.5; margin-top: 10px; text-align: center; }
+.demo-image-empty { color: var(--muted); font: 11px 'DM Mono'; }

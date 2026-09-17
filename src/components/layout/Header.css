@@ -1,0 +1,81 @@
+.topbar {
+  height: 76px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5.5vw;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  position: relative;
+  z-index: 2;
+}
+
+.brand {
+  border: 0;
+  background: none;
+  color: var(--ink);
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  font: 700 14px 'Space Grotesk';
+  letter-spacing: .11em;
+  cursor: pointer;
+  padding: 0;
+}
+
+.brand-mark {
+  width: 26px;
+  height: 26px;
+  background: var(--coral);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  padding: 6px 5px;
+  transform: rotate(-7deg);
+}
+
+.brand-mark span { background: #fff6ed; display: block; }
+
+.topnav {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin-left: 8%;
+}
+
+.topnav button {
+  border: 0;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 8px 0;
+}
+
+.topnav button.active { color: var(--ink); font-weight: 700; }
+.nav-rule { height: 14px; width: 1px; background: var(--line); }
+.nav-note { font: 12px 'DM Mono'; color: var(--muted); }
+
+.icon-button,
+.back-button,
+.reset-button {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.icon-button { border-radius: 50%; height: 36px; width: 36px; justify-content: center; }
+
+@media (max-width: 800px) {
+  .topbar { padding: 0 20px; }
+  .topnav { margin: 0; }
+  .nav-note, .nav-rule { display: none; }
+}
+
+@media (max-width: 480px) {
+  .topbar { height: 66px; }
+}

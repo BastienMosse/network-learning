@@ -1,0 +1,24 @@
+.inner-hero {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 55px;
+  margin-bottom: 60px;
+}
+
+.inner-hero h1 {
+  font-size: clamp(43px, 6vw, 72px);
+  margin-bottom: 18px;
+}
+
+.inner-hero p:last-child {
+  max-width: 570px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.empty-state {
+  border: 1px dashed var(--line);
+  padding: 52px;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 110px;
+}

@@ -1,0 +1,5 @@
+.demo-table-wrap { overflow-x: auto; margin-top: 16px; }
+.demo-table { width: 100%; border-collapse: collapse; font-size: 10px; white-space: nowrap; }
+.demo-table th, .demo-table td { border-bottom: 1px solid var(--line); padding: 7px 8px; text-align: left; }
+.demo-table th { color: var(--ink); font: 500 9px 'DM Mono'; text-transform: uppercase; }
+.demo-table td { color: var(--muted); }

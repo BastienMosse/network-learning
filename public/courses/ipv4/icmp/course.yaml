@@ -222,49 +222,47 @@ sections:
       - type: demo
         title: "ICMP Echo Request / Echo Reply"
         intro: "Suivez un ping entre deux machines et observez les messages ICMP."
-
-        nodes:
-          - id: pc-a
-            label: PC A
-            kind: device
-            position: { x: 20, y: 50 }
-
-          - id: pc-b
-            label: PC B
-            kind: device
-            position: { x: 80, y: 50 }
-
-        connections:
-          - from: pc-a
-            to: pc-b
-
+        network:
+          nodes:
+            - id: pc-a
+              label: PC A
+              kind: device
+              position: { x: 20, y: 50 }
+            - id: pc-b
+              label: PC B
+              kind: device
+              position: { x: 80, y: 50 }
+          connections:
+            - from: pc-a
+              to: pc-b
         steps:
-
           - title: "1. PC A envoie un Echo Request"
+            panel: "ICMP Type 8 | Code 0"
             description: "PC A construit un message ICMP Echo Request et l'envoie vers PC B."
             active: [pc-a, pc-b]
-            panel: "ICMP Type 8 | Code 0"
             packets:
-              - from: pc-a
-                to: pc-b
+              - - from: pc-a
+                  to: pc-b
+                  keep: true
 
           - title: "2. PC B reçoit le message"
+            panel: "IPv4 Protocol = 1 → ICMP"
             description: "PC B reçoit le paquet IPv4, identifie ICMP grâce au champ Protocol = 1, puis traite l'Echo Request."
             active: [pc-b]
-            panel: "IPv4 Protocol = 1 → ICMP"
 
           - title: "3. PC B répond"
+            panel: "ICMP Type 0 | Code 0"
             description: "PC B génère un message ICMP Echo Reply en réponse à la requête."
             active: [pc-a, pc-b]
-            panel: "ICMP Type 0 | Code 0"
             packets:
-              - from: pc-b
-                to: pc-a
+              - - from: pc-b
+                  to: pc-a
+                  keep: true
 
           - title: "4. PC A reçoit la réponse"
+            panel: "Echo Reply reçu"
             description: "PC A reçoit l'Echo Reply et peut calculer le temps aller-retour du ping."
             active: [pc-a]
-            panel: "Echo Reply reçu"
 
   # ============================================================
   # 05 - SYNTHÈSE

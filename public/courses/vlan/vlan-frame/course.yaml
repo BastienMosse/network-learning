@@ -259,83 +259,78 @@ sections:
       - type: demo
         title: "PC → Access → Trunk → Access → PC"
         intro: "Suivez une trame du PC A vers le PC B et observez quand le VLAN est associé à la trame et quand le tag 802.1Q est utilisé."
-
-        nodes:
-          - id: pc-a
-            label: PC A
-            kind: device
-            position: { x: 10, y: 50 }
-
-          - id: sw1
-            label: SW1
-            kind: device
-            position: { x: 35, y: 50 }
-
-          - id: sw2
-            label: SW2
-            kind: device
-            position: { x: 65, y: 50 }
-
-          - id: pc-b
-            label: PC B
-            kind: device
-            position: { x: 90, y: 50 }
-
-        connections:
-          - from: pc-a
-            to: sw1
-
-          - from: sw1
-            to: sw2
-
-          - from: sw2
-            to: pc-b
-
+        network:
+          nodes:
+            - id: pc-a
+              label: PC A
+              kind: device
+              position: { x: 10, y: 50 }
+            - id: sw1
+              label: SW1
+              kind: device
+              position: { x: 35, y: 50 }
+            - id: sw2
+              label: SW2
+              kind: device
+              position: { x: 65, y: 50 }
+            - id: pc-b
+              label: PC B
+              kind: device
+              position: { x: 90, y: 50 }
+          connections:
+            - from: pc-a
+              to: sw1
+            - from: sw1
+              to: sw2
+            - from: sw2
+              to: pc-b
         steps:
-
           - title: "1. PC A est connecté à un port Access"
+            panel: "PC A → Access → VLAN 10"
             description: "Le port de SW1 auquel PC A est connecté appartient au VLAN 10."
             active: [pc-a, sw1]
-            panel: "PC A → Access → VLAN 10"
 
           - title: "2. PC A envoie une trame"
+            panel: "Trame non taguée | VLAN associé par le port Access"
             description: "PC A envoie une trame Ethernet classique. Dans ce scénario, le PC n'ajoute pas lui-même de tag 802.1Q."
             active: [pc-a, sw1]
-            panel: "Trame non taguée | VLAN associé par le port Access"
             packets:
-              - from: pc-a
-                to: sw1
+              - - from: pc-a
+                  to: sw1
+                  keep: true
 
           - title: "3. SW1 associe la trame au VLAN 10"
+            panel: "VLAN = 10"
             description: "SW1 reçoit la trame sur son port Access VLAN 10. Il sait donc que cette trame appartient au VLAN 10."
             active: [sw1]
-            panel: "VLAN = 10"
 
           - title: "4. SW1 envoie la trame sur le trunk"
+            panel: "Trunk → 802.1Q → VLAN ID = 10"
             description: "La liaison entre SW1 et SW2 est un trunk. Pour transporter le VLAN 10 sur cette liaison, la trame est identifiée par un tag 802.1Q."
             active: [sw1, sw2]
-            panel: "Trunk → 802.1Q → VLAN ID = 10"
             packets:
-              - from: sw1
-                to: sw2
+              - - from: sw1
+                  to: sw2
+                  keep: true
 
           - title: "5. SW2 lit le VLAN ID"
+            panel: "VLAN ID = 10"
             description: "SW2 reçoit la trame taguée et lit le VLAN ID. Il sait que la trame appartient au VLAN 10."
             active: [sw2]
-            panel: "VLAN ID = 10"
 
           - title: "6. SW2 transmet vers le port Access"
+            panel: "VLAN 10 → Port Access"
             description: "PC B est connecté à un port Access appartenant au VLAN 10. Le switch transmet la trame vers ce port."
             active: [sw2, pc-b]
-            panel: "VLAN 10 → Port Access"
             packets:
-              - from: sw2
-                to: pc-b
+              - - from: sw2
+                  to: pc-b
+                  keep: true
 
           - title: "7. PC B reçoit une trame Ethernet classique"
+            panel: "PC B ← trame Ethernet non taguée"
             description: "Sur le port Access, le PC reçoit normalement une trame Ethernet sans le tag 802.1Q ajouté pour le transport sur le trunk."
             active: [pc-b]
-            panel: "PC B ← trame Ethernet non taguée"
 
       - type: text
         title: Ce qu'il faut observer

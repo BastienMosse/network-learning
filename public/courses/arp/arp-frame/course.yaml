@@ -226,74 +226,69 @@ sections:
       - type: demo
         title: "PC A cherche la MAC de PC B"
         intro: "Suivez l'échange ARP complet entre deux machines du même réseau."
-
-        nodes:
-          - id: pc-a
-            label: PC A
-            kind: device
-            position: { x: 20, y: 50 }
-
-          - id: switch
-            label: Switch
-            kind: device
-            position: { x: 50, y: 50 }
-
-          - id: pc-b
-            label: PC B
-            kind: device
-            position: { x: 80, y: 50 }
-
-        connections:
-          - from: pc-a
-            to: switch
-
-          - from: switch
-            to: pc-b
-
+        network:
+          nodes:
+            - id: pc-a
+              label: PC A
+              kind: device
+              position: { x: 20, y: 50 }
+            - id: switch
+              label: Switch
+              kind: device
+              position: { x: 50, y: 50 }
+            - id: pc-b
+              label: PC B
+              kind: device
+              position: { x: 80, y: 50 }
+          connections:
+            - from: pc-a
+              to: switch
+            - from: switch
+              to: pc-b
         steps:
-
           - title: "1. PC A veut communiquer avec PC B"
+            panel: "PC A : 192.168.1.10 | Recherche : 192.168.1.20"
             description: "PC A connaît l'IP de PC B mais ne connaît pas encore sa MAC."
             active: [pc-a]
-            panel: "PC A : 192.168.1.10 | Recherche : 192.168.1.20"
 
           - title: "2. PC A diffuse une requête ARP"
+            panel: "Who has 192.168.1.20?"
             description: "PC A envoie une requête ARP sur le réseau local pour demander quelle machine possède l'adresse IP 192.168.1.20."
             active: [pc-a, switch, pc-b]
-            panel: "Who has 192.168.1.20?"
             packets:
-              - from: pc-a
-                to: switch
+              - - from: pc-a
+                  to: switch
+                  keep: true
 
           - title: "3. Le switch diffuse la requête"
+            panel: "Broadcast ARP"
             description: "La requête ARP est diffusée dans le domaine de broadcast. PC B reçoit donc la requête."
             active: [switch, pc-b]
-            panel: "Broadcast ARP"
             packets:
-              - from: switch
-                to: pc-b
+              - - from: switch
+                  to: pc-b
+                  keep: true
 
           - title: "4. PC B reconnaît son adresse IP"
+            panel: "192.168.1.20 → AA:BB:BB:BB:BB:BB"
             description: "PC B possède bien l'adresse 192.168.1.20. Il prépare une réponse ARP."
             active: [pc-b]
-            panel: "192.168.1.20 → AA:BB:BB:BB:BB:BB"
 
           - title: "5. PC B répond"
+            panel: "192.168.1.20 = AA:BB:BB:BB:BB:BB"
             description: "PC B envoie une réponse ARP directement à PC A pour lui indiquer sa MAC."
             active: [pc-a, pc-b]
-            panel: "192.168.1.20 = AA:BB:BB:BB:BB:BB"
-            packetGroups:
-              -
-                - from: pc-b
+            packets:
+              - - from: pc-b
                   to: switch
-              -
-                - from: switch
+              - - from: switch
                   to: pc-a
+                  keep: true
 
           - title: "6. PC A connaît maintenant la MAC"
+            panel: "192.168.1.20 → AA:BB:BB:BB:BB:BB"
             description: "PC A peut maintenant construire une trame Ethernet destinée à PC B."
             active: [pc-a]
-            panel: "192.168.1.20 → AA:BB:BB:BB:BB:BB"
 
   # ============================================================
   # 07 - SYNTHÈSE

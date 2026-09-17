@@ -1,0 +1,84 @@
+.moving-packet {
+  position: absolute;
+
+  left: var(--packet-from-x);
+  top: var(--packet-from-y);
+
+  width: 12px;
+  height: 12px;
+
+  transform: translate(-50%, -50%);
+
+  opacity: 0;
+
+  z-index: 10;
+
+  animation-duration: 950ms;
+  animation-delay: var(--packet-delay, 0ms);
+  animation-timing-function: ease;
+  animation-fill-mode: both;
+}
+
+.moving-packet span {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  border-radius: 50%;
+
+  background: var(--coral);
+  
+  box-shadow: 0 0 0 5px var(--coral-soft);
+}
+
+.packet-keep {
+  animation-name: packet-travel-keep;
+}
+
+@keyframes packet-travel-keep {
+  0% {
+    left: var(--packet-from-x);
+    top: var(--packet-from-y);
+    opacity: 0;
+  }
+
+  1% {
+    opacity: 1;
+  }
+
+  100% {
+    left: var(--packet-to-x);
+    top: var(--packet-to-y);
+    opacity: 1;
+  }
+}
+
+
+.packet-hide {
+  animation-name: packet-travel-hide;
+}
+
+@keyframes packet-travel-hide {
+  0% {
+    left: var(--packet-from-x);
+    top: var(--packet-from-y);
+    opacity: 0;
+  }
+
+  1% {
+    opacity: 1;
+  }
+
+  90% {
+    left: var(--packet-to-x);
+    top: var(--packet-to-y);
+    opacity: 1;
+  }
+
+  100% {
+    left: var(--packet-to-x);
+    top: var(--packet-to-y);
+    opacity: 0;
+  }
+}

@@ -148,64 +148,60 @@ sections:
       - type: demo
         title: "Lecture d'un paquet IPv4"
         intro: "Analysez les champs essentiels d'un paquet IPv4."
-
-        nodes:
-          - id: pc-a
-            label: PC A
-            kind: device
-            position: { x: 15, y: 50 }
-
-          - id: router
-            label: Routeur
-            kind: device
-            position: { x: 50, y: 50 }
-
-          - id: pc-b
-            label: PC B
-            kind: device
-            position: { x: 85, y: 50 }
-
-        connections:
-          - from: pc-a
-            to: router
-
-          - from: router
-            to: pc-b
-
+        network:
+          nodes:
+            - id: pc-a
+              label: PC A
+              kind: device
+              position: { x: 15, y: 50 }
+            - id: router
+              label: Routeur
+              kind: device
+              position: { x: 50, y: 50 }
+            - id: pc-b
+              label: PC B
+              kind: device
+              position: { x: 85, y: 50 }
+          connections:
+            - from: pc-a
+              to: router
+            - from: router
+              to: pc-b
         steps:
-
           - title: "1. PC A construit le paquet"
-            description: "PC A envoie un paquet IPv4 vers PC B."
-            active: [pc-a]
             panel: |
               Source : 192.168.1.10
               Destination : 192.168.2.20
+            description: "PC A envoie un paquet IPv4 vers PC B."
+            active: [pc-a]
 
           - title: "2. Le paquet arrive au routeur"
+            panel: "TTL = 64"
             description: "Le routeur examine l'en-tête IPv4 pour déterminer comment acheminer le paquet."
             active: [pc-a, router]
-            panel: "TTL = 64"
             packets:
-              - from: pc-a
-                to: router
+              - - from: pc-a
+                  to: router
+                  keep: true
 
           - title: "3. Le routeur décrémente le TTL"
+            panel: "TTL : 64 → 63"
             description: "Le routeur décrémente le TTL avant de transmettre le paquet."
             active: [router]
-            panel: "TTL : 64 → 63"
 
           - title: "3. Le routeur décrémente le TTL"
+            panel: "TTL > 0"
             description: "Le TTL est positif, on transmet le paquet."
             active: [router]
-            panel: "TTL > 0"
 
           - title: "4. Le routeur transmet"
+            panel: "IP destination = 192.168.2.20"
             description: "Le paquet conserve son IP destination mais est encapsulé dans une nouvelle trame sur le lien suivant."
             active: [router, pc-b]
-            panel: "IP destination = 192.168.2.20"
             packets:
-              - from: router
-                to: pc-b
+              - - from: router
+                  to: pc-b
+                  keep: true
 
   # ==========================================================
   # 04 - SYNTHÈSE

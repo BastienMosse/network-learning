@@ -83,102 +83,93 @@ sections:
       - type: demo
         title: "Un switch, puis plusieurs VLAN"
         intro: "Comparez un réseau où toutes les machines appartiennent au même domaine de broadcast avec un réseau partitionné en plusieurs VLAN."
-
-        nodes:
-          - id: switch
-            label: Switch
-            kind: device
-            position: { x: 50, y: 50 }
-
-          - id: admin-1
-            label: Admin 1
-            kind: device
-            position: { x: 15, y: 20 }
-
-          - id: admin-2
-            label: Admin 2
-            kind: device
-            position: { x: 15, y: 80 }
-
-          - id: compta-1
-            label: Compta 1
-            kind: device
-            position: { x: 85, y: 20 }
-
-          - id: compta-2
-            label: Compta 2
-            kind: device
-            position: { x: 85, y: 80 }
-
-        connections:
-          - from: admin-1
-            to: switch
-
-          - from: admin-2
-            to: switch
-
-          - from: compta-1
-            to: switch
-
-          - from: compta-2
-            to: switch
-
+        network:
+          nodes:
+            - id: switch
+              label: Switch
+              kind: device
+              position: { x: 50, y: 50 }
+            - id: admin-1
+              label: Admin 1
+              kind: device
+              position: { x: 15, y: 20 }
+            - id: admin-2
+              label: Admin 2
+              kind: device
+              position: { x: 15, y: 80 }
+            - id: compta-1
+              label: Compta 1
+              kind: device
+              position: { x: 85, y: 20 }
+            - id: compta-2
+              label: Compta 2
+              kind: device
+              position: { x: 85, y: 80 }
+          connections:
+            - from: admin-1
+              to: switch
+            - from: admin-2
+              to: switch
+            - from: compta-1
+              to: switch
+            - from: compta-2
+              to: switch
         steps:
-
           - title: "1. Sans VLAN"
+            panel: "1 switch → 1 domaine de broadcast"
             description: "Toutes les machines sont connectées au même réseau logique. Elles appartiennent donc au même domaine de broadcast."
             active: []
-            panel: "1 switch → 1 domaine de broadcast"
 
           - title: "2. Un broadcast est envoyé"
+            panel: "Broadcast → tout le réseau"
             description: "Une machine envoie une trame broadcast. Le switch la diffuse vers les autres ports appartenant au même domaine."
             active: [admin-1, admin-2, compta-1, compta-2]
-            panel: "Broadcast → tout le réseau"
-            packetGroups:
-              -
-                - from: admin-1
+            packets:
+              - - from: admin-1
                   to: switch
-              -
-                - from: switch
+              - - from: switch
                   to: admin-2
+                  keep: true
                 - from: switch
                   to: compta-1
+                  keep: true
                 - from: switch
                   to: compta-2
+                  keep: true
 
           - title: "3. On crée des VLAN"
-            description: "Le switch est maintenant partitionné logiquement. Les machines d'administration sont placées dans le VLAN 10 et les machines de comptabilité dans le VLAN 20."
-            active: [admin-1, admin-2, compta-1, compta-2, switch]
             panel: |
               VLAN 10 = Administration
               VLAN 20 = Comptabilité
+            description: "Le switch est maintenant partitionné logiquement. Les machines d'administration sont placées dans le VLAN 10 et les machines de comptabilité dans le VLAN 20."
+            active: [admin-1, admin-2, compta-1, compta-2, switch]
 
           - title: "4. Les VLAN créent deux domaines de broadcast"
+            panel: "VLAN 10 → domaine de broadcast 1"
             description: "Les machines du VLAN 10 appartiennent à un domaine de broadcast différent de celui du VLAN 20."
             active: [admin-1, admin-2]
-            panel: "VLAN 10 → domaine de broadcast 1"
 
           - title: "5. Un broadcast du VLAN 10"
+            panel: "Broadcast VLAN 10 → uniquement VLAN 10"
             description: "Un broadcast envoyé par une machine du VLAN 10 est transmis uniquement aux autres ports appartenant au VLAN 10."
             active: [admin-1, admin-2]
-            panel: "Broadcast VLAN 10 → uniquement VLAN 10"
-            packetGroups:
-              -
-                - from: admin-1
+            packets:
+              - - from: admin-1
                   to: switch
-              -
-                - from: switch
+                  keep: true
+              - - from: switch
                   to: admin-2
+                  keep: true
 
           - title: "6. Le VLAN 20 reste isolé"
+            panel: "VLAN 20 → aucun broadcast provenant du VLAN 10"
             description: "Les machines du VLAN 20 ne reçoivent pas le broadcast provenant du VLAN 10."
             active: [compta-1, compta-2]
-            panel: "VLAN 20 → aucun broadcast provenant du VLAN 10"
 
           - title: "7. Résultat"
+            panel: "1 switch physique → plusieurs domaines de broadcast"
             description: "Un seul switch physique permet maintenant de créer plusieurs réseaux logiques indépendants."
             active: [admin-1, admin-2, compta-1, compta-2, switch]
-            panel: "1 switch physique → plusieurs domaines de broadcast"
 
   # ============================================================
   # 03 - PRINCIPE

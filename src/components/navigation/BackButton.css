@@ -1,0 +1,7 @@
+.back-button {
+  margin: 42px 0 55px;
+  border: 0;
+  padding: 0;
+  font-size: 12px;
+  color: var(--muted);
+}

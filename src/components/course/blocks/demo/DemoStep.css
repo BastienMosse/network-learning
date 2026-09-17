@@ -1,0 +1,24 @@
+.demo-stage {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  min-height: 250px;
+}
+
+.demo-panel {
+  border-left: 1px solid var(--line);
+  padding: 30px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.panel-label { font: 10px 'DM Mono'; text-transform: uppercase; color: var(--muted); }
+.demo-panel strong { font: 600 18px 'Space Grotesk'; margin: 9px 0; }
+.demo-panel p { color: var(--muted); font-size: 12px; line-height: 1.65; margin: 0; }
+.panel-step { color: var(--coral); font: 11px 'DM Mono'; margin-top: 24px; }
+.panel-step i { color: var(--muted); font-style: normal; margin: 0 6px; }
+
+@media (max-width: 800px) {
+  .demo-stage { grid-template-columns: 1fr; }
+  .demo-panel { border-left: 0; border-top: 1px solid var(--line); }
+}

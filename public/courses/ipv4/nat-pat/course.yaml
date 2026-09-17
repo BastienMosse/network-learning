@@ -79,59 +79,51 @@ sections:
       - type: demo
         title: "Plusieurs machines partagent une IP publique"
         intro: "Observez comment le routeur utilise les ports pour différencier plusieurs connexions."
-
-        nodes:
-          - id: pc-a
-            label: PC A
-            kind: device
-            position: { x: 15, y: 30 }
-
-          - id: pc-b
-            label: PC B
-            kind: device
-            position: { x: 15, y: 70 }
-
-          - id: router
-            label: Routeur NAT
-            kind: device
-            position: { x: 50, y: 50 }
-
-          - id: internet
-            label: Internet
-            kind: device
-            position: { x: 85, y: 50 }
-
-        connections:
-          - from: pc-a
-            to: router
-
-          - from: pc-b
-            to: router
-
-          - from: router
-            to: internet
-
+        network:
+          nodes:
+            - id: pc-a
+              label: PC A
+              kind: device
+              position: { x: 15, y: 30 }
+            - id: pc-b
+              label: PC B
+              kind: device
+              position: { x: 15, y: 70 }
+            - id: router
+              label: Routeur NAT
+              kind: device
+              position: { x: 50, y: 50 }
+            - id: internet
+              label: Internet
+              kind: device
+              position: { x: 85, y: 50 }
+          connections:
+            - from: pc-a
+              to: router
+            - from: pc-b
+              to: router
+            - from: router
+              to: internet
         steps:
-
           - title: "1. PC A ouvre une connexion"
+            panel: "192.168.1.10:50000"
             description: "PC A utilise son adresse privée et un port source."
             active: [pc-a, router]
-            panel: "192.168.1.10:50000"
 
           - title: "2. Le routeur traduit la connexion"
+            panel: "203.0.113.5:40000"
             description: "Le routeur remplace l'adresse privée par son adresse publique et peut modifier le port source."
             active: [router]
-            panel: "203.0.113.5:40000"
 
           - title: "3. PC B ouvre une autre connexion"
+            panel: "192.168.1.20:50000 → 203.0.113.5:40001"
             description: "PC B utilise également l'adresse publique du routeur, mais le routeur utilise un autre port."
             active: [pc-b, router]
-            panel: "192.168.1.20:50000 → 203.0.113.5:40001"
 
           - title: "4. Table PAT"
+            panel: "Table de traduction"
             description: "Le routeur mémorise les traductions afin de savoir à quelle machine privée retourner les réponses."
             active: [router]
-            panel: "Table de traduction"
             table:
               headers: ["Adresse interne", "Adresse publique"]
               rows:
