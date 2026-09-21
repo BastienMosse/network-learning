@@ -7,8 +7,10 @@ export const fallbackManifest: Manifest = {
   courseFiles: {},
 };
 
+const base = import.meta.env.BASE_URL;
+
 export async function loadManifest(): Promise<Manifest> {
-  const response = await fetch("/courses/manifest.json");
+  const response = await fetch(`${base}courses/manifest.json`);
 
   if (!response.ok) {
     return fallbackManifest;
@@ -18,9 +20,8 @@ export async function loadManifest(): Promise<Manifest> {
 }
 
 export async function loadCourse(path: string): Promise<CourseContent> {
-  console.log("path :", path);
-
-  const response = await fetch(path);
+  const url = path.startsWith("/") ? `${base}${path.slice(1)}` : path;
+  const response = await fetch(url);
 
   if (!response.ok) {
     throw new Error("Impossible de charger ce cours");
