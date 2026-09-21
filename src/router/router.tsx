@@ -7,11 +7,13 @@ import { Explorer } from "../pages/Explorer/Explorer";
 import { Theme } from "../pages/Theme/Theme";
 import { Course } from "../pages/Course/Course";
 import { Playground } from "../pages/Playground/Playground";
+import { Download } from "../pages/Download/Download";
 
 const basename = import.meta.env.BASE_URL.replace(/\/+$/, "") || undefined;
 
 export const router = createBrowserRouter(
   [
+    { path: "/download", element: <Download /> },
     {
       element: <AppLayout />,
       children: [

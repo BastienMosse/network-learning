@@ -53,6 +53,7 @@
 }
 
 .topnav button.active { color: var(--ink); font-weight: 700; }
+.nav-download { display: inline-flex; align-items: center; gap: 5px; }
 .nav-rule { height: 14px; width: 1px; background: var(--line); }
 .nav-note { font: 12px 'DM Mono'; color: var(--muted); }
 

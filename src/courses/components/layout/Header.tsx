@@ -1,8 +1,10 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, Download } from "lucide-react";
 import "./Header.css";
 
 import { useTheme } from "../../contexts/ThemeContext";
+
+const isTauri = "__TAURI_INTERNALS__" in window;
 
 export default function Header() {
   const navigate = useNavigate();
@@ -44,6 +46,15 @@ export default function Header() {
         <button onClick={() => navigate("/netsim")} className={isNetsim ? "active" : ""}>
           Playground
         </button>
+
+        {!isTauri && (
+          <>
+            <span className="nav-rule" />
+            <button onClick={() => navigate("/download")} className="nav-download">
+              <Download size={14} /> App desktop
+            </button>
+          </>
+        )}
       </nav>
 
       <button className="icon-button" onClick={toggleTheme} aria-label={themeLabel}>
