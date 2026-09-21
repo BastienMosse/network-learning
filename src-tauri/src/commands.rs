@@ -2,7 +2,7 @@ use crate::events::{StepHandle, StepReceiver};
 use crate::simulation::SimulationManager;
 
 use serde::Serialize;
-use tauri::State;
+use tauri::{AppHandle, Emitter, State};
 use tokio::sync::Mutex;
 
 
@@ -29,6 +29,13 @@ impl StepController {
 
 #[derive(Serialize)]
 pub struct StepInfo {
+    pub device: String,
+    pub event: String,
+    pub tables: Vec<String>,
+}
+
+#[derive(Serialize, Clone)]
+pub struct SimStepEvent {
     pub device: String,
     pub event: String,
     pub tables: Vec<String>,
@@ -121,8 +128,28 @@ pub async fn sim_link_interfaces(
 #[tauri::command]
 pub async fn sim_start(
     state: State<'_, Mutex<SimulationManager>>,
+    app: AppHandle,
 ) -> Result<(), String> {
-    state.lock().await.start()
+    let mut mgr = state.lock().await;
+    let mut log_rx = mgr.subscribe();
+    mgr.start()?;
+    drop(mgr);
+
+    tokio::spawn(async move {
+        while let Ok(step) = log_rx.recv().await {
+            if !step.kind.is_log_visible() {
+                continue;
+            }
+            let payload = SimStepEvent {
+                device: step.device,
+                event: step.kind.to_string(),
+                tables: step.tables.iter().map(|t| t.to_string()).collect(),
+            };
+            let _ = app.emit("sim-step", payload);
+        }
+    });
+
+    Ok(())
 }
 
 

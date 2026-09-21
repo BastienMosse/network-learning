@@ -35,64 +35,34 @@
 
 .ns-back:hover { color: var(--ink); }
 
-.ns-tool-hint {
-  font: 12px 'DM Mono';
-  color: var(--coral);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.ns-tool-hint button {
-  border: 1px solid var(--coral);
-  background: transparent;
-  color: var(--coral);
-  padding: 3px 8px;
-  font-size: 11px;
-  cursor: pointer;
-}
-
-.ns-tool-hint--delete { color: #d44; }
-.ns-tool-hint--delete button { border-color: #d44; color: #d44; }
-
 .ns-workspace {
   flex: 1;
   display: flex;
   overflow: hidden;
 }
 
-.ns-step-toggle {
+.ns-web-notice {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  font: 500 12px 'DM Mono';
+  justify-content: center;
+  flex: 1;
+  text-align: center;
+  gap: 8px;
   color: var(--muted);
-  cursor: pointer;
-  user-select: none;
+  padding: 48px 24px;
 }
 
-.ns-step-toggle input[type="checkbox"] {
-  accent-color: var(--coral);
+.ns-web-notice h2 {
+  font: 600 22px 'Space Grotesk';
+  color: var(--ink);
+  margin: 0;
 }
 
-.ns-step-toggle input:disabled { opacity: 0.4; }
-
-.ns-step-btn {
-  border: 1px solid var(--blue);
-  background: var(--blue-soft);
-  color: var(--blue);
-  padding: 6px 14px;
-  font: 600 12px 'Manrope';
-  cursor: pointer;
-  transition: all .15s;
+.ns-web-notice p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  max-width: 420px;
 }
 
-.ns-step-btn:hover {
-  background: var(--blue);
-  color: #fff;
-}
-
-.ns-step-btn:disabled {
-  opacity: 0.5;
-  cursor: wait;
-}

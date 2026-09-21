@@ -48,6 +48,12 @@ pub enum EventKind {
     Info { message: String },
 }
 
+impl EventKind {
+    pub fn is_log_visible(&self) -> bool {
+        !matches!(self, Self::ArpRequestReceived { .. } | Self::ArpReplyReceived { .. })
+    }
+}
+
 impl fmt::Display for EventKind {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
@@ -118,9 +124,33 @@ impl fmt::Display for TableView {
             writeln!(f, "    (empty)")?;
             return Ok(());
         }
-        writeln!(f, "    {}", self.headers.join(" | "))?;
+
+        let col_count = self.headers.len();
+        let mut widths: Vec<usize> = self.headers.iter().map(|h| h.len()).collect();
         for row in &self.rows {
-            writeln!(f, "    {}", row.join(" | "))?;
+            for (i, cell) in row.iter().enumerate() {
+                if i < col_count {
+                    widths[i] = widths[i].max(cell.len());
+                }
+            }
+        }
+
+        let header_line: Vec<String> = self.headers.iter().enumerate()
+            .map(|(i, h)| format!("{:<width$}", h, width = widths[i]))
+            .collect();
+        writeln!(f, "    {}", header_line.join(" | "))?;
+
+        let separator: Vec<String> = widths.iter().map(|w| "-".repeat(*w)).collect();
+        writeln!(f, "    {}", separator.join("-+-"))?;
+
+        for row in &self.rows {
+            let cells: Vec<String> = row.iter().enumerate()
+                .map(|(i, c)| {
+                    let w = if i < col_count { widths[i] } else { c.len() };
+                    format!("{:<width$}", c, width = w)
+                })
+                .collect();
+            writeln!(f, "    {}", cells.join(" | "))?;
         }
         Ok(())
     }

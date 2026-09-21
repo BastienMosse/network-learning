@@ -161,7 +161,7 @@ impl PC {
 
         self.events.step(
             &self.name,
-            EventKind::ArpReplySent { target_ip: arp.sender_ip, mac: source_mac },
+            EventKind::ArpReplySent { target_ip: arp.target_ip, mac: source_mac },
             vec![self.arp_table_view()],
         ).await;
 

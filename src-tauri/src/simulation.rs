@@ -360,6 +360,10 @@ impl SimulationManager {
         self.running
     }
 
+    pub fn subscribe(&self) -> tokio::sync::broadcast::Receiver<crate::events::Step> {
+        self.event_bus.subscribe()
+    }
+
     pub fn max_interfaces(device_type: &str) -> usize {
         match device_type {
             "pc" => MAX_IFACES_PC,

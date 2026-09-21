@@ -3,8 +3,5 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-
-  preview: {
-    allowedHosts: ["network-learning.onrender.com"],
-  },
+  base: process.env.BASE_PATH || "/",
 });

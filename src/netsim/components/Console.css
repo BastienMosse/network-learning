@@ -3,8 +3,22 @@
   background: var(--white);
   display: flex;
   flex-direction: column;
-  height: 220px;
-  min-height: 120px;
+  min-height: 100px;
+  position: relative;
+}
+
+.ns-console-resize {
+  position: absolute;
+  top: -3px;
+  left: 0;
+  right: 0;
+  height: 6px;
+  cursor: ns-resize;
+  z-index: 10;
+}
+
+.ns-console-resize:hover {
+  background: var(--blue-soft);
 }
 
 .ns-console-header {
@@ -21,12 +35,17 @@
 
 .ns-console-header select {
   font: 500 13px 'DM Mono';
-  background: var(--bg);
+  background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 4px;
   padding: 3px 8px;
   color: var(--ink);
   outline: none;
+}
+
+.ns-console-header select option {
+  background: var(--paper);
+  color: var(--ink);
 }
 
 .ns-console-output {
@@ -50,6 +69,79 @@
 .ns-console-output .console-info {
   color: var(--muted);
   font-style: italic;
+}
+
+.ns-console-output .console-step {
+  color: var(--muted);
+  padding-left: 12px;
+  font-size: 12px;
+}
+
+.ns-console-clear {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  padding: 2px 8px;
+  font: 500 11px 'DM Mono';
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all .15s;
+}
+
+.ns-console-clear:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.ns-console-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ns-console-stopped {
+  font-size: 11px;
+  color: var(--coral);
+}
+
+.ns-console-right .ns-step-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font: 500 11px 'DM Mono';
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.ns-console-right .ns-step-toggle input[type="checkbox"] {
+  accent-color: var(--coral);
+}
+
+.ns-console-right .ns-step-toggle input:disabled {
+  opacity: 0.4;
+}
+
+.ns-console-right .ns-step-btn {
+  border: 1px solid var(--blue);
+  background: var(--blue-soft);
+  color: var(--blue);
+  padding: 3px 10px;
+  font: 600 11px 'Manrope';
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all .15s;
+}
+
+.ns-console-right .ns-step-btn:hover {
+  background: var(--blue);
+  color: #fff;
+}
+
+.ns-console-right .ns-step-btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
 }
 
 .ns-console-input {

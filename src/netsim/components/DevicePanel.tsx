@@ -305,6 +305,7 @@ export function DevicePanel({
               <div className="ns-iface-info">
                 <strong>{iface.name}</strong>
                 {iface.ip && <span>{iface.ip}/{iface.mask}</span>}
+                <span className="ns-iface-mac">{iface.mac}</span>
                 <span className="ns-iface-mtu">MTU {iface.mtu}</span>
               </div>
               {peer && <span className="ns-iface-peer">{peer}</span>}

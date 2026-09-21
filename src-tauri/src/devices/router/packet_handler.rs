@@ -98,7 +98,7 @@ impl Router {
 
                 self.events.step(
                     &self.name,
-                    EventKind::ArpReplySent { target_ip: arp.sender_ip, mac: my_mac },
+                    EventKind::ArpReplySent { target_ip: arp.target_ip, mac: my_mac },
                     vec![self.arp_table_view()],
                 ).await;
 

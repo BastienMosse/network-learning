@@ -1,8 +1,11 @@
 use crate::devices::pc::PC;
-use crate::net::ethernet::Ethernet;
+use crate::events::EventKind;
+use crate::net::arp::{Arp, ArpOperations};
+use crate::net::ethernet::{Ethernet, EtherTypes};
 use crate::net::icmp::{Icmp, ECHO_REQUEST};
 use crate::net::ipv4::{IpNextHeaderProtocol, Ipv4};
 use crate::utils::addrs::ip_addr::Ipv4Addr;
+use crate::utils::addrs::mac_addr::MacAddr;
 
 use tokio::sync::oneshot;
 
@@ -99,6 +102,7 @@ impl PC {
 
         match parts[0] {
             "ping" => self.cmd_ping(&parts).await,
+            "arping" => self.cmd_arping(&parts).await,
             "arp" => self.cmd_arp(&parts).await,
             "ifconfig" | "ip" => self.cmd_ifconfig().await,
             "help" => self.cmd_help(),
@@ -117,11 +121,54 @@ impl PC {
         };
 
         let sent = self.handle_ping(target).await;
-        if sent {
-            format!("PING {} - request sent", target)
-        } else {
+        if !sent {
             format!("PING {} - failed (no interface)", target)
+        } else {
+            String::new()
         }
+    }
+
+    async fn cmd_arping(&mut self, args: &[&str]) -> String {
+        if args.len() < 2 {
+            return "usage: arping <ip>".into();
+        }
+
+        let target: Ipv4Addr = match args[1].parse() {
+            Ok(ip) => ip,
+            Err(_) => return format!("invalid IP: {}", args[1]),
+        };
+
+        let iface_id = {
+            let ifaces = self.ifaces.lock().await;
+            let id = ifaces.ids().next();
+            match id {
+                Some(id) => id,
+                None => return "no interface configured".into(),
+            }
+        };
+
+        let src_ip = self.interface_ip(iface_id).await.unwrap_or(Ipv4Addr::new(0, 0, 0, 0));
+        let src_mac = self.interface_mac(iface_id).await.unwrap_or(MacAddr::zero());
+
+        self.events.step(
+            &self.name,
+            EventKind::ArpRequestSent { target_ip: target },
+            vec![self.arp_table_view()],
+        ).await;
+
+        let arp_request = Arp::new(
+            ArpOperations::Request,
+            src_mac, src_ip,
+            MacAddr::zero(), target,
+        );
+
+        let frame = Ethernet::new(
+            MacAddr::broadcast(), src_mac,
+            EtherTypes::Arp, arp_request.to_bytes(),
+        );
+        self.send_ethernet(iface_id, frame).await;
+
+        String::new()
     }
 
     async fn cmd_arp(&self, args: &[&str]) -> String {
@@ -166,6 +213,7 @@ impl PC {
     fn cmd_help(&self) -> String {
         "Available commands:\n  \
          ping <ip>    - Send ICMP echo request\n  \
+         arping <ip>  - Send ARP request\n  \
          arp          - Show ARP table\n  \
          ifconfig     - Show interfaces\n  \
          help         - Show this help\n"

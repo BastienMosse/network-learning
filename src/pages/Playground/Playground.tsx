@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
 import type { DeviceType, NetDevice, NetLink, NetInterface } from "../../netsim/types";
 import { DEVICE_LABELS, DEVICE_HAS_IP, MAX_INTERFACES } from "../../netsim/types";
 import type { ToolMode } from "../../netsim/components/Toolbar";
@@ -9,6 +8,8 @@ import { DevicePanel } from "../../netsim/components/DevicePanel";
 import { Console } from "../../netsim/components/Console";
 import type { ConsoleEntry } from "../../netsim/components/Console";
 import "./Playground.css";
+
+const isTauri = "__TAURI_INTERNALS__" in window;
 
 let nextId = 1;
 const uid = () => `n${nextId++}`;
@@ -45,7 +46,37 @@ interface SavedState {
 
 let savedState: SavedState | null = null;
 
+async function tauriInvoke<T>(cmd: string, args?: Record<string, unknown>): Promise<T> {
+  const { invoke } = await import("@tauri-apps/api/core");
+  return invoke<T>(cmd, args);
+}
+
+async function tauriListen<T>(event: string, handler: (e: { payload: T }) => void) {
+  const { listen } = await import("@tauri-apps/api/event");
+  return listen<T>(event, handler);
+}
+
 export function Playground() {
+  if (!isTauri) {
+    return (
+      <main className="ns-page">
+        <div className="ns-web-notice">
+          <h2>Simulateur réseau</h2>
+          <p>
+            Le simulateur réseau nécessite l'application desktop pour fonctionner.
+          </p>
+          <p>
+            Téléchargez l'application pour accéder à cette fonctionnalité.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  return <PlaygroundInner />;
+}
+
+function PlaygroundInner() {
   const [init] = useState<SavedState | null>(() => {
     if (savedState) {
       const s = savedState;
@@ -79,6 +110,20 @@ export function Playground() {
     };
   }, []);
 
+  useEffect(() => {
+    const unlisten = tauriListen<{ device: string; event: string; tables: string[] }>(
+      "sim-step",
+      (event) => {
+        const { device, event: evt } = event.payload;
+        setConsoleEntries(prev => [
+          ...prev,
+          { type: "step" as const, text: `  [${device}] ${evt}` },
+        ]);
+      },
+    );
+    return () => { unlisten.then(fn => fn()); };
+  }, []);
+
   const logConsole = useCallback((type: ConsoleEntry["type"], text: string) => {
     setConsoleEntries(prev => [...prev, { type, text }]);
   }, []);
@@ -110,7 +155,7 @@ export function Playground() {
       interfaces: [],
     };
 
-    invoke("sim_create_device", { name, deviceType: type }).catch(err => {
+    tauriInvoke("sim_create_device", { name, deviceType: type }).catch(err => {
       logConsole("err", `Erreur création ${name}: ${err}`);
     });
 
@@ -129,7 +174,7 @@ export function Playground() {
     const device = devices.find(d => d.id === deviceId);
     if (!device || device.name === newName) return;
 
-    invoke("sim_rename_device", { oldName: device.name, newName }).catch(err => {
+    tauriInvoke("sim_rename_device", { oldName: device.name, newName }).catch(err => {
       logConsole("err", `Erreur renommage: ${err}`);
     });
 
@@ -142,7 +187,7 @@ export function Playground() {
     if (running) return;
     const device = devices.find(d => d.id === id);
     if (device) {
-      invoke("sim_remove_device", { name: device.name }).catch(err => {
+      tauriInvoke("sim_remove_device", { name: device.name }).catch(err => {
         logConsole("err", `Erreur suppression: ${err}`);
       });
     }
@@ -169,7 +214,7 @@ export function Playground() {
       const backendMask = DEVICE_HAS_IP[device.type] ? mask : 0;
 
       try {
-        const result = await invoke<{ id: number; mac: string }>("sim_add_interface", {
+        const result = await tauriInvoke<{ id: number; mac: string }>("sim_add_interface", {
           deviceName: device.name,
           ifaceName: name,
           ip: backendIp,
@@ -202,7 +247,7 @@ export function Playground() {
       const backendIp = DEVICE_HAS_IP[device.type] ? ip : undefined;
       const backendMask = DEVICE_HAS_IP[device.type] ? mask : undefined;
 
-      invoke("sim_edit_interface", {
+      tauriInvoke("sim_edit_interface", {
         deviceName: device.name,
         oldIfaceName: oldIface.name,
         newName: name !== oldIface.name ? name : null,
@@ -254,7 +299,7 @@ export function Playground() {
     const toIface = toDevice?.interfaces.find(i => i.id === ifaceId);
 
     if (fromDevice && toDevice && fromIface && toIface) {
-      invoke("sim_link_interfaces", {
+      tauriInvoke("sim_link_interfaces", {
         devA: fromDevice.name,
         ifaceA: fromIface.name,
         devB: toDevice.name,
@@ -280,9 +325,9 @@ export function Playground() {
   const handleStart = useCallback(async () => {
     try {
       if (stepMode) {
-        await invoke("sim_set_step_mode", { enabled: true });
+        await tauriInvoke("sim_set_step_mode", { enabled: true });
       }
-      await invoke("sim_start");
+      await tauriInvoke("sim_start");
       setRunning(true);
       logConsole("info", `Simulation démarrée${stepMode ? " (mode étape par étape)" : ""}`);
     } catch (err) {
@@ -292,7 +337,7 @@ export function Playground() {
 
   const handleStop = useCallback(async () => {
     try {
-      await invoke("sim_stop");
+      await tauriInvoke("sim_stop");
       setRunning(false);
       setWaitingStep(false);
       logConsole("info", "Simulation arrêtée");
@@ -301,9 +346,13 @@ export function Playground() {
     }
   }, [logConsole]);
 
+  const handleClear = useCallback(() => {
+    setConsoleEntries([]);
+  }, []);
+
   const handleReset = useCallback(async () => {
     try {
-      await invoke("sim_reset");
+      await tauriInvoke("sim_reset");
       setRunning(false);
       setWaitingStep(false);
       setDevices([]);
@@ -320,7 +369,7 @@ export function Playground() {
     if (waitingStep) return;
     setWaitingStep(true);
     try {
-      const step = await invoke<StepInfo>("sim_next_step");
+      const step = await tauriInvoke<StepInfo>("sim_next_step");
       logConsole("info", `[${step.device}] ${step.event}`);
       for (const table of step.tables) {
         logConsole("out", table);
@@ -334,8 +383,8 @@ export function Playground() {
   const handleExec = useCallback(async (deviceName: string, command: string) => {
     logConsole("cmd", `${deviceName}> ${command}`);
     try {
-      const result = await invoke<string>("sim_exec", { deviceName, input: command });
-      logConsole("out", result);
+      const result = await tauriInvoke<string>("sim_exec", { deviceName, input: command });
+      if (result) logConsole("out", result);
       if (stepMode && running) {
         handleNextStep();
       }
@@ -345,15 +394,6 @@ export function Playground() {
   }, [logConsole, stepMode, running, handleNextStep]);
 
   const selected = devices.find(d => d.id === selectedId) ?? null;
-
-  const hintMessage =
-    toolMode === "cable"
-      ? cableState.from
-        ? "Cliquez sur la machine de destination..."
-        : "Cliquez sur une machine pour sélectionner une interface..."
-      : toolMode === "delete"
-        ? "Cliquez sur un élément pour le supprimer..."
-        : null;
 
   return (
     <main className="ns-page">
@@ -368,26 +408,6 @@ export function Playground() {
           onStop={handleStop}
           onReset={handleReset}
         />
-        <label className="ns-step-toggle">
-          <input
-            type="checkbox"
-            checked={stepMode}
-            onChange={e => setStepMode(e.target.checked)}
-            disabled={running}
-          />
-          <span>Étape par étape</span>
-        </label>
-        {stepMode && running && (
-          <button className="ns-step-btn" onClick={handleNextStep} disabled={waitingStep}>
-            {waitingStep ? "En attente..." : "Étape suivante →"}
-          </button>
-        )}
-        {hintMessage && (
-          <span className={`ns-tool-hint ${toolMode === "delete" ? "ns-tool-hint--delete" : ""}`}>
-            {hintMessage}
-            <button onClick={() => setTool("select")}>Annuler</button>
-          </span>
-        )}
       </div>
 
       <div className="ns-workspace">
@@ -426,7 +446,12 @@ export function Playground() {
         devices={devices}
         running={running}
         onExec={handleExec}
+        onClear={handleClear}
         entries={consoleEntries}
+        stepMode={stepMode}
+        onSetStepMode={setStepMode}
+        onNextStep={handleNextStep}
+        waitingStep={waitingStep}
       />
     </main>
   );
