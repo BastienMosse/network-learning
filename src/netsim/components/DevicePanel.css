@@ -1,0 +1,260 @@
+.ns-panel {
+  width: 290px;
+  border-left: 1px solid var(--line);
+  background: var(--white);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.ns-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+}
+
+.ns-panel-header h3 {
+  font: 600 20px 'Space Grotesk';
+  letter-spacing: -.03em;
+  margin: 4px 0 0;
+}
+
+.ns-panel-close {
+  border: 0;
+  background: none;
+  font-size: 22px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.ns-panel-label {
+  font: 500 11px 'DM Mono';
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 10px;
+}
+
+.ns-panel-empty {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 0;
+}
+
+.ns-iface-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.ns-iface-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ns-iface-info strong { font: 600 12px 'DM Mono'; }
+.ns-iface-info span { font: 11px 'DM Mono'; color: var(--muted); }
+
+.ns-iface-peer {
+  font: 10px 'DM Mono';
+  color: var(--blue);
+  background: var(--blue-soft);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.ns-iface-link-btn {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all .15s;
+}
+
+.ns-iface-link-btn:hover,
+.ns-iface-link-btn.active {
+  background: var(--coral-soft);
+  border-color: var(--coral);
+  color: var(--coral);
+}
+
+.ns-panel-form { display: flex; flex-direction: column; gap: 6px; }
+
+.ns-panel-form input {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  padding: 7px 10px;
+  font: 12px 'DM Mono';
+  width: 100%;
+}
+
+.ns-panel-form input:focus {
+  outline: none;
+  border-color: var(--coral);
+}
+
+.ns-panel-form-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.ns-panel-add-btn {
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+
+.ns-panel-add-btn:hover { background: var(--coral); border-color: var(--coral); }
+
+.ns-panel-delete {
+  margin-top: auto;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  padding: 8px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.ns-panel-delete:hover {
+  background: #fce8e8;
+  border-color: #d44;
+  color: #d44;
+}
+
+.ns-panel-section { border-bottom: 1px solid var(--line); padding-bottom: 16px; }
+
+.ns-iface-edit {
+  border: 1px solid var(--coral);
+  padding: 8px;
+  margin-bottom: 6px;
+  background: var(--paper);
+}
+
+.ns-iface-edit-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ns-iface-edit-row input {
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--ink);
+  padding: 5px 6px;
+  font: 11px 'DM Mono';
+}
+
+.ns-iface-edit-row input:focus {
+  outline: none;
+  border-color: var(--coral);
+}
+
+.ns-iface-edit-btn {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.ns-iface-edit-btn:hover {
+  background: var(--coral-soft);
+  border-color: var(--coral);
+  color: var(--coral);
+}
+
+.ns-iface-edit-btn.save:hover {
+  background: #e8f5e9;
+  border-color: #4caf50;
+  color: #388e3c;
+}
+
+.ns-iface-edit-btn.cancel:hover {
+  background: #fce8e8;
+  border-color: #d44;
+  color: #d44;
+}
+
+.ns-iface-error {
+  display: block;
+  font: 11px 'DM Mono';
+  color: #d44;
+  margin-top: 4px;
+}
+
+.ns-iface-mtu {
+  font-size: 10px !important;
+  opacity: 0.6;
+}
+
+.ns-panel-name-edit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.ns-panel-name-edit input {
+  font: 600 18px 'Space Grotesk';
+  letter-spacing: -.03em;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  padding: 4px 8px;
+  width: 140px;
+}
+
+.ns-panel-name-edit input:focus {
+  outline: none;
+  border-color: var(--coral);
+}
+
+.ns-panel-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.ns-panel-name-row h3 {
+  font: 600 20px 'Space Grotesk';
+  letter-spacing: -.03em;
+  margin: 0;
+}

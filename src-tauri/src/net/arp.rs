@@ -9,10 +9,10 @@ pub struct Arp {
     pub hw_addr_len: u8,
     pub proto_addr_len: u8,
     pub operation: ArpOperation,
-    pub sender_hw_addr: MacAddr,
-    pub sender_proto_addr: Ipv4Addr,
-    pub target_hw_addr: MacAddr,
-    pub target_proto_addr: Ipv4Addr,
+    pub sender_mac: MacAddr,
+    pub sender_ip: Ipv4Addr,
+    pub target_mac: MacAddr,
+    pub target_ip: Ipv4Addr,
 }
 
 impl Arp {
@@ -21,10 +21,10 @@ impl Arp {
 
     pub fn new(
         operation: ArpOperation,
-        sender_hw_addr: MacAddr,
-        sender_proto_addr: Ipv4Addr,
-        target_hw_addr: MacAddr,
-        target_proto_addr: Ipv4Addr,
+        sender_mac: MacAddr,
+        sender_ip: Ipv4Addr,
+        target_mac: MacAddr,
+        target_ip: Ipv4Addr,
     ) -> Self {
         Self {
             hardware_type: ArpHardwareTypes::ETHERNET,
@@ -32,10 +32,10 @@ impl Arp {
             hw_addr_len: Self::ETHERNET_HW_ADDR_LEN,
             proto_addr_len: Self::IPV4_PROTO_ADDR_LEN,
             operation,
-            sender_hw_addr,
-            sender_proto_addr,
-            target_hw_addr,
-            target_proto_addr,
+            sender_mac,
+            sender_ip,
+            target_mac,
+            target_ip,
         }
     }
 
@@ -46,10 +46,10 @@ impl Arp {
         b.push(self.hw_addr_len);
         b.push(self.proto_addr_len);
         b.extend_from_slice(&self.operation.0.to_be_bytes());
-        b.extend_from_slice(&self.sender_hw_addr.to_bytes());
-        b.extend_from_slice(&self.sender_proto_addr.to_bytes());
-        b.extend_from_slice(&self.target_hw_addr.to_bytes());
-        b.extend_from_slice(&self.target_proto_addr.to_bytes());
+        b.extend_from_slice(&self.sender_mac.to_bytes());
+        b.extend_from_slice(&self.sender_ip.to_bytes());
+        b.extend_from_slice(&self.target_mac.to_bytes());
+        b.extend_from_slice(&self.target_ip.to_bytes());
         b
     }
 
@@ -78,19 +78,19 @@ impl Arp {
         let operation =
             u16::from_be_bytes([bytes[6], bytes[7]]);
 
-        let sender_hw_addr =
+        let sender_mac =
             MacAddr::from_bytes(&bytes[8..14])
                 .map_err(|_| "adresse MAC source invalide")?;
 
-        let sender_proto_addr =
+        let sender_ip =
             Ipv4Addr::from_bytes(&bytes[14..18])
                 .map_err(|_| "adresse IPv4 source invalide")?;
 
-        let target_hw_addr =
+        let target_mac =
             MacAddr::from_bytes(&bytes[18..24])
                 .map_err(|_| "adresse MAC destination invalide")?;
 
-        let target_proto_addr =
+        let target_ip =
             Ipv4Addr::from_bytes(&bytes[24..28])
                 .map_err(|_| "adresse IPv4 destination invalide")?;
 
@@ -100,10 +100,10 @@ impl Arp {
             hw_addr_len,
             proto_addr_len,
             operation: ArpOperation(operation),
-            sender_hw_addr,
-            sender_proto_addr,
-            target_hw_addr,
-            target_proto_addr,
+            sender_mac,
+            sender_ip,
+            target_mac,
+            target_ip,
         })
     }
 }
@@ -133,6 +133,6 @@ pub struct ArpOperation(pub u16);
 pub mod ArpOperations {
     use super::ArpOperation;
 
-    pub const REQUEST: ArpOperation = ArpOperation(1);
-    pub const REPLY: ArpOperation = ArpOperation(2);
+    pub const Request: ArpOperation = ArpOperation(1);
+    pub const Reply: ArpOperation = ArpOperation(2);
 }

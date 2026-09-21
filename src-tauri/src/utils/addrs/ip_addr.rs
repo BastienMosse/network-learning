@@ -46,6 +46,10 @@ impl Ipv4Addr {
     pub fn to_u32(self) -> u32 {
         u32::from_be_bytes(self.0)
     }
+
+    pub fn from_u32(val: u32) -> Self {
+        Self(val.to_be_bytes())
+    }
 }
 
 impl From<Ipv4Addr> for u32 {

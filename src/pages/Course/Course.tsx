@@ -3,11 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "./Course.css";
 
-import { useManifest } from "../../contexts/ManifestContext";
-import { BackButton } from "../../components/navigation/BackButton";
-import { loadCourse } from "../../services/courseService";
-import type { CourseContent } from "../../types/course/CourseContent";
-import { BlockRenderer } from "../../components/course/BlockRenderer";
+import { useManifest } from "../../courses/contexts/ManifestContext";
+import { BackButton } from "../../courses/components/navigation/BackButton";
+import { loadCourse } from "../../courses/services/courseService";
+import type { CourseContent } from "../../courses/types/course/CourseContent";
+import { BlockRenderer } from "../../courses/components/course/BlockRenderer";
 
 export function Course() {
   const { themeId, courseId } = useParams();
@@ -39,8 +39,8 @@ export function Course() {
   const section = course.sections[sectionIndex];
   const progress = ((sectionIndex + 1) / course.sections.length) * 100;
 
-  const onBack = () => { navigate(`/theme/${themeId}`) };
-  const openCourse = (id: string) => { navigate(`/theme/${themeId}/course/${id}`); };
+  const onBack = () => { navigate(`/courses/theme/${themeId}`) };
+  const openCourse = (id: string) => { navigate(`/courses/theme/${themeId}/course/${id}`); };
   const previousSection = () => {
     if (sectionIndex > 0) {
       setSectionIndex(sectionIndex - 1)

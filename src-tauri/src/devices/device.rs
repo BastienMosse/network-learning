@@ -1,10 +1,10 @@
 use crate::utils::interfaces::Interfaces;
 use crate::utils::socket::Socket;
-use crate::net::ethernet::Ethernet;
 
 use tokio::sync::{mpsc, Mutex};
 use std::sync::Arc;
 
+#[allow(async_fn_in_trait)]
 pub trait Device: Send + Sync + 'static {
     type Command: Send + 'static;
 
@@ -15,7 +15,7 @@ pub trait Device: Send + Sync + 'static {
     async fn on_packet(
         &mut self,
         in_idx: usize,
-        frame: Ethernet,
+        packet: Vec<u8>,
     );
 
     async fn on_command(
@@ -33,7 +33,7 @@ pub trait Device: Send + Sync + 'static {
         addr: &str,
         mask: u8,
         mtu: u16,
-    ) -> usize;
+    ) -> (usize, [u8; 6]);
 
     async fn get_iface_id(
         &self,
@@ -66,15 +66,7 @@ pub trait Device: Send + Sync + 'static {
                     ifaces.recv().await
                 } => {
                     if let Some((idx, packet)) = received {
-                        match Ethernet::from_bytes(&packet) {
-                            Ok(frame) => {
-                                if frame.verify_fcs() {
-                                    self.on_packet(idx, frame).await;
-                                }
-                            }
-                            Err(_) => {
-                            }
-                        }
+                        self.on_packet(idx, packet).await;
                     }
                 }
 

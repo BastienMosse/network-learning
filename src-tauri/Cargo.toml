@@ -22,6 +22,9 @@ tokio-stream = "0.1"
 pnet_macros = "0.35"
 pnet_macros_support = "0.35"
 futures = "0.3"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rand = "0.8"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.

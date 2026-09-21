@@ -1,0 +1,34 @@
+.ns-canvas {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle, var(--line) 1px, transparent 1px);
+  background-size: 30px 30px;
+  min-height: 500px;
+}
+
+.ns-canvas-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ns-link-line {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  opacity: .5;
+}
+
+.ns-canvas-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font: 13px 'DM Mono';
+  color: var(--muted);
+  pointer-events: none;
+}

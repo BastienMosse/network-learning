@@ -10,14 +10,16 @@ export default function Header() {
 
   const { dark, toggleTheme } = useTheme();
 
-  const isHome = location.pathname === "/";
+  const isCourses = location.pathname.startsWith("/courses");
+  const isNetsim = location.pathname.startsWith("/netsim");
+
   const goHome = () => { navigate("/"); };
 
   const themeLabel = dark
     ? "Activer le thème clair"
     : "Activer le thème sombre";
-  
-  const icone = dark 
+
+  const icone = dark
     ? (<Sun size={18} />)
     : (<Moon size={18} />);
 
@@ -33,15 +35,15 @@ export default function Header() {
       </button>
 
       <nav className="topnav" aria-label="Navigation principale" >
-        <button onClick={goHome} className={isHome ? "active" : ""}>
-          Explorer
+        <button onClick={() => navigate("/courses")} className={isCourses ? "active" : ""}>
+          Cours
         </button>
 
         <span className="nav-rule" />
 
-        <span className="nav-note">
-          Laboratoire de réseau
-        </span>
+        <button onClick={() => navigate("/netsim")} className={isNetsim ? "active" : ""}>
+          Playground
+        </button>
       </nav>
 
       <button className="icon-button" onClick={toggleTheme} aria-label={themeLabel}>

@@ -3,10 +3,10 @@ import { RouterProvider } from "react-router-dom";
 
 import { router } from "./router/router";
 
-import type { Manifest } from "./types/Manifest/Manifest";
-import { loadManifest, fallbackManifest } from "./services/courseService";
-import { ManifestContext } from "./contexts/ManifestContext";
-import { ThemeContext } from "./contexts/ThemeContext";
+import type { Manifest } from "./courses/types/Manifest/Manifest";
+import { loadManifest, fallbackManifest } from "./courses/services/courseService";
+import { ManifestContext } from "./courses/contexts/ManifestContext";
+import { ThemeContext } from "./courses/contexts/ThemeContext";
 
 export default function App() {
   const [manifest, setManifest] = useState<Manifest>(fallbackManifest);

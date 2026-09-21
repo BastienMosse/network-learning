@@ -123,7 +123,7 @@
     {
       "id": "equipements-reseau",
       "slug": "equipements-reseau",
-      "title": "Équipements réseau — Hub, Bridge, Switch et Routeur",
+      "title": "Équipements réseau - Hub, Bridge, Switch et Routeur",
       "description": "Comprendre le rôle et les différences entre un hub, un bridge, un switch et un routeur, ainsi que les couches OSI et les adresses utilisées.",
       "level": "Débutant",
       "duration": "40 min",

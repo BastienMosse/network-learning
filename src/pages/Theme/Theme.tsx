@@ -1,17 +1,17 @@
 import { useNavigate, useParams } from "react-router-dom";
 import "./Theme.css";
 
-import { useManifest } from "../../contexts/ManifestContext";
-import { BackButton } from "../../components/navigation/BackButton";
-import { CourseList } from "../../components/courses/CourseList";
+import { useManifest } from "../../courses/contexts/ManifestContext";
+import { BackButton } from "../../courses/components/navigation/BackButton";
+import { CourseList } from "../../courses/components/courses/CourseList";
 
 export function Theme() {
   const { themeId } = useParams();
   const navigate = useNavigate();
   const manifest = useManifest();
 
-  const onBack = () => { navigate('/') };
-  const onCourse = (themeId: string, courseId: string) => { navigate(`/theme/${themeId}/course/${courseId}`); };
+  const onBack = () => { navigate('/courses') };
+  const onCourse = (themeId: string, courseId: string) => { navigate(`/courses/theme/${themeId}/course/${courseId}`); };
 
   const courses = manifest.courses.filter(
     (course) => course.themeId === themeId,

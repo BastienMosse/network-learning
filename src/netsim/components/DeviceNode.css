@@ -1,0 +1,67 @@
+.ns-device {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  min-width: 80px;
+  padding: 12px 16px;
+  border: 1px solid var(--ink);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  z-index: 2;
+  transition: border-color .15s;
+}
+
+.ns-device:active { cursor: grabbing; }
+
+.ns-device--selected {
+  border-color: var(--coral);
+  border-width: 2px;
+  z-index: 3;
+}
+
+.ns-device-type {
+  font: 600 11px 'DM Mono';
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: inherit;
+}
+
+.ns-device-name {
+  font: 500 10px 'DM Mono';
+  color: inherit;
+  opacity: .7;
+}
+
+.ns-device--cable {
+  cursor: crosshair;
+}
+
+.ns-device--cable:hover {
+  border-color: var(--coral);
+  box-shadow: 0 0 0 3px var(--coral-soft) !important;
+}
+
+.ns-device--delete {
+  cursor: pointer;
+}
+
+.ns-device--delete:hover {
+  border-color: #d44;
+  box-shadow: 0 0 0 3px rgba(221, 68, 68, .2) !important;
+  opacity: .7;
+}
+
+.ns-device-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--ink);
+  color: var(--paper);
+  font: 600 9px 'DM Mono';
+  padding: 2px 5px;
+  border-radius: 8px;
+}

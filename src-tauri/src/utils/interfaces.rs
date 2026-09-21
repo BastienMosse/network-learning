@@ -1,6 +1,7 @@
 use crate::utils::socket::Socket;
 
 use futures::future::{select_all, FutureExt};
+use rand::Rng;
 use std::collections::HashMap;
 
 
@@ -36,9 +37,11 @@ impl Interfaces {
         addr: u32,
         mask: u8,
         mtu: u16,
-    ) -> usize {
+    ) -> (usize, [u8; 6]) {
         let id = self.next_id;
         self.next_id += 1;
+
+        let mac = self.generate_unique_mac();
 
         self.ifaces.insert(
             id,
@@ -48,14 +51,33 @@ impl Interfaces {
                 addr,
                 mask,
                 mtu,
-                mac: [0; 6],
+                mac,
                 soc: None,
             },
         );
 
-        id
+        (id, mac)
     }
 
+
+    pub fn update(
+        &mut self,
+        id: usize,
+        name: Option<&str>,
+        addr: Option<u32>,
+        mask: Option<u8>,
+        mtu: Option<u16>,
+    ) -> bool {
+        if let Some(iface) = self.ifaces.get_mut(&id) {
+            if let Some(n) = name { iface.name = n.to_string(); }
+            if let Some(a) = addr { iface.addr = a; }
+            if let Some(m) = mask { iface.mask = m; }
+            if let Some(mt) = mtu { iface.mtu = mt; }
+            true
+        } else {
+            false
+        }
+    }
 
     pub fn remove(
         &mut self,
@@ -71,6 +93,35 @@ impl Interfaces {
         self.ifaces.keys().copied()
     }
 
+
+    pub fn get(&self, id: usize) -> Option<&Iface> {
+        self.ifaces.get(&id)
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = &Iface> {
+        self.ifaces.values()
+    }
+
+    pub fn iter_with_id(&self) -> impl Iterator<Item = (usize, &Iface)> {
+        self.ifaces.iter().map(|(&id, iface)| (id, iface))
+    }
+
+    pub fn len(&self) -> usize {
+        self.ifaces.len()
+    }
+
+    fn generate_unique_mac(&self) -> [u8; 6] {
+        let mut rng = rand::thread_rng();
+        loop {
+            let mut mac = [0u8; 6];
+            rng.fill(&mut mac[..]);
+            mac[0] = 0x02; // locally administered, unicast
+            let exists = self.ifaces.values().any(|i| i.mac == mac);
+            if !exists {
+                return mac;
+            }
+        }
+    }
 
     pub fn id_by_name(
         &self,
