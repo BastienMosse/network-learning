@@ -3,6 +3,8 @@ import { Monitor, Download as DownloadIcon, ArrowLeft } from "lucide-react";
 import "./Download.css";
 
 const REPO = "BastienMosse/network-learning";
+const CACHE_KEY = "nl_release_cache";
+const CACHE_TTL = 1000 * 60 * 30; // 30 minutes
 
 interface Asset {
   name: string;
@@ -14,6 +16,24 @@ interface Release {
   tag_name: string;
   published_at: string;
   assets: Asset[];
+}
+
+function getCachedRelease(): Release | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) return null;
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function cacheRelease(data: Release) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ data, ts: Date.now() }));
+  } catch {}
 }
 
 type Platform = "windows" | "linux" | "unknown";
@@ -51,9 +71,17 @@ export function Download() {
   const platform = detectPlatform();
 
   useEffect(() => {
+    const cached = getCachedRelease();
+    if (cached) {
+      setRelease(cached);
+      return;
+    }
     fetch(`https://api.github.com/repos/${REPO}/releases/latest`)
       .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then(setRelease)
+      .then((data: Release) => {
+        cacheRelease(data);
+        setRelease(data);
+      })
       .catch(() => setError(true));
   }, []);
 
