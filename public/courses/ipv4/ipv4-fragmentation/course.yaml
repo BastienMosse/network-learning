@@ -67,7 +67,7 @@ sections:
         content: |
           Un paquet IP contient 3 bits de flag.
 
-          - Bit 0 : reservé
+          - Bit 0 : réservé
           - Bit 1 : DF
           - Bit 2 : MF
 

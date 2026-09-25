@@ -195,7 +195,7 @@ sections:
       - type: text
         title: Les champs à retenir
         content: |
-          Pour comprendre ARP, retiens principalement quatre informations :
+          Pour comprendre ARP, retenez principalement ces informations :
 
           - **Hardware Type** : 1 pour Ethernet 
           - **Protocol Type** : 0x0800 pour IPv4
@@ -204,7 +204,7 @@ sections:
           - **Operation** : 1 pour une requête ARP, 2 pour une réponse ARP
           - **MAC source** : adresse MAC de l'émetteur
           - **IP source** : adresse IP de l'émetteur
-          - **MAC cible** : adresse MAC recherchée ou destinataire (00:00:00:00:00:00 pour une requete)
+          - **MAC cible** : adresse MAC recherchée ou destinataire (00:00:00:00:00:00 pour une requête)
           - **IP cible** : adresse IP de la cible
 
       - type: text

@@ -111,7 +111,7 @@ sections:
 
           - title: "3. PC B répond"
             panel: "192.168.1.20 → AA:BB:BB:BB:BB:BB"
-            description: "PC A envoie une requete ARP a PC B qui répond à sa requête en indiquant sa MAC, puis envoi son paquet."
+            description: "PC A envoie une requête ARP à PC B qui répond à sa requête en indiquant sa MAC, puis envoie son paquet."
             active: [pc-a, pc-b]
             packets:
               - - from: pc-a
@@ -144,7 +144,7 @@ sections:
 
           - title: "6. PC C répond"
             panel: "192.168.1.30 → AA:CC:CC:CC:CC:CC"
-            description: "PC A envoie une requete ARP a PC C qui répond à sa requête en indiquant sa MAC, puis envoi son paquet."
+            description: "PC A envoie une requête ARP à PC C qui répond à sa requête en indiquant sa MAC, puis envoie son paquet."
             active: [pc-a, pc-c]
             packets:
               - - from: pc-a

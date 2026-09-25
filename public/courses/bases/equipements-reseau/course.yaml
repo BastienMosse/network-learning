@@ -194,7 +194,7 @@ sections:
 
           Si PC A communique avec PC B et que le bridge sait que PC B se trouve sur le même segment, il peut empêcher la trame de traverser vers le deuxième segment.
 
-          Il apprends les adresses MAC en observant le trafic qui traverse ses ports.
+          Il apprend les adresses MAC en observant le trafic qui traverse ses ports.
           Il regarde l'émetteur de chaque trame et note de quel segment provient le paquet.
           Il construit ainsi une **table d'apprentissage** qui lui permet de savoir sur quel segment se trouve chaque appareil.
 
@@ -276,7 +276,7 @@ sections:
         steps:
           - title: La table du bridge est vide
             panel: Table du bridge
-            description: Au démarrage, le bridge ne sait sur quel segment se trouve chaque appareil. Il va l'apprendre en observant le trafic qui traverse chaque port.
+            description: Au démarrage, le bridge ne sait pas sur quel segment se trouve chaque appareil. Il va l'apprendre en observant le trafic qui traverse chaque port.
             active: [bridge]
             table:
               headers: [Adresse MAC, Segment]
@@ -449,7 +449,7 @@ sections:
               height: 80
               color: coral
         steps:
-          - title: Le bridge a deja sa table complete.
+          - title: Le bridge a déjà sa table complète.
             panel: Table du bridge
             description: La table du bridge est complète. Il sait sur quel segment se trouve chaque appareil.
             active: [bridge]
@@ -557,7 +557,7 @@ sections:
               height: 80
               color: coral
         steps:
-          - title: Le bridge a deja sa table complete.
+          - title: Le bridge a déjà sa table complète.
             panel: Table du bridge
             description: La table du bridge est complète. Il sait sur quel segment se trouve chaque appareil.
             active: [bridge]

@@ -7,8 +7,8 @@ duration: 10 min
 themeId: ethernet
 color: blue
 objectives:
-  - 
-  - 
+  - Comprendre ce qu'est un domaine de collision et un domaine de broadcast
+  - Savoir comment chaque équipement réseau (hub, switch, routeur) les délimite
 sections:
 
   # ============================================================

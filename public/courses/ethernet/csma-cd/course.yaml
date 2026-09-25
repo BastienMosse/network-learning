@@ -74,7 +74,7 @@ sections:
         diagram: |
           flowchart TD
 
-              A[Le paquet est prêt] --> B{repporter la transmission ?}
+              A[Le paquet est prêt] --> B{reporter la transmission ?}
               B -->|Oui| A
               B -->|Non| C[Lancer la transmission]
               C --> D{Collision détectée ?}
@@ -84,7 +84,7 @@ sections:
               E -->|Non| D
               F --> H[Augmenter le nombre<br/>de tentatives]
               H --> I{Nombre de tentatives > 15 ?}
-              I -->|Oui| J([Abandon :<br/>paquet perdu, sur-collisions excessives])
+              I -->|Oui| J([Abandon :<br/>paquet perdu, collisions excessives])
               I -->|Non| K[Calculer un délai<br/>de backoff]
               K --> L[Attendre le temps<br/>de backoff]
               L --> A
@@ -160,11 +160,11 @@ sections:
             media:
               src: /courses/ethernet/csma-cd/images/step_5.png
 
-          - title: 6. Rétransmettre - Multiple Access
+          - title: 6. Retransmettre - Multiple Access
             description: |
               Après le temps d'attente aléatoire, les sources réécoutent le réseau.
               Si le support est libre, elles peuvent retransmettre leur trame.
-            panel: Rétransmettre - Multiple Access
+            panel: Retransmettre - Multiple Access
             media:
               src: /courses/ethernet/csma-cd/images/step_6.png
 

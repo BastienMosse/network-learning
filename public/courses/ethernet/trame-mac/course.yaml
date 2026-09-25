@@ -37,7 +37,7 @@ sections:
           **Données → paquet IP → trame Ethernet → bits sur le support**
 
           Une **trame Ethernet** a une taille minimale de 64 octets et une taille maximale de 1518 octets.
-          Elle peut donc transporter une quantité de données comprises entre 48 et 1500 octets.
+          Elle peut donc transporter une quantité de données comprise entre 48 et 1500 octets.
 
 
       - type: text
@@ -178,10 +178,10 @@ sections:
           Par exemple, une trame Ethernet peut transporter un paquet **IPv4** ou **IPv6**.
           Le récepteur sait ainsi comment interpréter les données contenues dans la trame.
 
-          - Ipv4: 0x0800
-          - Arp: 0x0806
-          - Ipv6: 0x86DD
-          - Vlan: 0x8100
+          - IPv4 : 0x0800
+          - ARP : 0x0806
+          - IPv6 : 0x86DD
+          - VLAN : 0x8100
 
       - type: text
         title: Données
@@ -193,7 +193,7 @@ sections:
           On peut donc avoir :
 
       - type: code
-        langauage:
+        language:
         code: |
           Trame Ethernet
           └── Paquet IP

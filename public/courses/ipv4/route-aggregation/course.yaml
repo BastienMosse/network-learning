@@ -22,10 +22,10 @@ sections:
       - type: text
         title: Objectif
         content: |
-          L'agrégation est l'opération inverse des masqus variables.
-          Au lieu de découper un réseau en pluieurs sous-réseaux, on va
+          L'agrégation est l'opération inverse des masques variables.
+          Au lieu de découper un réseau en plusieurs sous-réseaux, on va
           regrouper plusieurs sous-réseaux contigus en un seul réseau avec un masque plus court.
-          Ce nouveau doit correspondre parfaitemet à l'ancien, sans oubler d'adresses ou en avoir en plus.
+          Ce nouveau réseau doit correspondre parfaitement à l'ancien, sans oublier d'adresses ou en avoir en plus.
 
 
       - type: text

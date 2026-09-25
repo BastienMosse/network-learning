@@ -47,7 +47,7 @@ sections:
           - { id: src-mac, label: "MAC source", bits: 6, color: blue, description: "Adresse MAC de l'émetteur de la trame" }
           - { id: tpid, label: TPID, bits: 2, color: teal, description: "TPID" }
           - { id: pcp-dei, label: "PCP + DEI", bits: 1, color: green, description: "PCP + DEI" }
-          - { id: vlan-id, label: "VLAN ID", bits: 3, color: yellow, description: "VLAN IDVLAN ID" }
+          - { id: vlan-id, label: "VLAN ID", bits: 3, color: yellow, description: "VLAN ID" }
           - { id: ether-type, label: "EtherType", bits: 4, color: blue, description: "EtherType" }
           - { id: payload, label: "Données", bits: 4, variable: true, color: teal, description: "Données" }
           - { id: fcs, label: FCS, bits: 4, color: coral, description: "FCS" }

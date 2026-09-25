@@ -27,7 +27,7 @@ sections:
     blocks:
 
       - type: text
-        title: Topologe
+        title: Topologie
         
       - type: image
         src: /courses/ethernet/ethernet-training/images/exo-1.png
@@ -62,7 +62,7 @@ sections:
     blocks:
 
       - type: text
-        title: Topologe
+        title: Topologie
         
       - type: image
         src: /courses/ethernet/ethernet-training/images/exo-2.png
@@ -70,7 +70,7 @@ sections:
       - type: text
         title: Questions
         content: |
-          - Determiner la couche OSI de chaque élément de l'architecture donnée.
+          - Déterminer la couche OSI de chaque élément de l'architecture donnée.
           - Donner le nombre de Domaines de Collision (CD)
           - Donner le nombre de Domaines de Broadcast (BD)
 
@@ -85,7 +85,7 @@ sections:
     blocks:
 
       - type: image
-        title: Determiner la couche OSI de chaque élément de l'architecture donnée.
+        title: Déterminer la couche OSI de chaque élément de l'architecture donnée.
         src: /courses/ethernet/ethernet-training/images/exo-2-sol-1.png
 
       - type: image
@@ -107,7 +107,7 @@ sections:
     blocks:
 
       - type: text
-        title: Topologe
+        title: Topologie
         
       - type: image
         src: /courses/ethernet/ethernet-training/images/exo-3.png
@@ -115,11 +115,11 @@ sections:
       - type: text
         title: Questions
         content: |
-          - Determiner la table d'adressage MAC de chacun des ports du Switch 4 (S4)
+          - Déterminer la table d'adressage MAC de chacun des ports du Switch 4 (S4)
 
 
   # ============================================================
-  # 06 - EXO 23- Solutions
+  # 06 - EXO 3 - Solutions
   # ============================================================
 
   - id: exo-3-sol
@@ -128,13 +128,13 @@ sections:
     blocks:
 
       - type: image
-        title: Determiner la table d'adressage MAC de chacun des ports du Switch 4 (S4) - Port 1
+        title: Déterminer la table d'adressage MAC de chacun des ports du Switch 4 (S4) - Port 1
         src: /courses/ethernet/ethernet-training/images/exo-3-sol-1.png
 
       - type: image
-        title: Determiner la table d'adressage MAC de chacun des ports du Switch 4 (S4) - Port 2
+        title: Déterminer la table d'adressage MAC de chacun des ports du Switch 4 (S4) - Port 2
         src: /courses/ethernet/ethernet-training/images/exo-3-sol-2.png
 
       - type: image
-        title: Determiner la table d'adressage MAC de chacun des ports du Switch 4 (S4) - Port 3
+        title: Déterminer la table d'adressage MAC de chacun des ports du Switch 4 (S4) - Port 3
         src: /courses/ethernet/ethernet-training/images/exo-3-sol-3.png

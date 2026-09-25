@@ -100,7 +100,7 @@ sections:
       - type: text
         title: Version
         content: |
-          La **version** permet aux machines d'identifier le type de paquet IP recu (IPv4 ou IPv6)
+          La **version** permet aux machines d'identifier le type de paquet IP reçu (IPv4 ou IPv6).
 
           IP version :
           - 4 pour IPv4
@@ -189,7 +189,7 @@ sections:
             description: "Le routeur décrémente le TTL avant de transmettre le paquet."
             active: [router]
 
-          - title: "3. Le routeur décrémente le TTL"
+          - title: "3b. Le TTL est vérifié"
             panel: "TTL > 0"
             description: "Le TTL est positif, on transmet le paquet."
             active: [router]

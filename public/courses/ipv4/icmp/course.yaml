@@ -112,8 +112,8 @@ sections:
           - { id: type, label: Type, bits: 8, color: coral, description: "Identifie la catégorie du message ICMP" }
           - { id: code, label: Code, bits: 8, color: blue, description: "Précise le type de message ICMP" }
           - { id: checksum, label: Checksum, bits: 16, color: yellow, description: "Somme de contrôle du message ICMP" }
-          - { id: identifier, label: Identifier, bits: 16, color: yellow, description: "Somme de contrôle du message ICMP" }
-          - { id: sequence-number, label: Sequence Number, bits: 16, color: yellow, description: "Somme de contrôle du message ICMP" }
+          - { id: identifier, label: Identifier, bits: 16, color: yellow, description: "Identifiant utilisé pour associer les requêtes et les réponses" }
+          - { id: sequence-number, label: Sequence Number, bits: 16, color: yellow, description: "Numéro de séquence incrémenté à chaque requête" }
           - { id: data, label: Données, bits: 0, variable: true, color: green, description: "Données éventuellement transportées par le message ICMP" }
 
       - type: text
